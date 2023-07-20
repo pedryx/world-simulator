@@ -17,10 +17,10 @@ internal class LevelState : GameState
 
         Texture2D texture = Texture2D.FromFile(Game.GraphicsDevice, "test.png");
 
-        var builder = Game.Factory.CreateEntityBuilder();
+        var builder = Game.Factory.CreateEntityBuilder(ECSWorld);
         builder.AddComponent<Transform>();
         builder.AddComponent(new Appearance(texture));
-        var entity = builder.Build(ECSWorld);
+        var entity = builder.Build();
     }
 
     protected override IEnumerable<IECSSystem> CreateSystems(IECSWorldBuilder builder)

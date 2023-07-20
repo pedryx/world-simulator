@@ -2,6 +2,7 @@
 
 namespace WorldSimulator.ECS.Entitas;
 internal class ComponentWrapper<TComponent> : IComponent
+    where TComponent : struct
 {
     private static readonly int id = ComponentIDGenerator.NextID();
 

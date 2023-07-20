@@ -5,6 +5,7 @@ using WorldSimulator.ECS.AbstractECS;
 namespace WorldSimulator.ECS.Entitas;
 
 internal class EntitasSystem<TComponent> : IECSSystem
+    where TComponent : struct
 {
     private readonly System system;
 
@@ -49,6 +50,8 @@ internal class EntitasSystem<TComponent> : IECSSystem
 }
 
 internal class EntitasSystem<TComponent1, TComponent2> : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
 {
     private readonly System system;
 
@@ -98,6 +101,9 @@ internal class EntitasSystem<TComponent1, TComponent2> : IECSSystem
 }
 
 internal class EntitasSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
+    where TComponent3 : struct
 {
     private readonly System system;
 
@@ -159,6 +165,10 @@ internal class EntitasSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
 }
 
 internal class EntitasSystem<TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
+    where TComponent3 : struct
+    where TComponent4 : struct
 {
 
     private readonly System system;

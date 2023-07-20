@@ -11,6 +11,7 @@ internal class EntitasEntity : AbstractECS.IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
+        where TComponent : struct
     {
         Entity.AddComponent
         (
@@ -25,17 +26,20 @@ internal class EntitasEntity : AbstractECS.IEntity
     }
 
     public ref TComponent GetComponent<TComponent>()
+        where TComponent : struct
     {
         return ref ((ComponentWrapper<TComponent>)Entity.GetComponent(ComponentWrapper<TComponent>.ID))
             .Component;
     }
 
     public bool HasComponent<TComponent>()
+        where TComponent : struct
     {
         return Entity.HasComponent(ComponentWrapper<TComponent>.ID);
     }
 
     public void RemoveComponent<TComponent>()
+        where TComponent : struct
     {
         Entity.RemoveComponent(ComponentWrapper<TComponent>.ID);
     }

@@ -5,6 +5,6 @@
 public interface IECSFactory
 {
     void Initialize();
-    IEntityBuilder CreateEntityBuilder();
+    IEntityBuilder CreateEntityBuilder(IECSWorld world);
     IECSWorldBuilder CreateWorldBuilder();
 }

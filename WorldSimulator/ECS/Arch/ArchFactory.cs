@@ -11,8 +11,8 @@ public class ArchFactory : IECSFactory
 {
     public void Initialize() { }
 
-    public IEntityBuilder CreateEntityBuilder()
-        => new OnPlaceBuildEntityBuilder((types, values, world) =>
+    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
+        => new OnPlaceBuildEntityBuilder(world, (types, values, world) =>
         {
             Entity entity = ((BasicECSWorld<World>)world).World.Create<Empty>();
             entity.AddRange(values.ToArray());

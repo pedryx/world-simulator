@@ -11,19 +11,22 @@ internal class CloneEntityBuilder : IEntityBuilder
 {
     private readonly IEntity prototype;
     private readonly Func<IECSWorld, IEntity, IEntity> clone;
+    private readonly IECSWorld world;
 
-    public CloneEntityBuilder(IEntity prototype, Func<IECSWorld, IEntity, IEntity> clone)
+    public CloneEntityBuilder(IECSWorld world, IEntity prototype, Func<IECSWorld, IEntity, IEntity> clone)
     {
         this.prototype = prototype;
         this.clone = clone;
+        this.world = world;
     }
 
     public void AddComponent<TComponent>(TComponent component)
+        where TComponent : struct
     {
         prototype.AddComponent(component);
     }
 
-    public IEntity Build(IECSWorld world)
+    public IEntity Build()
     {
         return clone(world, prototype);
     }

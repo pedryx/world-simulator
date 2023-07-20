@@ -13,10 +13,11 @@ internal class EntitasFactory : IECSFactory
 
     public void Initialize() { }
 
-    public IEntityBuilder CreateEntityBuilder()
+    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
     {
         return new CloneEntityBuilder
         (
+            world,
             new EntitasEntity(prototypesContext.CreateEntity()),
             (world, prototype) =>
             {

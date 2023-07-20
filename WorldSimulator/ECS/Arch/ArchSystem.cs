@@ -3,14 +3,15 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.Arch;
-internal class ArchSystem<TComponent1> : IECSSystem
+internal class ArchSystem<TComponent> : IECSSystem
+    where TComponent : struct
 {
-    private readonly EntityProcessor<TComponent1> processor;
+    private readonly EntityProcessor<TComponent> processor;
 
     private World world;
     private QueryDescription query;
 
-    public ArchSystem(EntityProcessor<TComponent1> processor)
+    public ArchSystem(EntityProcessor<TComponent> processor)
     {
         this.processor = processor;
     }
@@ -18,15 +19,15 @@ internal class ArchSystem<TComponent1> : IECSSystem
     public void Initialize(IECSWorld wrapper)
     {
         world = ((BasicECSWorld<World>)wrapper).World;
-        query = new QueryDescription().WithAll<TComponent1>();
+        query = new QueryDescription().WithAll<TComponent>();
     }
 
     public void Update(float deltaTime)
     {
         processor.PreUpdate(deltaTime);
-        world.Query(in query, (ref TComponent1 component1) =>
+        world.Query(in query, (ref TComponent component) =>
         {
-            processor.Process(ref component1, deltaTime);
+            processor.Process(ref component, deltaTime);
         });
 
         processor.PostUpdate(deltaTime);
@@ -34,6 +35,8 @@ internal class ArchSystem<TComponent1> : IECSSystem
 }
 
 internal class ArchSystem<TComponent1, TComponent2> : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
 {
     private readonly EntityProcessor<TComponent1, TComponent2> processor;
 
@@ -63,6 +66,9 @@ internal class ArchSystem<TComponent1, TComponent2> : IECSSystem
 }
 
 internal class ArchSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
+    where TComponent3 : struct
 {
     private readonly EntityProcessor<TComponent1, TComponent2, TComponent3> processor;
 
@@ -100,6 +106,10 @@ internal class ArchSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
 }
 
 internal class ArchSystem<TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
+    where TComponent3 : struct
+    where TComponent4 : struct
 {
     private readonly EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
         processor;

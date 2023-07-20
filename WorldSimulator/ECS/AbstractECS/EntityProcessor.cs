@@ -33,6 +33,7 @@ public abstract class EntityProcessor
 /// </summary>
 /// <typeparam name="TComponent">Type of first component.</typeparam>
 public abstract class EntityProcessor<TComponent> : EntityProcessor
+    where TComponent : struct
 {
     protected EntityProcessor(Game game, GameState gameState) 
         : base(game, gameState) { }
@@ -51,6 +52,8 @@ public abstract class EntityProcessor<TComponent> : EntityProcessor
 /// <typeparam name="TComponent1">Type of first component.</typeparam>
 /// <typeparam name="TComponent2">Type of second component.</typeparam>
 public abstract class EntityProcessor<TComponent1, TComponent2> : EntityProcessor
+    where TComponent1 : struct
+    where TComponent2 : struct
 {
     protected EntityProcessor(Game game, GameState gameState) 
         : base(game, gameState) { }
@@ -76,6 +79,9 @@ public abstract class EntityProcessor<TComponent1, TComponent2> : EntityProcesso
 /// <typeparam name="TComponent2">Type of second component.</typeparam>
 /// <typeparam name="TComponent3">Type of third component.</typeparam>
 public abstract class EntityProcessor<TComponent1, TComponent2, TComponent3> : EntityProcessor
+    where TComponent1 : struct
+    where TComponent2 : struct
+    where TComponent3 : struct
 {
     protected EntityProcessor(Game game, GameState gameState) 
         : base(game, gameState) { }
@@ -110,6 +116,10 @@ public abstract class EntityProcessor
     TComponent3,
     TComponent4
 > : EntityProcessor
+    where TComponent1 : struct
+    where TComponent2 : struct
+    where TComponent3 : struct
+    where TComponent4 : struct
 {
     protected EntityProcessor(Game game, GameState gameState) 
         : base(game, gameState) { }

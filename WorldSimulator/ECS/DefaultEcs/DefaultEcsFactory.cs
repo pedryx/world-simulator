@@ -13,10 +13,11 @@ internal class DefaultEcsFactory : IECSFactory
 
     public void Initialize() { }
 
-    public IEntityBuilder CreateEntityBuilder()
+    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
     {
         return new CloneEntityBuilder
         (
+            world,
             new DefaultEcsEntity(prototypesWorld.CreateEntity()),
             (world, prototype) =>
             {

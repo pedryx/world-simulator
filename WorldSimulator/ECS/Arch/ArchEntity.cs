@@ -16,17 +16,21 @@ internal class ArchEntity : IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
+        where TComponent : struct
         => entity.Add(component);
 
     public void Destroy()
         => world.Destroy(entity);
 
     public ref TComponent GetComponent<TComponent>()
+        where TComponent : struct
         => ref entity.Get<TComponent>();
 
     public bool HasComponent<TComponent>()
+        where TComponent : struct
         => entity.Has<TComponent>();
 
     public void RemoveComponent<TComponent>()
+        where TComponent : struct
         => entity.Remove<TComponent>();
 }

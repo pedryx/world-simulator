@@ -3,13 +3,14 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.DefaultEcs;
-internal class DefaultEcsSystem<TComponent1> : IECSSystem
+internal class DefaultEcsSystem<TComponent> : IECSSystem
+    where TComponent : struct
 {
-    private readonly EntityProcessor<TComponent1> processor;
+    private readonly EntityProcessor<TComponent> processor;
 
     private EntitySet set;
 
-    public DefaultEcsSystem(EntityProcessor<TComponent1> processor)
+    public DefaultEcsSystem(EntityProcessor<TComponent> processor)
     {
         this.processor = processor;
     }
@@ -17,7 +18,7 @@ internal class DefaultEcsSystem<TComponent1> : IECSSystem
     public void Initialize(IECSWorld world)
         => set = ((BasicECSWorld<World>)world).World
             .GetEntities()
-            .With<TComponent1>()
+            .With<TComponent>()
             .AsSet();
 
     public void Update(float deltaTime)
@@ -25,15 +26,17 @@ internal class DefaultEcsSystem<TComponent1> : IECSSystem
         processor.PreUpdate(deltaTime);
         foreach (var entity in set.GetEntities())
         {
-            ref var component1 = ref entity.Get<TComponent1>();
+            ref var component = ref entity.Get<TComponent>();
 
-            processor.Process(ref component1, deltaTime);
+            processor.Process(ref component, deltaTime);
         }
         processor.PostUpdate(deltaTime);
     }
 }
 
 internal class DefaultEcsSystem<TComponent1, TComponent2> : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
 {
     private readonly EntityProcessor<TComponent1, TComponent2> processor;
 
@@ -66,6 +69,9 @@ internal class DefaultEcsSystem<TComponent1, TComponent2> : IECSSystem
 }
 
 internal class DefaultEcsSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
+    where TComponent3 : struct
 {
     private readonly EntityProcessor<TComponent1, TComponent2, TComponent3> processor;
 
@@ -101,6 +107,10 @@ internal class DefaultEcsSystem<TComponent1, TComponent2, TComponent3> : IECSSys
 
 internal class DefaultEcsSystem<TComponent1, TComponent2, TComponent3, TComponent4> 
     : IECSSystem
+    where TComponent1 : struct
+    where TComponent2 : struct
+    where TComponent3 : struct
+    where TComponent4 : struct
 {
     private readonly EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
         processor;
