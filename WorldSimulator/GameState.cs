@@ -20,6 +20,7 @@ public abstract class GameState
 
     public Game Game { get; private set; }
     public IECSWorld ECSWorld { get; private set; }
+    public Camera Camera { get; private set; }
 
     protected abstract void CreateEntities();
     /// <summary>
@@ -35,6 +36,7 @@ public abstract class GameState
     public void Initialize(Game game)
     {
         Game = game;
+        Camera = new Camera(game);
 
         var worldBuilder = game.Factory.CreateWorldBuilder();
         systems = CreateSystems(worldBuilder);

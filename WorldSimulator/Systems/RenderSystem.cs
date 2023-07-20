@@ -17,7 +17,11 @@ internal class RenderSystem : EntityProcessor<Transform, Appearance>
 
     public override void PreUpdate(float deltaTime)
     {
-        spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack);
+        spriteBatch.Begin
+        (
+            sortMode: SpriteSortMode.FrontToBack,
+            transformMatrix: GameState.Camera.GetTransformMatrix()
+        );
 
         base.PreUpdate(deltaTime);
     }
