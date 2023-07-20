@@ -14,12 +14,15 @@ public class ArchFactory : IECSFactory
     public IEntityBuilder CreateEntityBuilder()
         => new OnPlaceBuildEntityBuilder((types, values, world) =>
         {
-            Entity entity = ((BasicECSWorld<World>)world).World.Create(types);
-            entity.SetRange(values.ToArray());
+            Entity entity = ((BasicECSWorld<World>)world).World.Create<Empty>();
+            entity.AddRange(values.ToArray());
+            entity.Remove<Empty>();
 
             return new ArchEntity(entity, ((BasicECSWorld<World>)world).World);
         });
 
     public IECSWorldBuilder CreateWorldBuilder()
         => new ArchWorldBuilder();
+
+    private struct Empty { }
 }
