@@ -1,9 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>WorldSimulator</RootNamespace>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Arch" Version="1.2.5" />
+    <PackageReference Include="DefaultEcs" Version="0.17.2" />
+    <PackageReference Include="Entitas" Version="1.14.2" />
+  </ItemGroup>
 
 </Project>
