@@ -1,11 +1,5 @@
 ﻿using DefaultEcs;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.DefaultEcs;
@@ -19,27 +13,17 @@ internal class DefaultEcsEntity : IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
-    {
-        throw new NotImplementedException();
-    }
+        => Entity.Set(component);
 
     public void Destroy()
-    {
-        throw new NotImplementedException();
-    }
+        => Entity.Dispose();
 
     public ref TComponent GetComponent<TComponent>()
-    {
-        throw new NotImplementedException();
-    }
+        => ref Entity.Get<TComponent>();
 
     public bool HasComponent<TComponent>()
-    {
-        throw new NotImplementedException();
-    }
+        => Entity.Has<TComponent>();
 
     public void RemoveComponent<TComponent>()
-    {
-        throw new NotImplementedException();
-    }
+        => Entity.Remove<TComponent>();
 }
