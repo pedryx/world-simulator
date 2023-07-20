@@ -4,6 +4,9 @@ using Arch.Core.Extensions;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.Arch;
+/// <summary>
+/// https://github.com/genaray/Arch
+/// </summary>
 public class ArchFactory : IECSFactory
 {
     public void Initialize() { }
