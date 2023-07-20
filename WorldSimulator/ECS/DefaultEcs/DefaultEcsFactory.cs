@@ -9,7 +9,7 @@ namespace WorldSimulator.ECS.DefaultEcs;
 /// </summary>
 internal class DefaultEcsFactory : IECSFactory
 {
-    private World prototypesWorld = new World();
+    private readonly World prototypesWorld = new();
 
     public void Initialize() { }
 

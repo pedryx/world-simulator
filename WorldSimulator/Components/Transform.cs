@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 
+using WorldSimulator.ECS.AbstractECS;
+
 namespace WorldSimulator.Components;
 /// <summary>
 /// Transform component.
 /// </summary>
+[Component]
 public struct Transform
 {
     /// <summary>

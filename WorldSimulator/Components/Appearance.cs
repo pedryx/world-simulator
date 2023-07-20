@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
+using WorldSimulator.ECS.AbstractECS;
+
 namespace WorldSimulator.Components;
+[Component]
 internal struct Appearance
 {
     public Sprite Sprite;

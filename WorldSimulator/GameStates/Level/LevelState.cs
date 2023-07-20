@@ -20,7 +20,7 @@ internal class LevelState : GameState
         var builder = Game.Factory.CreateEntityBuilder();
         builder.AddComponent<Transform>();
         builder.AddComponent(new Appearance(texture));
-        builder.Build(ECSWorld);
+        var entity = builder.Build(ECSWorld);
     }
 
     protected override IEnumerable<IECSSystem> CreateSystems(IECSWorldBuilder builder)
