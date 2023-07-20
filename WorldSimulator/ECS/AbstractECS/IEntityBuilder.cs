@@ -8,13 +8,16 @@ public interface IEntityBuilder
 {
     void AddComponent<TComponent>(TComponent component);
 
+    /// <summary>
+    /// Create new instance of specific component type and add it to entity builder.
+    /// </summary>
+    /// <typeparam name="TComponent">Type of component to create and add.</typeparam>
     public void AddComponent<TComponent>()
         where TComponent : new()
         => AddComponent(new TComponent());
 
     /// <summary>
-    /// Build ECS entity (<see cref="IEntity"/>) from added ECS components.
+    /// Build ECS entity (<see cref="IEntity"/>) with all added ECS components.
     /// </summary>
-    /// <returns></returns>
     IEntity Build(IECSWorld world);
 }

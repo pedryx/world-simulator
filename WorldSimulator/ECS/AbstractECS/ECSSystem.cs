@@ -1,5 +1,8 @@
 ﻿namespace WorldSimulator.ECS.AbstractECS;
 
+/// <summary>
+/// Base class for entity-component-system system.
+/// </summary>
 public abstract class ECSSystem
 {
     public virtual void Initialize() { }
@@ -11,6 +14,11 @@ public abstract class ECSSystem
     public abstract void Update(float deltaTime);
 }
 
+/// <summary>
+/// base class for entity-component-system system specialized for specific entity processor.
+/// Each ecs system has one processor. Class derived from this is responsible for iterating
+/// all entities with associated components and calling processor's process method on them.
+/// </summary>
 public abstract class ECSSystem<TEntityProcessor> : ECSSystem
     where TEntityProcessor : EntityProcessor
 {

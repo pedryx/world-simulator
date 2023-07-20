@@ -6,6 +6,15 @@
 /// </summary>
 public interface IECSWorldBuilder
 {
+    /// <summary>
+    /// Creates ecs system from entity processor and adds it to the ecs world.
+    /// </summary>
+    /// <typeparam name="TECSSystem">Type of system to create.</typeparam>
+    /// <typeparam name="TEntityProcessor">
+    /// Type of processor from which to create the system.
+    /// </typeparam>
+    /// <param name="processor">Processor from which to create the system.</param>
+    /// <returns>Created ecs system.</returns>
     TECSSystem AddSystem<TECSSystem, TEntityProcessor>
     (
         Game game,

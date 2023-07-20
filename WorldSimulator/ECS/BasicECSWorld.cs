@@ -6,7 +6,7 @@ namespace WorldSimulator.ECS;
 /// <summary>
 /// Simple wrapper around ECS world of specific type.
 /// </summary>
-/// <typeparam name="TWorld"></typeparam>
+/// <typeparam name="TWorld">Type of ecs world (actual type not the wrapper).</typeparam>
 public class BasicECSWorld<TWorld> : IECSWorld
 {
     private readonly Action<TWorld> update;

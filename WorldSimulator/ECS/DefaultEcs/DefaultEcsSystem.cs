@@ -15,7 +15,7 @@ internal class DefaultEcsSystem<TComponent1> : ECSSystem<EntityProcessor<TCompon
 
     public override void Update(float deltaTime)
     {
-        Processor.PreProcess(deltaTime);
+        Processor.PreUpdate(deltaTime);
         foreach (var entity in set.GetEntities())
         {
             ref var component1 = ref entity.Get<TComponent1>();
@@ -40,7 +40,7 @@ internal class DefaultEcsSystem<TComponent1, TComponent2>
 
     public override void Update(float deltaTime)
     {
-        Processor.PreProcess(deltaTime);
+        Processor.PreUpdate(deltaTime);
         foreach (var entity in set.GetEntities())
         {
             ref var component1 = ref entity.Get<TComponent1>();
@@ -67,7 +67,7 @@ internal class DefaultEcsSystem<TComponent1, TComponent2, TComponent3>
 
     public override void Update(float deltaTime)
     {
-        Processor.PreProcess(deltaTime);
+        Processor.PreUpdate(deltaTime);
         foreach (var entity in set.GetEntities())
         {
             ref var component1 = ref entity.Get<TComponent1>();
@@ -96,7 +96,7 @@ internal class DefaultEcsSystem<TComponent1, TComponent2, TComponent3, TComponen
 
     public override void Update(float deltaTime)
     {
-        Processor.PreProcess(deltaTime);
+        Processor.PreUpdate(deltaTime);
         foreach (var entity in set.GetEntities())
         {
             ref var component1 = ref entity.Get<TComponent1>();

@@ -16,7 +16,7 @@ internal class ArchSystem<TComponent1> : ECSSystem<EntityProcessor<TComponent1>>
 
     public override void Update(float deltaTime)
     {
-        Processor.PreProcess(deltaTime);
+        Processor.PreUpdate(deltaTime);
         world.Query(in query, (ref TComponent1 component1) =>
         {
             Processor.Process(ref component1, deltaTime);
@@ -40,7 +40,7 @@ internal class ArchSystem<TComponent1, TComponent2>
 
     public override void Update(float deltaTime)
     {
-        Processor.PreProcess(deltaTime);
+        Processor.PreUpdate(deltaTime);
         world.Query(in query, (ref TComponent1 component1, ref TComponent2 component2) =>
         {
             Processor.Process(ref component1, ref component2, deltaTime);
@@ -63,7 +63,7 @@ internal class ArchSystem<TComponent1, TComponent2, TComponent3>
 
     public override void Update(float deltaTime)
     {
-        Processor.PreProcess(deltaTime);
+        Processor.PreUpdate(deltaTime);
         world.Query
         (
             in query,
@@ -100,7 +100,7 @@ internal class ArchSystem<TComponent1, TComponent2, TComponent3, TComponent4>
 
     public override void Update(float deltaTime)
     {
-        Processor.PreProcess(deltaTime);
+        Processor.PreUpdate(deltaTime);
         world.Query
         (
             in query,

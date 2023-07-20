@@ -1,7 +1,9 @@
 ﻿namespace WorldSimulator.ECS.AbstractECS;
 
 /// <summary>
-/// Represent base interface for entity processors.
+/// Represent base interface for entity processors. Processor is responsible for processing
+/// entities, class derived from <see cref="ECSSystem{TEntityProcessor}"/> is responsible
+/// to call processor's process method on each associated entity.
 /// </summary>
 public abstract class EntityProcessor 
 {
@@ -16,7 +18,15 @@ public abstract class EntityProcessor
     }
 
     public virtual void Initialize() { }
-    public virtual void PreProcess(float deltaTime) { }
+    /// <summary>
+    /// Occur at the start of system update call.
+    /// </summary>
+    /// <param name="deltaTime">Elapsed time between frames.</param>
+    public virtual void PreUpdate(float deltaTime) { }
+    /// <summary>
+    /// Occur at the end of system update call.
+    /// </summary>
+    /// <param name="deltaTime">Elapsed time between frames.</param>
     public virtual void PostProcess(float deltaTime) { }
 }
 
