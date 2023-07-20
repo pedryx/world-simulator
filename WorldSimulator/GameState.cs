@@ -10,4 +10,19 @@ namespace WorldSimulator;
 public class GameState
 {
     public IECSWorld ECSWorld { get; private set; }
+
+    public void Initialize(Game game)
+    {
+
+    }
+
+    public void Update(float deltaTime)
+    {
+
+    }
+
+    public void Draw(float deltaTime)
+    {
+
+    }
 }
