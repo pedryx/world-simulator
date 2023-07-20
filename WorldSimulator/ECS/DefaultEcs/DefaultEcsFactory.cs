@@ -9,22 +9,26 @@ namespace WorldSimulator.ECS.DefaultEcs;
 /// </summary>
 internal class DefaultEcsFactory : IECSFactory
 {
+    private World prototypesWorld = new World();
+
     public void Initialize() { }
 
-    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
+    public IEntityBuilder CreateEntityBuilder()
     {
-        DefaultEcsEntity prototype = new(((BasicECSWorld<World>)world)
-            .World.CreateEntity());
-        return new CloneEntityBuilder(prototype, (world, prototype) =>
-        {
-            return new DefaultEcsEntity
-            (
-                ((DefaultEcsEntity)prototype)
-                    .Entity.CopyTo(((BasicECSWorld<World>)world).World)
-            );
-        });
+        return new CloneEntityBuilder
+        (
+            new DefaultEcsEntity(prototypesWorld.CreateEntity()),
+            (world, prototype) =>
+            {
+                return new DefaultEcsEntity
+                (
+                    ((DefaultEcsEntity)prototype)
+                        .Entity.CopyTo(((BasicECSWorld<World>)world).World)
+                );
+            }
+        );
     }
 
     public IECSWorldBuilder CreateWorldBuilder()
-        => new BasicECSWorldBuilder<World>(new World());
+        => new DefaultECSWorldBuilder();
 }

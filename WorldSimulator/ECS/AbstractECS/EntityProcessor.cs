@@ -10,14 +10,12 @@ public abstract class EntityProcessor
     protected Game Game { get; private set; }
     protected GameState GameState { get; private set; }
 
-    public void Initialize(Game game, GameState gameState)
+    public EntityProcessor(Game game, GameState gameState)
     {
         Game = game;
         GameState = gameState;
-        Initialize();
     }
 
-    public virtual void Initialize() { }
     /// <summary>
     /// Occur at the start of system update call.
     /// </summary>
@@ -27,7 +25,7 @@ public abstract class EntityProcessor
     /// Occur at the end of system update call.
     /// </summary>
     /// <param name="deltaTime">Elapsed time between frames.</param>
-    public virtual void PostProcess(float deltaTime) { }
+    public virtual void PostUpdate(float deltaTime) { }
 }
 
 /// <summary>
@@ -36,6 +34,9 @@ public abstract class EntityProcessor
 /// <typeparam name="TComponent">Type of first component.</typeparam>
 public abstract class EntityProcessor<TComponent> : EntityProcessor
 {
+    protected EntityProcessor(Game game, GameState gameState) 
+        : base(game, gameState) { }
+
     /// <summary>
     /// Process component tuple.
     /// </summary>
@@ -51,6 +52,9 @@ public abstract class EntityProcessor<TComponent> : EntityProcessor
 /// <typeparam name="TComponent2">Type of second component.</typeparam>
 public abstract class EntityProcessor<TComponent1, TComponent2> : EntityProcessor
 {
+    protected EntityProcessor(Game game, GameState gameState) 
+        : base(game, gameState) { }
+
     /// <summary>
     /// Process component tuple.
     /// </summary>
@@ -73,6 +77,9 @@ public abstract class EntityProcessor<TComponent1, TComponent2> : EntityProcesso
 /// <typeparam name="TComponent3">Type of third component.</typeparam>
 public abstract class EntityProcessor<TComponent1, TComponent2, TComponent3> : EntityProcessor
 {
+    protected EntityProcessor(Game game, GameState gameState) 
+        : base(game, gameState) { }
+
     /// <summary>
     /// Process component tuple.
     /// </summary>
@@ -104,6 +111,9 @@ public abstract class EntityProcessor
     TComponent4
 > : EntityProcessor
 {
+    protected EntityProcessor(Game game, GameState gameState) 
+        : base(game, gameState) { }
+
     /// <summary>
     /// Process component tuple.
     /// </summary>

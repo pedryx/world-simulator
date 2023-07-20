@@ -3,67 +3,86 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.Arch;
-internal class ArchSystem<TComponent1> : ECSSystem<EntityProcessor<TComponent1>>
+internal class ArchSystem<TComponent1> : IECSSystem
 {
+    private readonly EntityProcessor<TComponent1> processor;
+
     private World world;
     private QueryDescription query;
 
-    public void Initialize(IECSWorld world)
+    public ArchSystem(EntityProcessor<TComponent1> processor)
     {
-        this.world = ((BasicECSWorld<World>)world).World;
+        this.processor = processor;
+    }
+
+    public void Initialize(IECSWorld wrapper)
+    {
+        world = ((BasicECSWorld<World>)wrapper).World;
         query = new QueryDescription().WithAll<TComponent1>();
     }
 
-    public override void Update(float deltaTime)
+    public void Update(float deltaTime)
     {
-        Processor.PreUpdate(deltaTime);
+        processor.PreUpdate(deltaTime);
         world.Query(in query, (ref TComponent1 component1) =>
         {
-            Processor.Process(ref component1, deltaTime);
+            processor.Process(ref component1, deltaTime);
         });
 
-        Processor.PostProcess(deltaTime);
+        processor.PostUpdate(deltaTime);
     }
 }
 
-internal class ArchSystem<TComponent1, TComponent2> 
-    : ECSSystem<EntityProcessor<TComponent1, TComponent2>>
+internal class ArchSystem<TComponent1, TComponent2> : IECSSystem
 {
+    private readonly EntityProcessor<TComponent1, TComponent2> processor;
+
     private World world;
     private QueryDescription query;
 
-    public void Initialize(IECSWorld world)
+    public ArchSystem(EntityProcessor<TComponent1, TComponent2> processor)
     {
-        this.world = ((BasicECSWorld<World>)world).World;
+        this.processor = processor;
+    }
+
+    public void Initialize(IECSWorld wrapper)
+    {
+        world = ((BasicECSWorld<World>)wrapper).World;
         query = new QueryDescription().WithAll<TComponent1, TComponent2>();
     }
 
-    public override void Update(float deltaTime)
+    public void Update(float deltaTime)
     {
-        Processor.PreUpdate(deltaTime);
+        processor.PreUpdate(deltaTime);
         world.Query(in query, (ref TComponent1 component1, ref TComponent2 component2) =>
         {
-            Processor.Process(ref component1, ref component2, deltaTime);
+            processor.Process(ref component1, ref component2, deltaTime);
         });
-        Processor.PostProcess(deltaTime);
+        processor.PostUpdate(deltaTime);
     }
 }
 
-internal class ArchSystem<TComponent1, TComponent2, TComponent3> 
-    : ECSSystem<EntityProcessor<TComponent1, TComponent2, TComponent3>>
+internal class ArchSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
 {
+    private readonly EntityProcessor<TComponent1, TComponent2, TComponent3> processor;
+
     private World world;
     private QueryDescription query;
 
-    public void Initialize(IECSWorld world)
+    public ArchSystem(EntityProcessor<TComponent1, TComponent2, TComponent3> processor)
     {
-        this.world = ((BasicECSWorld<World>)world).World;
+        this.processor = processor;
+    }
+
+    public void Initialize(IECSWorld wrapper)
+    {
+        world = ((BasicECSWorld<World>)wrapper).World;
         query = new QueryDescription().WithAll<TComponent1, TComponent2, TComponent3>();
     }
 
-    public override void Update(float deltaTime)
+    public void Update(float deltaTime)
     {
-        Processor.PreUpdate(deltaTime);
+        processor.PreUpdate(deltaTime);
         world.Query
         (
             in query,
@@ -73,22 +92,32 @@ internal class ArchSystem<TComponent1, TComponent2, TComponent3>
                 ref TComponent3 component3
             ) =>
             {
-                Processor.Process(ref component1, ref component2, ref component3, deltaTime);
+                processor.Process(ref component1, ref component2, ref component3, deltaTime);
             }
         );
-        Processor.PostProcess(deltaTime);
+        processor.PostUpdate(deltaTime);
     }
 }
 
-internal class ArchSystem<TComponent1, TComponent2, TComponent3, TComponent4> 
-    : ECSSystem<EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>>
+internal class ArchSystem<TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
 {
+    private readonly EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
+        processor;
+
     private World world;
     private QueryDescription query;
 
-    public void Initialize(IECSWorld world)
+    public ArchSystem
+    (
+        EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> processor
+    )
     {
-        this.world = ((BasicECSWorld<World>)world).World;
+        this.processor = processor;
+    }
+
+    public void Initialize(IECSWorld wrapper)
+    {
+        world = ((BasicECSWorld<World>)wrapper).World;
         query = new QueryDescription().WithAll
         <
             TComponent1,
@@ -98,9 +127,9 @@ internal class ArchSystem<TComponent1, TComponent2, TComponent3, TComponent4>
         >();
     }
 
-    public override void Update(float deltaTime)
+    public void Update(float deltaTime)
     {
-        Processor.PreUpdate(deltaTime);
+        processor.PreUpdate(deltaTime);
         world.Query
         (
             in query,
@@ -111,7 +140,7 @@ internal class ArchSystem<TComponent1, TComponent2, TComponent3, TComponent4>
                 ref TComponent4 component4
             ) =>
             {
-                Processor.Process
+                processor.Process
                 (
                     ref component1,
                     ref component2,
@@ -121,6 +150,6 @@ internal class ArchSystem<TComponent1, TComponent2, TComponent3, TComponent4>
                 );
             }
         );
-        Processor.PostProcess(deltaTime);
+        processor.PostUpdate(deltaTime);
     }
 }

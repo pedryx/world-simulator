@@ -11,7 +11,7 @@ public class ArchFactory : IECSFactory
 {
     public void Initialize() { }
 
-    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
+    public IEntityBuilder CreateEntityBuilder()
         => new OnPlaceBuildEntityBuilder((types, values, world) =>
         {
             Entity entity = ((BasicECSWorld<World>)world).World.Create(types);
@@ -21,5 +21,5 @@ public class ArchFactory : IECSFactory
         });
 
     public IECSWorldBuilder CreateWorldBuilder()
-        => new BasicECSWorldBuilder<World>(World.Create());
+        => new ArchWorldBuilder();
 }
