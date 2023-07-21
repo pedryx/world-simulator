@@ -4,10 +4,11 @@ using WorldSimulator.ECS.Arch;
 using WorldSimulator.ECS.DefaultEcs;
 using WorldSimulator.ECS.Entitas;
 using WorldSimulator.ECS.HypEcs;
+using WorldSimulator.ECS.LeoEcs;
 using WorldSimulator.GameStates.Level;
 
 const int seed = 0;
-IECSFactory factory = new ArchFactory();
+IECSFactory factory = new LeoEcsFactory();
 
 Game game = new(factory, seed);
 game.SwitchState(new LevelState());
