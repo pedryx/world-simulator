@@ -15,7 +15,7 @@ public class LevelState : GameState
     {
         LevelFactory = new LevelFactory(Game, this);
 
-        Texture2D texture = Texture2D.FromFile(Game.GraphicsDevice, "test.png");
+        Texture2D texture = Game.GetResourceManager<Texture2D>()["test"];
 
         var builder = Game.Factory.CreateEntityBuilder(ECSWorld);
         builder.AddComponent<Transform>();

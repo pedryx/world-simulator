@@ -2,8 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Resources;
 
 using MonoGameBaseGame = Microsoft.Xna.Framework.Game;
 
@@ -24,6 +27,7 @@ public class Game : MonoGameBaseGame
     /// seeds.
     /// </summary>
     private readonly Random seedGenerator;
+    private IDictionary<Type, IResourceManager> resourceManagers;
 
     public IECSFactory Factory { get; private set; }
     public float Speed { get; set; } = 1.0f;
@@ -57,6 +61,9 @@ public class Game : MonoGameBaseGame
     public int GenerateSeed()
         => seedGenerator.Next();
 
+    public ResourceManager<TResource> GetResourceManager<TResource>()
+        => (ResourceManager<TResource>)resourceManagers[typeof(TResource)];
+
     /// <summary>
     /// Create and switch to a new state of specific type. Created state will also be initialized.
     /// </summary>
@@ -79,6 +86,14 @@ public class Game : MonoGameBaseGame
     protected override void LoadContent()
     {
         SpriteBatch = new SpriteBatch(GraphicsDevice);
+        resourceManagers = new Dictionary<Type, IResourceManager>()
+        {
+            { typeof(Texture2D) ,new TextureManager(GraphicsDevice) },
+        };
+        foreach (var manager in resourceManagers.Values)
+        {
+            manager.LoadAll();
+        }
         ActiveState.Initialize(this);
 
         base.LoadContent();
