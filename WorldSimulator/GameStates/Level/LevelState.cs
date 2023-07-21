@@ -35,6 +35,7 @@ internal class LevelState : GameState
     {
         return new List<IECSSystem>()
         {
+            builder.AddSystem(new RenderClipSystem(Game, this)),
             builder.AddSystem(new RenderSystem(Game, this)),
         };
     }

@@ -7,6 +7,10 @@ namespace WorldSimulator.Components;
 internal struct Appearance
 {
     public Sprite Sprite;
+    /// <summary>
+    /// Is appearance visible by camera (dont take alpha into cosideration).
+    /// </summary>
+    public bool Visible;
 
     public Appearance(Sprite sprite)
     {

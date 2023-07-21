@@ -33,6 +33,9 @@ internal class RenderSystem : EntityProcessor<Transform, Appearance>
         float deltaTime
     )
     {
+        if (!appearance.Visible)
+            return;
+
         spriteBatch.Draw(appearance.Sprite, transform.Position, transform.Scale, transform.Rotation);
     }
 

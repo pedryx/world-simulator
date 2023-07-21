@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 
+using WorldSimulator.Components;
+
 namespace WorldSimulator;
 /// <summary>
 /// Simple 2D camera.
