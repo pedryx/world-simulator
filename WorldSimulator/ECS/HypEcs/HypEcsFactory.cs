@@ -3,7 +3,7 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.HypEcs;
-internal class HypEcsFactory : IECSFactory
+public class HypEcsFactory : IECSFactory
 {
     public void Initialize() { }
 

@@ -1,5 +1,5 @@
 ﻿namespace WorldSimulator.GameStates.Level;
-internal class LevelFactory
+public class LevelFactory
 {
     private readonly Game game;
     private readonly LevelState gameState;

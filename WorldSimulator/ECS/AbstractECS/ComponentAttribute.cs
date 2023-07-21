@@ -7,4 +7,4 @@ namespace WorldSimulator.ECS.AbstractECS;
 /// types are components
 /// </summary>
 [AttributeUsage(AttributeTargets.Struct)]
-internal class ComponentAttribute : Attribute { }
+public class ComponentAttribute : Attribute { }

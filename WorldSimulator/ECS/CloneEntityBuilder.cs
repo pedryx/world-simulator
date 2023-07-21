@@ -7,7 +7,7 @@ namespace WorldSimulator.ECS;
 /// Entity builder which will create an entity as prototype and it will clone this prototype
 /// on <see cref="Build(IECSWorld)"/> call.
 /// </summary>
-internal class CloneEntityBuilder : IEntityBuilder
+public class CloneEntityBuilder : IEntityBuilder
 {
     private readonly IEntity prototype;
     private readonly Func<IECSWorld, IEntity, IEntity> clone;

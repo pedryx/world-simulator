@@ -5,7 +5,7 @@ using System.Reflection;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.LeoEcs;
-internal class LeoEcsFactory : IECSFactory
+public class LeoEcsFactory : IECSFactory
 {
     public void Initialize() { }
 

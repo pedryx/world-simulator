@@ -7,7 +7,7 @@ namespace WorldSimulator.Systems;
 /// <summary>
 /// Marks all entities visible on screen as visible (sets <see cref="Appearance.Visible"/> to true).
 /// </summary>
-internal class RenderClipSystem : EntityProcessor<Transform, Appearance>
+public class RenderClipSystem : EntityProcessor<Transform, Appearance>
 {
     /// <summary>
     /// If entity's height is smaller than this threshold than entity is considered not visible.

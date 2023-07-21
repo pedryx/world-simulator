@@ -3,7 +3,7 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.Entitas;
-internal class EntitasFactory : IECSFactory
+public class EntitasFactory : IECSFactory
 {
     private readonly Context<Entity> prototypesContext = new
     (

@@ -7,7 +7,7 @@ using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Systems;
 
 namespace WorldSimulator.GameStates.Level;
-internal class LevelState : GameState
+public class LevelState : GameState
 {
     public LevelFactory LevelFactory { get; private set; }
 

@@ -7,7 +7,7 @@ namespace WorldSimulator.ECS.DefaultEcs;
 /// <summary>
 /// https://github.com/Doraku/DefaultEcs
 /// </summary>
-internal class DefaultEcsFactory : IECSFactory
+public class DefaultEcsFactory : IECSFactory
 {
     private readonly World prototypesWorld = new();
 

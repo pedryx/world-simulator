@@ -5,7 +5,7 @@ using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Systems;
-internal class RenderSystem : EntityProcessor<Transform, Appearance>
+public class RenderSystem : EntityProcessor<Transform, Appearance>
 {
     private readonly SpriteBatch spriteBatch;
 
