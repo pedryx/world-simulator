@@ -23,7 +23,7 @@ public class LevelState : GameState
         var entity = builder.Build();
     }
 
-    protected override IEnumerable<IECSSystem> CreateSystems(IECSWorldBuilder builder)
+    protected override IEnumerable<IECSSystem> CreateSystems()
     {
         return new List<IECSSystem>()
         {
@@ -31,12 +31,12 @@ public class LevelState : GameState
         };
     }
 
-    protected override IEnumerable<IECSSystem> CreateRenderSystems(IECSWorldBuilder builder)
+    protected override IEnumerable<IECSSystem> CreateRenderSystems()
     {
         return new List<IECSSystem>()
         {
-            builder.AddSystem(new RenderClipSystem(Game, this)),
-            builder.AddSystem(new RenderSystem(Game, this)),
+            Game.Factory.CreateSystem(new RenderClipSystem(Game, Camera)),
+            Game.Factory.CreateSystem(new RenderSystem(Game.SpriteBatch, Camera)),
         };
     }
 }

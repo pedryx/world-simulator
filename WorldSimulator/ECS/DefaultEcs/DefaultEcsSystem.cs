@@ -3,14 +3,15 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.DefaultEcs;
-internal class DefaultEcsSystem<TComponent> : IECSSystem
+internal class DefaultEcsSystem<TEntityProcessor, TComponent> : IECSSystem
+    where TEntityProcessor : struct, IEntityProcessor<TComponent>
     where TComponent : struct
 {
-    private readonly EntityProcessor<TComponent> processor;
+    private readonly TEntityProcessor processor;
 
     private EntitySet set;
 
-    public DefaultEcsSystem(EntityProcessor<TComponent> processor)
+    public DefaultEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
@@ -34,15 +35,16 @@ internal class DefaultEcsSystem<TComponent> : IECSSystem
     }
 }
 
-internal class DefaultEcsSystem<TComponent1, TComponent2> : IECSSystem
+internal class DefaultEcsSystem<TEntityProcessor, TComponent1, TComponent2> : IECSSystem
+    where TEntityProcessor : struct, IEntityProcessor<TComponent1, TComponent2>
     where TComponent1 : struct
     where TComponent2 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2> processor;
+    private readonly TEntityProcessor processor;
 
     private EntitySet set;
 
-    public DefaultEcsSystem(EntityProcessor<TComponent1, TComponent2> processor)
+    public DefaultEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
@@ -68,16 +70,17 @@ internal class DefaultEcsSystem<TComponent1, TComponent2> : IECSSystem
     }
 }
 
-internal class DefaultEcsSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
+internal class DefaultEcsSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3> : IECSSystem
+    where TEntityProcessor : struct, IEntityProcessor<TComponent1, TComponent2, TComponent3>
     where TComponent1 : struct
     where TComponent2 : struct
     where TComponent3 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2, TComponent3> processor;
+    private readonly TEntityProcessor processor;
 
     private EntitySet set;
 
-    public DefaultEcsSystem(EntityProcessor<TComponent1, TComponent2, TComponent3> processor)
+    public DefaultEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
@@ -105,22 +108,18 @@ internal class DefaultEcsSystem<TComponent1, TComponent2, TComponent3> : IECSSys
     }
 }
 
-internal class DefaultEcsSystem<TComponent1, TComponent2, TComponent3, TComponent4> 
-    : IECSSystem
+internal class DefaultEcsSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
+    where TEntityProcessor : struct, IEntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
     where TComponent1 : struct
     where TComponent2 : struct
     where TComponent3 : struct
     where TComponent4 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
-        processor;
+    private readonly TEntityProcessor processor;
 
     private EntitySet set;
 
-    public DefaultEcsSystem
-    (
-        EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> processor
-    )
+    public DefaultEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }

@@ -1,19 +1,28 @@
 ﻿
 using DefaultEcs;
 
+using System;
+
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.DefaultEcs;
 /// <summary>
 /// https://github.com/Doraku/DefaultEcs
 /// </summary>
-public class DefaultEcsFactory : IECSFactory
+public class DefaultEcsFactory : ECSFactory
 {
     private readonly World prototypesWorld = new();
 
-    public void Initialize() { }
+    public DefaultEcsFactory() 
+        : base
+        (
+            typeof(DefaultEcsSystem<,>),
+            typeof(DefaultEcsSystem<,,>),
+            typeof(DefaultEcsSystem<,,,>),
+            typeof(DefaultEcsSystem<,,,,>)
+        ) { }
 
-    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
+    public override IEntityBuilder CreateEntityBuilder(IECSWorld world)
     {
         return new CloneEntityBuilder
         (
@@ -30,6 +39,6 @@ public class DefaultEcsFactory : IECSFactory
         );
     }
 
-    public IECSWorldBuilder CreateWorldBuilder()
-        => new DefaultECSWorldBuilder();
+    public override IECSWorld CreateWorld()
+        => new BasicECSWorld<World>(new World());
 }

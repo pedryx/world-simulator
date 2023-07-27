@@ -5,33 +5,27 @@ using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Systems;
-public class RenderSystem : EntityProcessor<Transform, Appearance>
+public readonly struct RenderSystem : IEntityProcessor<Transform, Appearance>
 {
     private readonly SpriteBatch spriteBatch;
+    private readonly Camera camera;
 
-    public RenderSystem(Game game, GameState gameState) 
-        : base(game, gameState)
+    public RenderSystem(SpriteBatch spriteBatch, Camera camera)
     {
-        spriteBatch = game.SpriteBatch;
+        this.spriteBatch = spriteBatch;
+        this.camera = camera;
     }
 
-    public override void PreUpdate(float deltaTime)
+    void IEntityProcessor.PreUpdate(float deltaTime)
     {
         spriteBatch.Begin
         (
             sortMode: SpriteSortMode.FrontToBack,
-            transformMatrix: GameState.Camera.GetTransformMatrix()
+            transformMatrix: camera.GetTransformMatrix()
         );
-
-        base.PreUpdate(deltaTime);
     }
 
-    public override void Process
-    (
-        ref Transform transform,
-        ref Appearance appearance,
-        float deltaTime
-    )
+    public void Process(ref Transform transform, ref Appearance appearance, float deltaTime)
     {
         if (!appearance.Visible)
             return;
@@ -39,10 +33,8 @@ public class RenderSystem : EntityProcessor<Transform, Appearance>
         spriteBatch.Draw(appearance.Sprite, transform.Position, transform.Scale, transform.Rotation);
     }
 
-    public override void PostUpdate(float deltaTime)
+    void IEntityProcessor.PostUpdate(float deltaTime)
     {
         spriteBatch.End();
-
-        base.PostUpdate(deltaTime);
     }
 }

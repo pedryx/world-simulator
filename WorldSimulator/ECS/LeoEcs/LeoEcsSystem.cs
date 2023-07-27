@@ -3,14 +3,15 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.LeoEcs;
-internal class LeoEcsSystem<TComponent1> : IECSSystem, IEcsSystem
-    where TComponent1 : struct
+internal class LeoEcsSystem<TEntityProcessor, TComponent> : IECSSystem, IEcsSystem
+    where TEntityProcessor : IEntityProcessor<TComponent>
+    where TComponent : struct
 {
-    private readonly EntityProcessor<TComponent1> processor;
+    private readonly TEntityProcessor processor;
     // will get injected by leo ecs
-    private readonly EcsFilter<TComponent1> filter = null;
+    private readonly EcsFilter<TComponent> filter = null;
 
-    public LeoEcsSystem(EntityProcessor<TComponent1> processor)
+    public LeoEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
@@ -27,23 +28,24 @@ internal class LeoEcsSystem<TComponent1> : IECSSystem, IEcsSystem
         processor.PreUpdate(deltaTime);
         foreach (var i in filter)
         {
-            ref TComponent1 component1 = ref filter.Get1(i);
+            ref TComponent component = ref filter.Get1(i);
 
-            processor.Process(ref component1, deltaTime);
+            processor.Process(ref component, deltaTime);
         }
         processor.PostUpdate(deltaTime);
     }
 }
 
-internal class LeoEcsSystem<TComponent1, TComponent2> : IECSSystem, IEcsSystem
+internal class LeoEcsSystem<TEntityProcessor, TComponent1, TComponent2> : IECSSystem, IEcsSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2>
     where TComponent1 : struct
     where TComponent2 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2> processor;
+    private readonly TEntityProcessor processor;
     // will get injected by leo ecs
     private readonly EcsFilter<TComponent1, TComponent2> filter = null;
 
-    public LeoEcsSystem(EntityProcessor<TComponent1, TComponent2> processor)
+    public LeoEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
@@ -69,16 +71,17 @@ internal class LeoEcsSystem<TComponent1, TComponent2> : IECSSystem, IEcsSystem
     }
 }
 
-internal class LeoEcsSystem<TComponent1, TComponent2, TComponent3> : IECSSystem, IEcsSystem
+internal class LeoEcsSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3> : IECSSystem, IEcsSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3>
     where TComponent1 : struct
     where TComponent2 : struct
     where TComponent3 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2, TComponent3> processor;
+    private readonly TEntityProcessor processor;
     // will get injected by leo ecs
     private readonly EcsFilter<TComponent1, TComponent2, TComponent3> filter = null;
 
-    public LeoEcsSystem(EntityProcessor<TComponent1, TComponent2, TComponent3> processor)
+    public LeoEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
@@ -105,18 +108,19 @@ internal class LeoEcsSystem<TComponent1, TComponent2, TComponent3> : IECSSystem,
     }
 }
 
-internal class LeoEcsSystem<TComponent1, TComponent2, TComponent3, TComponent4> 
+internal class LeoEcsSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3, TComponent4> 
     : IECSSystem, IEcsSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
     where TComponent1 : struct
     where TComponent2 : struct
     where TComponent3 : struct
     where TComponent4 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> processor;
+    private readonly TEntityProcessor processor;
     // will get injected by leo ecs
     private readonly EcsFilter<TComponent1, TComponent2, TComponent3, TComponent4> filter = null;
 
-    public LeoEcsSystem(EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> processor)
+    public LeoEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }

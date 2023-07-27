@@ -4,20 +4,23 @@ using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.Entitas;
 
-internal class EntitasSystem<TComponent> : IECSSystem
+internal class EntitasSystem<TEntityProcessor, TComponent> : IECSSystem
+    where TEntityProcessor : IEntityProcessor<TComponent>
     where TComponent : struct
 {
-    private readonly System system;
+    private readonly TEntityProcessor processor;
 
-    public EntitasSystem(EntityProcessor<TComponent> processor, Context<Entity> context) 
+    private System system;
+
+    public EntitasSystem(TEntityProcessor processor) 
     {
-        system = new System(processor, context);
+        this.processor = processor;
     }
 
-    public EntitasSystem<TComponent> Clone(Context<Entity> context)
-        => new(system.Processor, context);
-
-    public void Initialize(IECSWorld world) { }
+    public void Initialize(IECSWorld world) 
+    {
+        system = new System(processor, ((BasicECSWorld<Context<Entity>>)world).World);
+    }
 
     public void Update(float deltaTime)
     {
@@ -30,10 +33,10 @@ internal class EntitasSystem<TComponent> : IECSSystem
 
     private class System : JobSystem<Entity>
     {
-        public EntityProcessor<TComponent> Processor { get; private set; }
+        public TEntityProcessor Processor { get; private set; }
         public float DeltaTime { get; set; }
 
-        public System(EntityProcessor<TComponent> processor, Context<Entity> context)
+        public System(TEntityProcessor processor, Context<Entity> context)
             : base(context.GetGroup(Matcher<Entity>.AllOf(ComponentWrapper<TComponent>.ID)), 1)
         {
             Processor = processor;
@@ -49,21 +52,24 @@ internal class EntitasSystem<TComponent> : IECSSystem
     }
 }
 
-internal class EntitasSystem<TComponent1, TComponent2> : IECSSystem
+internal class EntitasSystem<TEntityProcessor, TComponent1, TComponent2> : IECSSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2>
     where TComponent1 : struct
     where TComponent2 : struct
 {
-    private readonly System system;
+    private readonly TEntityProcessor processor;
 
-    public EntitasSystem(EntityProcessor<TComponent1, TComponent2> processor, Context<Entity> context)
+    private System system;
+
+    public EntitasSystem(TEntityProcessor processor)
     {
-        system = new System(processor, context);
+        this.processor = processor;
     }
 
-    public EntitasSystem<TComponent1, TComponent2> Clone(Context<Entity> context)
-        => new(system.Processor, context);
-
-    public void Initialize(IECSWorld world) { }
+    public void Initialize(IECSWorld world)
+    {
+        system = new System(processor, ((BasicECSWorld<Context<Entity>>)world).World);
+    }
 
     public void Update(float deltaTime)
     {
@@ -76,14 +82,15 @@ internal class EntitasSystem<TComponent1, TComponent2> : IECSSystem
 
     private class System : JobSystem<Entity>
     {
-        public EntityProcessor<TComponent1, TComponent2> Processor { get; private set; }
+        public TEntityProcessor Processor { get; private set; }
         public float DeltaTime { get; set; }
 
-        public System(EntityProcessor<TComponent1, TComponent2> processor, Context<Entity> context)
-            : base(context.GetGroup(Matcher<Entity>.AllOf(
-                      ComponentWrapper<TComponent1>.ID,
-                      ComponentWrapper<TComponent2>.ID
-                  )), 1)
+        public System(TEntityProcessor processor, Context<Entity> context)
+            : base(context.GetGroup(Matcher<Entity>.AllOf
+            (
+                ComponentWrapper<TComponent1>.ID,
+                ComponentWrapper<TComponent2>.ID
+            )), 1)
         {
             Processor = processor;
         }
@@ -100,26 +107,25 @@ internal class EntitasSystem<TComponent1, TComponent2> : IECSSystem
     }
 }
 
-internal class EntitasSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
+internal class EntitasSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3> : IECSSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3>
     where TComponent1 : struct
     where TComponent2 : struct
     where TComponent3 : struct
 {
-    private readonly System system;
+    private readonly TEntityProcessor processor;
 
-    public EntitasSystem
-    (
-        EntityProcessor<TComponent1, TComponent2, TComponent3> processor,
-        Context<Entity> context
-    )
+    private System system;
+
+    public EntitasSystem(TEntityProcessor processor)
     {
-        system = new System(processor, context);
+        this.processor = processor;
     }
 
-    public EntitasSystem<TComponent1, TComponent2, TComponent3> Clone(Context<Entity> context)
-        => new(system.Processor, context);
-
-    public void Initialize(IECSWorld world) { }
+    public void Initialize(IECSWorld world)
+    {
+        system = new System(processor, ((BasicECSWorld<Context<Entity>>)world).World);
+    }
 
     public void Update(float deltaTime)
     {
@@ -132,20 +138,16 @@ internal class EntitasSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
 
     private class System : JobSystem<Entity>
     {
-        public EntityProcessor<TComponent1, TComponent2, TComponent3> Processor { get; private set; }
+        public TEntityProcessor Processor { get; private set; }
         public float DeltaTime { get; set; }
 
-        public System
-        (
-            EntityProcessor<TComponent1, TComponent2, TComponent3> processor,
-            Context<Entity> context
-        )
+        public System(TEntityProcessor processor, Context<Entity> context)
             : base(context.GetGroup(Matcher<Entity>.AllOf
-              (
-                  ComponentWrapper<TComponent1>.ID,
-                  ComponentWrapper<TComponent2>.ID,
-                  ComponentWrapper<TComponent3>.ID
-              )), 1)
+            (
+                ComponentWrapper<TComponent1>.ID,
+                ComponentWrapper<TComponent2>.ID,
+                ComponentWrapper<TComponent3>.ID
+            )), 1)
         {
             Processor = processor;
         }
@@ -164,31 +166,26 @@ internal class EntitasSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
     }
 }
 
-internal class EntitasSystem<TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
+internal class EntitasSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
     where TComponent1 : struct
     where TComponent2 : struct
     where TComponent3 : struct
     where TComponent4 : struct
 {
+    private readonly TEntityProcessor processor;
 
-    private readonly System system;
+    private System system;
 
-    public EntitasSystem
-    (
-        EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> processor,
-        Context<Entity> context
-    )
+    public EntitasSystem(TEntityProcessor processor)
     {
-        system = new System(processor, context);
+        this.processor = processor;
     }
 
-    public EntitasSystem<TComponent1, TComponent2, TComponent3, TComponent4> Clone
-    (
-        Context<Entity> context
-    )
-        => new(system.Processor, context);
-
-    public void Initialize(IECSWorld world) { }
+    public void Initialize(IECSWorld world)
+    {
+        system = new System(processor, ((BasicECSWorld<Context<Entity>>)world).World);
+    }
 
     public void Update(float deltaTime)
     {
@@ -201,25 +198,18 @@ internal class EntitasSystem<TComponent1, TComponent2, TComponent3, TComponent4>
 
     private class System : JobSystem<Entity>
     {
-        public EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> Processor
-        {
-            get; 
-            private set; 
-        }
+        public TEntityProcessor Processor { get; private set; }
+
         public float DeltaTime { get; set; }
 
-        public System
-        (
-            EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> processor,
-            Context<Entity> context
-        )
+        public System(TEntityProcessor processor, Context<Entity> context)
             : base(context.GetGroup(Matcher<Entity>.AllOf
-              (
-                  ComponentWrapper<TComponent1>.ID,
-                  ComponentWrapper<TComponent2>.ID,
-                  ComponentWrapper<TComponent3>.ID,
-                  ComponentWrapper<TComponent4>.ID
-              )), 1)
+            (
+                ComponentWrapper<TComponent1>.ID,
+                ComponentWrapper<TComponent2>.ID,
+                ComponentWrapper<TComponent3>.ID,
+                ComponentWrapper<TComponent4>.ID
+            )), 1)
         {
             Processor = processor;
         }
@@ -235,14 +225,7 @@ internal class EntitasSystem<TComponent1, TComponent2, TComponent3, TComponent4>
             ref TComponent4 component4 = ref ((ComponentWrapper<TComponent4>)entity
                 .GetComponent(ComponentWrapper<TComponent4>.ID)).Component;
 
-            Processor.Process
-            (
-                ref component1,
-                ref component2,
-                ref component3,
-                ref component4,
-                DeltaTime
-            );
+            Processor.Process(ref component1, ref component2, ref component3, ref component4, DeltaTime);
         }
     }
 }

@@ -7,22 +7,30 @@ namespace WorldSimulator.ECS.Arch;
 /// <summary>
 /// https://github.com/genaray/Arch
 /// </summary>
-public class ArchFactory : IECSFactory
+public class ArchFactory : ECSFactory
 {
-    public void Initialize() { }
+    public ArchFactory() 
+        : base(typeof(ArchSystem<,>), typeof(ArchSystem<,,>), typeof(ArchSystem<,,,>), typeof(ArchSystem<,,,,>)) { }
 
-    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
-        => new OnPlaceBuildEntityBuilder(world, (types, values, world) =>
+
+    public override IEntityBuilder CreateEntityBuilder(IECSWorld world)
+    {
+        return new OnPlaceBuildEntityBuilder(world, (types, values, world) =>
         {
+            /*
+             * We need to create entity with Empty component because World.Create throws exception when creating entity
+             * with no components.
+             */
             Entity entity = ((BasicECSWorld<World>)world).World.Create<Empty>();
             entity.AddRange(values.ToArray());
             entity.Remove<Empty>();
 
             return new ArchEntity(entity, ((BasicECSWorld<World>)world).World);
         });
+    }
 
-    public IECSWorldBuilder CreateWorldBuilder()
-        => new ArchWorldBuilder();
+    public override IECSWorld CreateWorld()
+       => new BasicECSWorld<World>(World.Create());
 
     private struct Empty { }
 }

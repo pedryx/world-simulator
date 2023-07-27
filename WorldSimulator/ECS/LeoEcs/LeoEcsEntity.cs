@@ -13,15 +13,11 @@ internal class LeoEcsEntity : IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct
-    {
-        Entity.Replace(component);
-    }
+        where TComponent : struct 
+        => Entity.Replace(component);
 
-    public void Destroy()
-    {
-        Entity.Destroy();
-    }
+    public void Destroy() 
+        => Entity.Destroy();
 
     public ref TComponent GetComponent<TComponent>() 
         where TComponent : struct
@@ -30,13 +26,11 @@ internal class LeoEcsEntity : IEntity
         return ref component;
     }
 
-    public bool HasComponent<TComponent>() where TComponent : struct
-    {
-        return Entity.Has<TComponent>();
-    }
+    public bool HasComponent<TComponent>()
+        where TComponent : struct 
+        => Entity.Has<TComponent>();
 
-    public void RemoveComponent<TComponent>() where TComponent : struct
-    {
-        Entity.Del<TComponent>();
-    }
+    public void RemoveComponent<TComponent>()
+        where TComponent : struct 
+        => Entity.Del<TComponent>();
 }

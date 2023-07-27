@@ -14,14 +14,10 @@ internal class HypEcsEntityBuilder : IEntityBuilder
         builder = world.Spawn();
     }
 
-    public void AddComponent<TComponent>(TComponent component) 
-        where TComponent : struct
-    {
-        builder.Add(component);
-    }
+    public void AddComponent<TComponent>(TComponent component)
+        where TComponent : struct 
+        => builder.Add(component);
 
-    public IEntity Build()
-    {
-        return new HypEcsEntity(builder.Id(), world);
-    }
+    public IEntity Build() 
+        => new HypEcsEntity(builder.Id(), world);
 }

@@ -7,21 +7,26 @@ namespace WorldSimulator.Systems;
 /// <summary>
 /// Marks all entities visible on screen as visible (sets <see cref="Appearance.Visible"/> to true).
 /// </summary>
-public class RenderClipSystem : EntityProcessor<Transform, Appearance>
+public readonly struct RenderClipSystem : IEntityProcessor<Transform, Appearance>
 {
     /// <summary>
     /// If entity's height is smaller than this threshold than entity is considered not visible.
     /// </summary>
     private const float sizeThreshold = 5.0f;
 
-    public RenderClipSystem(Game game, GameState gameState) 
-        : base(game, gameState) { }
+    private readonly Game game;
+    private readonly Camera camera;
 
-    public override void Process(ref Transform transform, ref Appearance appearance, float deltaTime)
+    public RenderClipSystem(Game game, Camera camera)
     {
-        float maxWindowSize = Game.Resolution.Length();
-        float maxSpriteSize = (appearance.Sprite.GetSize() * transform.Scale).Length() 
-            * GameState.Camera.Scale;
+        this.game = game;
+        this.camera = camera;
+    }
+
+    public void Process(ref Transform transform, ref Appearance appearance, float deltaTime)
+    {
+        float maxWindowSize = game.Resolution.Length();
+        float maxSpriteSize = (appearance.Sprite.GetSize() * transform.Scale).Length() * camera.Scale;
 
         if (maxSpriteSize < sizeThreshold)
         {
@@ -29,11 +34,7 @@ public class RenderClipSystem : EntityProcessor<Transform, Appearance>
             return;
         }
 
-        float distance = Vector2.Distance
-        (
-            GameState.Camera.Position,
-            transform.Position + appearance.Sprite.Position
-        );
+        float distance = Vector2.Distance(camera.Position, transform.Position + appearance.Sprite.Position);
 
         appearance.Visible = (distance <= (maxWindowSize + maxSpriteSize));
     }

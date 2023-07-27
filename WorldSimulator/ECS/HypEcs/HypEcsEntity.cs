@@ -14,32 +14,22 @@ internal class HypEcsEntity : IEntity
         this.world = world;
     }
 
-    public void AddComponent<TComponent>(TComponent component) 
-        where TComponent : struct
-    {
-        world.AddComponent(entity, component);
-    }
+    public void AddComponent<TComponent>(TComponent component)
+        where TComponent : struct 
+        => world.AddComponent(entity, component);
 
-    public void Destroy()
-    {
-        world.Despawn(entity);
-    }
+    public void Destroy() 
+        => world.Despawn(entity);
 
-    public ref TComponent GetComponent<TComponent>() 
-        where TComponent : struct
-    {
-        return ref world.GetComponent<TComponent>(entity);
-    }
+    public ref TComponent GetComponent<TComponent>()
+        where TComponent : struct 
+        => ref world.GetComponent<TComponent>(entity);
 
-    public bool HasComponent<TComponent>() 
-        where TComponent : struct
-    {
-        return world.HasComponent<TComponent>(entity);
-    }
+    public bool HasComponent<TComponent>()
+        where TComponent : struct 
+        => world.HasComponent<TComponent>(entity);
 
-    public void RemoveComponent<TComponent>() 
-        where TComponent : struct
-    {
-        world.RemoveComponent<TComponent>(entity);
-    }
+    public void RemoveComponent<TComponent>()
+        where TComponent : struct 
+        => world.RemoveComponent<TComponent>(entity);
 }

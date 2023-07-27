@@ -26,8 +26,7 @@ public interface IEntity
         where TComponent : struct;
 
     /// <summary>
-    /// Destroy entity. (Entity will no longer be managed by its ecs world and all
-    /// components will no longer be valid.)
+    /// Destroy entity. (Entity will no longer be managed by its ecs world and all components will no longer be valid.)
     /// </summary>
     void Destroy();
 }

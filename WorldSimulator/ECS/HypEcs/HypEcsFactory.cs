@@ -3,17 +3,20 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.HypEcs;
-public class HypEcsFactory : IECSFactory
+public class HypEcsFactory : ECSFactory
 {
-    public void Initialize() { }
+    public HypEcsFactory()
+        : base
+        (
+            typeof(HypEcsSystem<,>),
+            typeof(HypEcsSystem<,,>),
+            typeof(HypEcsSystem<,,,>),
+            typeof(HypEcsSystem<,,,,>)
+        ) { }
 
-    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
-    {
-        return new HypEcsEntityBuilder(((BasicECSWorld<World>)world).World);
-    }
+    public override IEntityBuilder CreateEntityBuilder(IECSWorld world) 
+        => new HypEcsEntityBuilder(((BasicECSWorld<World>)world).World);
 
-    public IECSWorldBuilder CreateWorldBuilder()
-    {
-        return new HypEcsWorldBuilder();
-    }
+    public override IECSWorld CreateWorld() 
+        => new BasicECSWorld<World>(new World());
 }

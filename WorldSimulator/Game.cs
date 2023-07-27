@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
@@ -29,7 +28,7 @@ public class Game : MonoGameBaseGame
     private readonly Random seedGenerator;
     private IDictionary<Type, IResourceManager> resourceManagers;
 
-    public IECSFactory Factory { get; private set; }
+    public ECSFactory Factory { get; private set; }
     public float Speed { get; set; } = 1.0f;
     public GameState ActiveState { get; private set; }
     public SpriteBatch SpriteBatch { get; private set; }
@@ -39,7 +38,7 @@ public class Game : MonoGameBaseGame
     public Vector2 Resolution 
         => new(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
 
-    public Game(IECSFactory factory, int seed)
+    public Game(ECSFactory factory, int seed)
     {
         graphics = new GraphicsDeviceManager(this)
         {

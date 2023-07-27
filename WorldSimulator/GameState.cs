@@ -26,22 +26,21 @@ public abstract class GameState
     /// <summary>
     /// Create processors for systems which will be handled in <see cref="Update(float)"/>.
     /// </summary>
-    protected abstract IEnumerable<IECSSystem> CreateSystems(IECSWorldBuilder builder);
+    protected abstract IEnumerable<IECSSystem> CreateSystems();
     /// <summary>
     /// Create processors for systems which will be handled in <see cref="Draw(float)"/>.
     /// </summary>
     /// <returns></returns>
-    protected abstract IEnumerable<IECSSystem> CreateRenderSystems(IECSWorldBuilder builder);
+    protected abstract IEnumerable<IECSSystem> CreateRenderSystems();
 
     public void Initialize(Game game)
     {
         Game = game;
+        ECSWorld = Game.Factory.CreateWorld();
         Camera = new Camera(game);
 
-        var worldBuilder = game.Factory.CreateWorldBuilder();
-        systems = CreateSystems(worldBuilder);
-        renderSystems = CreateRenderSystems(worldBuilder);
-        ECSWorld = worldBuilder.Build();
+        systems = CreateSystems();
+        renderSystems = CreateRenderSystems();
 
         foreach (var system in systems)
         {

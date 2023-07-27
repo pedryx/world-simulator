@@ -5,11 +5,18 @@ using System.Reflection;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.LeoEcs;
-public class LeoEcsFactory : IECSFactory
+public class LeoEcsFactory : ECSFactory
 {
-    public void Initialize() { }
+    public LeoEcsFactory()
+        : base
+        (
+            typeof(LeoEcsSystem<,>),
+            typeof(LeoEcsSystem<,,>),
+            typeof(LeoEcsSystem<,,,>),
+            typeof(LeoEcsSystem<,,,>)
+        ) { }
 
-    public IEntityBuilder CreateEntityBuilder(IECSWorld world)
+    public override IEntityBuilder CreateEntityBuilder(IECSWorld world)
     {
         return new OnPlaceBuildEntityBuilder
         (
@@ -33,6 +40,6 @@ public class LeoEcsFactory : IECSFactory
         );
     }
 
-    public IECSWorldBuilder CreateWorldBuilder()
-        => new LeoEcsWorldBuilder();
+    public override IECSWorld CreateWorld()
+        => new BasicECSWorld<EcsWorld>(new EcsWorld());
 }

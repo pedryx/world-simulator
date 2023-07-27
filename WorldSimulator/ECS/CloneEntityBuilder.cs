@@ -21,13 +21,9 @@ public class CloneEntityBuilder : IEntityBuilder
     }
 
     public void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct
-    {
-        prototype.AddComponent(component);
-    }
+        where TComponent : struct 
+        => prototype.AddComponent(component);
 
     public IEntity Build()
-    {
-        return clone(world, prototype);
-    }
+        => clone(world, prototype);
 }

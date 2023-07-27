@@ -1,7 +1,5 @@
 ﻿namespace WorldSimulator.ECS.AbstractECS;
 
-// TODO: dont pass world on build, world will be passed by for example constructors
-
 /// <summary>
 /// Builder which can be used to build ECS entities (<see cref="IEntity"/>) from
 /// ECS components.

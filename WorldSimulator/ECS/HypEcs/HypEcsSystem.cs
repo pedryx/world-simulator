@@ -3,50 +3,56 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.HypEcs;
-internal class HypEcsSystem<TComponent1> : IECSSystem
-    where TComponent1 : struct
+internal class HypEcsSystem<TEntityProcessor, TComponent> : IECSSystem
+    where TEntityProcessor : IEntityProcessor<TComponent>
+    where TComponent : struct
 {
-    private readonly EntityProcessor<TComponent1> processor;
+    private readonly TEntityProcessor processor;
 
-    private Query<TComponent1> query;
+    private Query<TComponent> query;
 
-    public HypEcsSystem(EntityProcessor<TComponent1> processor)
+    public HypEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
 
     public void Initialize(IECSWorld wrapper)
-        => query = ((BasicECSWorld<World>)wrapper).World.Query<TComponent1>().Build();
+    {
+        query = ((BasicECSWorld<World>)wrapper).World.Query<TComponent>().Build();
+    }
 
     public void Update(float deltaTime)
     {
         processor.PreUpdate(deltaTime);
-        query.Run((count, components1) =>
+        query.Run((count, components) =>
         {
             for (int i = 0; i < count; i++)
             {
-                processor.Process(ref components1[i], deltaTime);
+                processor.Process(ref components[i], deltaTime);
             }
         });
         processor.PostUpdate(deltaTime);
     }
 }
 
-internal class HypEcsSystem<TComponent1, TComponent2> : IECSSystem
+internal class HypEcsSystem<TEntityProcessor, TComponent1, TComponent2> : IECSSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2>
     where TComponent1 : struct
     where TComponent2 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2> processor;
+    private readonly TEntityProcessor processor;
 
     private Query<TComponent1, TComponent2> query;
 
-    public HypEcsSystem(EntityProcessor<TComponent1, TComponent2> processor)
+    public HypEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
 
     public void Initialize(IECSWorld wrapper)
-        => query = ((BasicECSWorld<World>)wrapper).World.Query<TComponent1, TComponent2>().Build();
+    {
+        query = ((BasicECSWorld<World>)wrapper).World.Query<TComponent1, TComponent2>().Build();
+    }
 
     public void Update(float deltaTime)
     {
@@ -62,27 +68,25 @@ internal class HypEcsSystem<TComponent1, TComponent2> : IECSSystem
     }
 }
 
-internal class HypEcsSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
+internal class HypEcsSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3> : IECSSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3>
     where TComponent1 : struct
     where TComponent2 : struct
     where TComponent3 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2, TComponent3> processor;
+    private readonly TEntityProcessor processor;
 
     private Query<TComponent1, TComponent2, TComponent3> query;
 
-    public HypEcsSystem(EntityProcessor<TComponent1, TComponent2, TComponent3> processor)
+    public HypEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
 
     public void Initialize(IECSWorld wrapper)
-        => query = ((BasicECSWorld<World>)wrapper).World.Query
-        <
-            TComponent1,
-            TComponent2,
-            TComponent3
-        >().Build();
+    {
+        query = ((BasicECSWorld<World>)wrapper).World.Query<TComponent1, TComponent2, TComponent3>().Build();
+    }
 
     public void Update(float deltaTime)
     {
@@ -91,42 +95,36 @@ internal class HypEcsSystem<TComponent1, TComponent2, TComponent3> : IECSSystem
         {
             for (int i = 0; i < count; i++)
             {
-                processor.Process
-                (
-                    ref components1[i],
-                    ref components2[i],
-                    ref components3[i],
-                    deltaTime
-                );
+                processor.Process(ref components1[i], ref components2[i], ref components3[i], deltaTime);
             }
         });
         processor.PostUpdate(deltaTime);
     }
 }
 
-internal class HypEcsSystem<TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
+internal class HypEcsSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
+    where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
     where TComponent1 : struct
     where TComponent2 : struct
     where TComponent3 : struct
     where TComponent4 : struct
 {
-    private readonly EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> processor;
+    private readonly TEntityProcessor processor;
 
     private Query<TComponent1, TComponent2, TComponent3, TComponent4> query;
 
-    public HypEcsSystem(EntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> processor)
+    public HypEcsSystem(TEntityProcessor processor)
     {
         this.processor = processor;
     }
 
     public void Initialize(IECSWorld wrapper)
-        => query = ((BasicECSWorld<World>)wrapper).World.Query
-        <
-            TComponent1,
-            TComponent2,
-            TComponent3,
-            TComponent4
-        >().Build();
+    {
+        query = ((BasicECSWorld<World>)wrapper)
+            .World
+            .Query<TComponent1, TComponent2, TComponent3, TComponent4>()
+            .Build();
+    }
 
     public void Update(float deltaTime)
     {
