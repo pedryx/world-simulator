@@ -19,7 +19,6 @@ public class Game : MonoGameBaseGame
     private const int resolutionHeight = 720;
     private readonly Color clearColor = Color.Black;
 
-    private readonly GraphicsDeviceManager graphics;
     /// <summary>
     /// RNG used for generating seeds. Each RNG in the game is based on seed
     /// from this generator. <see cref="GenerateSeed"/> is used for obtaining
@@ -32,15 +31,17 @@ public class Game : MonoGameBaseGame
     public float Speed { get; set; } = 1.0f;
     public GameState ActiveState { get; private set; }
     public SpriteBatch SpriteBatch { get; private set; }
+    public GraphicsDeviceManager Graphics { get; private set; }
+
     /// <summary>
     /// Width and height of game window.
     /// </summary>
     public Vector2 Resolution 
-        => new(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+        => new(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
 
     public Game(ECSFactory factory, int seed)
     {
-        graphics = new GraphicsDeviceManager(this)
+        Graphics = new GraphicsDeviceManager(this)
         {
             PreferredBackBufferWidth = resolutionWidth,
             PreferredBackBufferHeight = resolutionHeight,

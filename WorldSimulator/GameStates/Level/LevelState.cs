@@ -27,7 +27,7 @@ public class LevelState : GameState
     {
         return new List<IECSSystem>()
         {
-
+            new InputSystem(Game, Camera),
         };
     }
 

@@ -13,9 +13,9 @@ public class Camera
     /// <summary>
     /// Position of the center of the camera.
     /// </summary>
-    public Vector2 Position { get; private set; }
-    public float Scale { get; private set; } = 1.0f;
-    public float Rotation { get; private set; }
+    public Vector2 Position { get; set; }
+    public float Scale { get; set; } = 1.0f;
+    public float Rotation { get; set; }
 
     public Camera(Game game)
     {
