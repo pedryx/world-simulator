@@ -6,11 +6,13 @@ namespace WorldSimulator.Components;
 [Component]
 public struct Appearance
 {
-    public Sprite Sprite;
+    public Sprite Sprite = new();
     /// <summary>
     /// Is appearance visible by camera (dont take alpha into cosideration).
     /// </summary>
     public bool Visible;
+
+    public Appearance() { }
 
     public Appearance(Sprite sprite)
     {

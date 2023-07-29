@@ -1,8 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System.Collections.Generic;
 
-using System.Collections.Generic;
-
-using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Systems;
 
@@ -14,13 +11,9 @@ public class LevelState : GameState
     protected override void CreateEntities()
     {
         LevelFactory = new LevelFactory(Game, this);
+        WorldGenerator worldGenerator = new(Game, LevelFactory);
 
-        Texture2D texture = Game.GetResourceManager<Texture2D>()["test"];
-
-        var builder = Game.Factory.CreateEntityBuilder(ECSWorld);
-        builder.AddComponent<Transform>();
-        builder.AddComponent(new Appearance(texture));
-        var entity = builder.Build();
+        worldGenerator.Generate();
     }
 
     protected override IEnumerable<IECSSystem> CreateSystems()

@@ -41,6 +41,7 @@ public abstract class GameState
 
         systems = CreateSystems();
         renderSystems = CreateRenderSystems();
+        CreateEntities();
 
         foreach (var system in systems)
         {
@@ -50,8 +51,6 @@ public abstract class GameState
         {
             system.Initialize(ECSWorld);
         }
-
-        CreateEntities();
     }
 
     public void Update(float deltaTime)

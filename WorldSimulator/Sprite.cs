@@ -30,6 +30,8 @@ public struct Sprite
         return size * Scale;
     }
 
+    public Sprite() { }
+
     public Sprite(Texture2D texture, float scale = 1.0f)
     {
         Texture = texture;
