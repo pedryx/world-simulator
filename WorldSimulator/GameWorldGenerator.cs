@@ -7,7 +7,7 @@ using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.GameStates.Level;
 
 namespace WorldSimulator;
-internal class WorldGenerator
+internal class GameWorldGenerator
 {
     /// <summary>
     /// Size of world width and height in pixels.
@@ -33,7 +33,7 @@ internal class WorldGenerator
     };
     private readonly LevelFactory factory;
 
-    public WorldGenerator(Game game, LevelFactory factory)
+    public GameWorldGenerator(Game game, LevelFactory factory)
     {
         this.game = game;
         this.factory = factory;

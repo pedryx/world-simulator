@@ -11,7 +11,7 @@ public class LevelState : GameState
     protected override void CreateEntities()
     {
         LevelFactory = new LevelFactory(Game, this);
-        WorldGenerator worldGenerator = new(Game, LevelFactory);
+        GameWorldGenerator worldGenerator = new(Game, LevelFactory);
 
         worldGenerator.Generate();
     }
