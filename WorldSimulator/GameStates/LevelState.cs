@@ -21,6 +21,8 @@ public class LevelState : GameState
         return new List<IECSSystem>()
         {
             new InputSystem(Game, Camera),
+            Game.Factory.CreateSystem(new RandomMovementSystem(Game)),
+            Game.Factory.CreateSystem(new MovementSystem()),
         };
     }
 

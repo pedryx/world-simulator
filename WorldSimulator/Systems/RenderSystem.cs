@@ -30,7 +30,7 @@ internal readonly struct RenderSystem : IEntityProcessor<Transform, Appearance>
         if (!appearance.Visible)
             return;
 
-        spriteBatch.Draw(appearance.Sprite, transform.Position, transform.Scale, transform.Rotation);
+        spriteBatch.Draw(appearance.Sprite, transform.Position, transform.Scale, 0.0f);
     }
 
     void IEntityProcessor.PostUpdate(float deltaTime)

@@ -17,10 +17,6 @@ internal struct Transform
     /// Scale of the entity.
     /// </summary>
     public float Scale = 1.0f;
-    /// <summary>
-    /// Rotation of the entity.
-    /// </summary>
-    public float Rotation;
 
     public Transform() { }
 

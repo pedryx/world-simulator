@@ -25,6 +25,7 @@ internal class LevelFactory
     /// Builder for resources.
     /// </summary>
     private readonly IEntityBuilder resourceBuilder;
+    private readonly IEntityBuilder animalBuilder;
 
     public LevelFactory(Game game, LevelState gameState)
     {
@@ -33,6 +34,7 @@ internal class LevelFactory
 
         basicBuilder = CreateBasicBuilder();
         resourceBuilder = CreateResourceBuilder();
+        animalBuilder = CreateAnimalBuilder();
     }
 
     private IEntityBuilder CreateBasicBuilder()
@@ -54,9 +56,29 @@ internal class LevelFactory
         return builder;
     }
 
-    private IEntity CreateResource(Texture2D texture, float scale, Vector2 position, Rectangle? sourceRectangle = null)
+    private IEntityBuilder CreateAnimalBuilder()
     {
-        IEntity entity = resourceBuilder.Build();
+        IEntityBuilder builder = CreateResourceBuilder();
+
+        builder.AddComponent(new Movement()
+        {
+            Speed = 30.0f,
+        });
+        builder.AddComponent<RandomMovement>();
+
+        return builder;
+    }
+
+    private IEntity CreateResource
+    (
+        IEntityBuilder builder,
+        Texture2D texture,
+        float scale,
+        Vector2 position,
+        Rectangle? sourceRectangle = null
+    )
+    {
+        IEntity entity = builder.Build();
 
         ref Appearance appearance = ref entity.GetComponent<Appearance>();
         appearance.Sprite.Texture = texture;
@@ -78,18 +100,41 @@ internal class LevelFactory
             return CreateRock(position);
         else if (resource == Resources.Deposite)
             return CreateDeposite(position);
+        else if (resource == Resources.Deer)
+            return CreateDeer(position);
 
         throw new InvalidOperationException("Entity for this resoure not exist!");
     }
 
     public IEntity CreateTree(Vector2 position)
-        => CreateResource(game.GetResourceManager<Texture2D>()["pine tree"], 0.5f, position);
+        => CreateResource(resourceBuilder, game.GetResourceManager<Texture2D>()["pine tree"], 0.5f, position);
 
     public IEntity CreateRock(Vector2 position)
-        => CreateResource(game.GetResourceManager<Texture2D>()["rock pile"], 0.1f, position);
+        => CreateResource(resourceBuilder, game.GetResourceManager<Texture2D>()["rock pile"], 0.1f, position);
 
     public IEntity CreateDeposite(Vector2 position)
-        => CreateResource(game.GetResourceManager<Texture2D>()["ore"], 0.6f, position, new Rectangle(32, 0, 32, 32));
+    {
+        return CreateResource
+        (
+            resourceBuilder,
+            game.GetResourceManager<Texture2D>()["ore"],
+            0.6f,
+            position,
+            new Rectangle(32, 0, 32, 32)
+        );
+    }
+
+    public IEntity CreateDeer(Vector2 position)
+    {
+        return CreateResource
+        (
+            animalBuilder,
+            game.GetResourceManager<Texture2D>()["deer"],
+            0.8f,
+            position,
+            new Rectangle(0, 0, 32, 32)
+        );
+    }
 
     public IEntity CreateTerrain(Texture2D texture)
     {
