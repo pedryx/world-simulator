@@ -54,13 +54,16 @@ internal class LevelFactory
         return builder;
     }
 
-    private IEntity CreateResource(Texture2D texture, float scale, Vector2 position)
+    private IEntity CreateResource(Texture2D texture, float scale, Vector2 position, Rectangle? sourceRectangle = null)
     {
         IEntity entity = resourceBuilder.Build();
 
-        entity.GetComponent<Appearance>().Sprite.Texture = texture;
-        entity.GetComponent<Appearance>().Sprite.Origin = texture.GetSize() * new Vector2(0.5f, 1.0f);
-        entity.GetComponent<Appearance>().Sprite.Scale = scale;
+        ref Appearance appearance = ref entity.GetComponent<Appearance>();
+        appearance.Sprite.Texture = texture;
+        appearance.Sprite.Origin = (sourceRectangle == null ? texture.GetSize() : sourceRectangle.Value.Size.ToVector2())
+            * new Vector2(0.5f, 1.0f);
+        appearance.Sprite.Scale = scale;
+        appearance.Sprite.SourceRectangle = sourceRectangle;
 
         entity.GetComponent<Transform>().Position = position;
 
@@ -73,6 +76,8 @@ internal class LevelFactory
             return CreateTree(position);
         else if (resource == Resources.Rock)
             return CreateRock(position);
+        else if (resource == Resources.Deposite)
+            return CreateDeposite(position);
 
         throw new InvalidOperationException("Entity for this resoure not exist!");
     }
@@ -82,6 +87,9 @@ internal class LevelFactory
 
     public IEntity CreateRock(Vector2 position)
         => CreateResource(game.GetResourceManager<Texture2D>()["rock pile"], 0.1f, position);
+
+    public IEntity CreateDeposite(Vector2 position)
+        => CreateResource(game.GetResourceManager<Texture2D>()["ore"], 0.6f, position, new Rectangle(32, 0, 32, 32));
 
     public IEntity CreateTerrain(Texture2D texture)
     {

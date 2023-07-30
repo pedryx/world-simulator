@@ -24,5 +24,6 @@ internal static class Terrains
     public readonly static Terrain Beach = new(new Color(255, 253, 158), true);
     public readonly static Terrain Plains = new(new Color(85, 201, 90), true);
     public readonly static Terrain Forest = new(new Color(25, 133, 30), true, Resources.Tree, 0.0003f);
-    public readonly static Terrain Mountain = new(new Color(143, 143, 143), true, Resources.Rock, 0.001f);
+    public readonly static Terrain Mountain = new(new Color(143, 143, 143), true, Resources.Rock, 0.002f);
+    public readonly static Terrain HighMountain = new(new Color(255, 255, 255), true, Resources.Deposite, 0.004f);
 }

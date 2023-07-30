@@ -30,7 +30,8 @@ internal class GameWorldGenerator
         new BiomeLayer(0.40f, Terrains.Beach),
         new BiomeLayer(0.50f, Terrains.Plains),
         new BiomeLayer(0.70f, Terrains.Forest),
-        new BiomeLayer(1.00f, Terrains.Mountain),
+        new BiomeLayer(0.80f, Terrains.Mountain),
+        new BiomeLayer(1.00f, Terrains.HighMountain),
     };
     private readonly LevelFactory factory;
 
