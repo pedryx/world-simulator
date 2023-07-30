@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
-using WorldSimulator.Resources;
+using WorldSimulator.ContentResources;
 
 using MonoGameBaseGame = Microsoft.Xna.Framework.Game;
 

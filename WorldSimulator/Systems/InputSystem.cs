@@ -9,11 +9,11 @@ namespace WorldSimulator.Systems;
 /// </summary>
 internal struct InputSystem : IECSSystem
 {
-    private const float cameraMoveSpeed = 1000.0f;
+    private const float cameraMoveSpeed = 2250.0f;
     /// <summary>
     /// Speed of camera zooming in/out.
     /// </summary>
-    private const float cameraZoomSpeed = 50.0f;
+    private const float cameraZoomSpeed = 0.2f;
     /// <summary>
     /// Minimum camera zoomed value.
     /// </summary>
@@ -83,7 +83,7 @@ internal struct InputSystem : IECSSystem
             zoomDirection = -1.0f;
 
         camera.Position += movementDirection * cameraMoveSpeed * deltaTime * (1 / camera.Scale);
-        camera.Scale *= (1.0f + zoomDirection * cameraZoomSpeed * deltaTime);
+        camera.Scale *= (1.0f + zoomDirection * cameraZoomSpeed);
 
         camera.Scale = MathHelper.Clamp(camera.Scale, cameraMinZoom, cameraMaxZoom);
     }
