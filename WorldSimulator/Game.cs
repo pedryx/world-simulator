@@ -27,16 +27,16 @@ public class Game : MonoGameBaseGame
     private readonly Random seedGenerator;
     private IDictionary<Type, IResourceManager> resourceManagers;
 
-    public ECSFactory Factory { get; private set; }
+    internal ECSFactory Factory { get; private set; }
     public float Speed { get; set; } = 1.0f;
-    public GameState ActiveState { get; private set; }
-    public SpriteBatch SpriteBatch { get; private set; }
-    public GraphicsDeviceManager Graphics { get; private set; }
+    internal GameState ActiveState { get; private set; }
+    internal SpriteBatch SpriteBatch { get; private set; }
+    internal GraphicsDeviceManager Graphics { get; private set; }
 
     /// <summary>
     /// Width and height of game window.
     /// </summary>
-    public Vector2 Resolution 
+    internal Vector2 Resolution 
         => new(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
 
     public Game(ECSFactory factory, int seed)
@@ -58,17 +58,17 @@ public class Game : MonoGameBaseGame
     /// <summary>
     /// Generate seed for RNG.
     /// </summary>
-    public int GenerateSeed()
+    internal int GenerateSeed()
         => seedGenerator.Next();
 
-    public ResourceManager<TResource> GetResourceManager<TResource>()
+    internal ResourceManager<TResource> GetResourceManager<TResource>()
         => (ResourceManager<TResource>)resourceManagers[typeof(TResource)];
 
     /// <summary>
     /// Create and switch to a new state of specific type. Created state will also be initialized.
     /// </summary>
     /// <typeparam name="TGameState">Type of state to create and to switch to.</typeparam>
-    public void SwitchState<TGameState>()
+    internal void SwitchState<TGameState>()
         where TGameState : GameState, new()
     {
         var newState = new TGameState();

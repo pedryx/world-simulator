@@ -1,5 +1,5 @@
 ﻿namespace WorldSimulator;
-public class Resource
+internal class Resource
 {
 }
 

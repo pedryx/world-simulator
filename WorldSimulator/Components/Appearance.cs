@@ -4,7 +4,7 @@ using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components;
 [Component]
-public struct Appearance
+internal struct Appearance
 {
     public Sprite Sprite = new();
     /// <summary>

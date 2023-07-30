@@ -3,12 +3,12 @@ using System.IO;
 using System.Linq;
 
 namespace WorldSimulator.ContentResources;
-public interface IResourceManager
+internal interface IResourceManager
 {
     public void LoadAll();
 }
 
-public abstract class ResourceManager<TResource> : IResourceManager
+internal abstract class ResourceManager<TResource> : IResourceManager
 {
     private const string ContentRootFolder = "Content";
 

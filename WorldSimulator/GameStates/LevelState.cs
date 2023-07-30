@@ -3,10 +3,10 @@
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Systems;
 
-namespace WorldSimulator.GameStates.Level;
+namespace WorldSimulator.GameStates;
 public class LevelState : GameState
 {
-    public LevelFactory LevelFactory { get; private set; }
+    internal LevelFactory LevelFactory { get; private set; }
 
     protected override void CreateEntities()
     {

@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 
 using WorldSimulator.ECS.AbstractECS;
-using WorldSimulator.GameStates.Level;
 
 namespace WorldSimulator;
 internal class GameWorldGenerator

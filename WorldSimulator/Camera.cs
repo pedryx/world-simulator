@@ -6,7 +6,7 @@ namespace WorldSimulator;
 /// <summary>
 /// Simple 2D camera.
 /// </summary>
-public class Camera
+internal class Camera
 {
     private readonly Game game;
 

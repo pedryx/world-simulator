@@ -7,7 +7,7 @@ namespace WorldSimulator.Components;
 /// Transform component.
 /// </summary>
 [Component]
-public struct Transform
+internal struct Transform
 {
     /// <summary>
     /// Position of the entity.

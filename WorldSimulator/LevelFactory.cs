@@ -6,12 +6,13 @@ using System;
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
+using WorldSimulator.GameStates;
 
-namespace WorldSimulator.GameStates.Level;
+namespace WorldSimulator;
 /// <summary>
 /// Factory for level state entities.
 /// </summary>
-public class LevelFactory
+internal class LevelFactory
 {
     private readonly Game game;
     private readonly LevelState levelState;
@@ -24,7 +25,7 @@ public class LevelFactory
     public LevelFactory(Game game, LevelState gameState)
     {
         this.game = game;
-        this.levelState = gameState;
+        levelState = gameState;
 
         CreateBasicEntityBuilder();
     }

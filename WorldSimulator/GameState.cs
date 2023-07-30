@@ -18,9 +18,9 @@ public abstract class GameState
     /// </summary>
     private IEnumerable<IECSSystem> renderSystems;
 
-    public Game Game { get; private set; }
-    public IECSWorld ECSWorld { get; private set; }
-    public Camera Camera { get; private set; }
+    internal Game Game { get; private set; }
+    internal IECSWorld ECSWorld { get; private set; }
+    internal Camera Camera { get; private set; }
 
     protected abstract void CreateEntities();
     /// <summary>
@@ -33,7 +33,7 @@ public abstract class GameState
     /// <returns></returns>
     protected abstract IEnumerable<IECSSystem> CreateRenderSystems();
 
-    public void Initialize(Game game)
+    internal void Initialize(Game game)
     {
         Game = game;
         ECSWorld = Game.Factory.CreateWorld();
@@ -53,7 +53,7 @@ public abstract class GameState
         }
     }
 
-    public void Update(float deltaTime)
+    internal void Update(float deltaTime)
     {
         foreach (var system in systems)
         {
@@ -63,7 +63,7 @@ public abstract class GameState
         ECSWorld.Update();
     }
 
-    public void Draw(float deltaTime)
+    internal void Draw(float deltaTime)
     {
         foreach (var system in renderSystems)
         {

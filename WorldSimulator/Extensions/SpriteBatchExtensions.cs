@@ -5,7 +5,7 @@ namespace WorldSimulator.Extensions;
 /// <summary>
 /// Contains extension methods for <see cref="SpriteBatch"/>.
 /// </summary>
-public static class SpriteBatchExtensions
+internal static class SpriteBatchExtensions
 {
     public static void Draw
     (

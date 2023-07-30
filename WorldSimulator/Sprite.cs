@@ -7,7 +7,7 @@ namespace WorldSimulator;
 /// <summary>
 /// Represent renderable sprite.
 /// </summary>
-public struct Sprite
+internal struct Sprite
 {
     public Texture2D Texture;
     public Vector2 Position;

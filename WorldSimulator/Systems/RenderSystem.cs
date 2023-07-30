@@ -5,7 +5,7 @@ using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Systems;
-public readonly struct RenderSystem : IEntityProcessor<Transform, Appearance>
+internal readonly struct RenderSystem : IEntityProcessor<Transform, Appearance>
 {
     private readonly SpriteBatch spriteBatch;
     private readonly Camera camera;
