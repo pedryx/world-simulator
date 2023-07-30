@@ -20,47 +20,52 @@ internal class LevelFactory
     /// <summary>
     /// Builder for basic entities with only transform and appearance components.
     /// </summary>
-    private IEntityBuilder basicEntity;
+    private readonly IEntityBuilder basicBuilder;
+    /// <summary>
+    /// Builder for resources.
+    /// </summary>
+    private readonly IEntityBuilder resourceBuilder;
 
     public LevelFactory(Game game, LevelState gameState)
     {
         this.game = game;
         levelState = gameState;
 
-        CreateBasicEntityBuilder();
+        basicBuilder = CreateBasicBuilder();
+        resourceBuilder = CreateResourceBuilder();
     }
 
-    private void CreateBasicEntityBuilder()
+    private IEntityBuilder CreateBasicBuilder()
     {
-        basicEntity = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
-        basicEntity.AddComponent<Transform>();
-        basicEntity.AddComponent<Appearance>();
+        IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
+
+        builder.AddComponent<Transform>();
+        builder.AddComponent<Appearance>();
+
+        return builder;
     }
 
-    /// <summary>
-    /// Create basic entity with only transform and appearance components.
-    /// </summary>
-    public IEntity CreateBasicEntity(Texture2D texture, Vector2 origin, float scale = 1.0f, Vector2 position = default)
+    private IEntityBuilder CreateResourceBuilder()
     {
-        IEntity entity = basicEntity.Build();
-        ref Appearance appearance = ref entity.GetComponent<Appearance>();
+        IEntityBuilder builder = CreateBasicBuilder();
 
-        appearance.Sprite.Texture = texture;
-        appearance.Sprite.Origin = origin;
-        appearance.Sprite.Scale = scale;
+        builder.AddComponent<LayerUpdate>();
+
+        return builder;
+    }
+
+    private IEntity CreateResource(Texture2D texture, float scale, Vector2 position)
+    {
+        IEntity entity = resourceBuilder.Build();
+
+        entity.GetComponent<Appearance>().Sprite.Texture = texture;
+        entity.GetComponent<Appearance>().Sprite.Origin = texture.GetSize() * new Vector2(0.5f, 1.0f);
+        entity.GetComponent<Appearance>().Sprite.Scale = scale;
+
         entity.GetComponent<Transform>().Position = position;
 
         return entity;
     }
-
-    /// <summary>
-    /// Create basic entity with only transform and appearance components.
-    /// </summary>
-    public IEntity CreateBasicEntity(Texture2D texture, float scale = 1.0f, Vector2 position = default)
-        => CreateBasicEntity(texture, texture.GetSize() / 2.0f, scale, position);
-
-    private IEntity CreateResource(Texture2D texture, float scale = 1.0f, Vector2 position = default)
-        => CreateBasicEntity(texture, texture.GetSize() * new Vector2(0.5f, 1.0f), scale, position);
 
     public IEntity CreateResource(Resource resource, Vector2 position)
     {
@@ -78,5 +83,13 @@ internal class LevelFactory
     public IEntity CreateRock(Vector2 position)
         => CreateResource(game.GetResourceManager<Texture2D>()["rock pile"], 0.1f, position);
 
+    public IEntity CreateTerrain(Texture2D texture)
+    {
+        IEntity entity = basicBuilder.Build();
 
+        entity.GetComponent<Appearance>().Sprite.Texture = texture;
+        entity.GetComponent<Appearance>().Sprite.Origin = texture.GetSize() / 2.0f;
+
+        return entity;
+    }
 }

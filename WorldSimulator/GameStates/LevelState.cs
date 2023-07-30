@@ -29,6 +29,7 @@ public class LevelState : GameState
         return new List<IECSSystem>()
         {
             Game.Factory.CreateSystem(new RenderClipSystem(Game, Camera)),
+            Game.Factory.CreateSystem(new LayerUpdateSystem(Game, Camera)),
             Game.Factory.CreateSystem(new RenderSystem(Game.SpriteBatch, Camera)),
         };
     }

@@ -8,7 +8,7 @@ using WorldSimulator.ECS.LeoEcs;
 using WorldSimulator.GameStates;
 
 const int seed = 0;
-ECSFactory factory = new EntitasFactory();
+ECSFactory factory = new ArchFactory();
 
 Game game = new(factory, seed);
 game.SwitchState(new LevelState());

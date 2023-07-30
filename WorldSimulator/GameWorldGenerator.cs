@@ -65,7 +65,7 @@ internal class GameWorldGenerator
 
         Color[] pixels = new Color[worldSize * worldSize];
         Texture2D terrainTexture = new(game.GraphicsDevice, worldSize, worldSize);
-        IEntity terrain = factory.CreateBasicEntity(terrainTexture);
+        IEntity terrain = factory.CreateTerrain(terrainTexture);
 
         Random random = new(game.GenerateSeed());
         float[] chances = new float[worldSize * worldSize];
