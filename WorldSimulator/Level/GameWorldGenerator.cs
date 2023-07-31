@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
-using System.Security.Principal;
 using System.Threading.Tasks;
 
 using WorldSimulator.ECS.AbstractECS;
@@ -13,15 +12,15 @@ internal class GameWorldGenerator
     /// <summary>
     /// Size of world width and height in pixels.
     /// </summary>
-    private const int worldSize = 4096;
-    private const int borderSize = 8;
+    public const int WorldSize = 4096;
+    public const int BorderSize = 16;
+    /// <summary>
+    /// Distance between nodes in movement grid.
+    /// </summary>
+    public const int GridDistance = 16;
 
     private readonly object spawnResourceLock = new();
     private readonly Game game;
-    /// <summary>
-    /// Noise used for terrain generation.
-    /// </summary>
-    private readonly Noise terrainNoise;
     /// <summary>
     /// Each layer prepresent different biome, biomes are placed based on generated height.
     /// </summary>
@@ -30,32 +29,41 @@ internal class GameWorldGenerator
         new BiomeLayer(0.30f, Terrains.DeepWater),
         new BiomeLayer(0.35f, Terrains.ShallowWater),
         new BiomeLayer(0.40f, Terrains.Beach),
-        new BiomeLayer(0.50f, Terrains.Plains),
+        new BiomeLayer(0.50f, Terrains.Plain),
         new BiomeLayer(0.70f, Terrains.Forest),
         new BiomeLayer(0.80f, Terrains.Mountain),
         new BiomeLayer(1.00f, Terrains.HighMountain),
     };
     private readonly LevelFactory factory;
-    private readonly Terrain[][] terrainMap = new Terrain[worldSize][];
+
+    /// <summary>
+    /// Noise used for terrain generation.
+    /// </summary>
+    private Noise terrainNoise;
+    private Graph graph;
+    private Terrain[][] terrainMap = new Terrain[WorldSize][];
 
     public GameWorldGenerator(Game game, LevelFactory factory)
     {
         this.game = game;
         this.factory = factory;
-
-        // Noise parameters are fine-tuned.
-        terrainNoise = new Noise(game.GenerateSeed(), 0.0008f, 0.0016f, 0.0032f);
-        for (int i = 0; i < terrainMap.Length; i++)
-        {
-            terrainMap[i] = new Terrain[worldSize];
-        }
     }
 
     public GameWorld Generate()
     {
-        GenerateTerrain();
+        // Noise parameters are fine-tuned.
+        terrainNoise = new Noise(game.GenerateSeed(), 0.0008f, 0.0016f, 0.0032f);
+        graph = new Graph();
+        terrainMap = new Terrain[WorldSize][];
+        for (int i = 0; i < terrainMap.Length; i++)
+        {
+            terrainMap[i] = new Terrain[WorldSize];
+        }
 
-        return new(terrainMap);
+        GenerateTerrain();
+        GenerateGraph();
+
+        return new(terrainMap, graph);
     }
 
     /// <summary>
@@ -63,33 +71,29 @@ internal class GameWorldGenerator
     /// </summary>
     private IEntity GenerateTerrain()
     {
-        /*
-         * 1. for each pixel:
-         * 2.     generate random height value (based on terrain noise)
-         * 3.     select biome based on height value
-         * 4.     if resource can spawn at biome
-         * 5.         try to spawn it
-         * 
-         * Biome-height pair is represented by Layer structure.
-         */
-
-        Color[] pixels = new Color[worldSize * worldSize];
-        Texture2D terrainTexture = new(game.GraphicsDevice, worldSize, worldSize);
+        Color[] pixels = new Color[WorldSize * WorldSize];
+        Texture2D terrainTexture = new(game.GraphicsDevice, WorldSize, WorldSize);
         IEntity terrain = factory.CreateTerrain(terrainTexture);
 
+        /*
+         * pregenerate random value for each pixel, later this value will be used to determine if resource should be
+         * spawned
+        */
         Random random = new(game.GenerateSeed());
-        float[] chances = new float[worldSize * worldSize];
+        float[] chances = new float[WorldSize * WorldSize];
         for (int i = 0; i < chances.Length; i++)
         {
             chances[i] = random.NextSingle();
         }
 
+        // process each pixel in parallel
         Parallel.For(0, pixels.Length, i =>
         {
-            int x = i % worldSize;
-            int y = i / worldSize;
+            int x = i % WorldSize;
+            int y = i / WorldSize;
 
-            if (x < borderSize || x >= worldSize - borderSize || y < borderSize || y >= worldSize - borderSize)
+            // set border biome
+            if (x < BorderSize || x >= WorldSize - BorderSize || y < BorderSize || y >= WorldSize - BorderSize)
             {
                 pixels[i] = Terrains.Border.Color;
                 terrainMap[y][x] = Terrains.Border;
@@ -98,22 +102,21 @@ internal class GameWorldGenerator
 
             float height = terrainNoise.CalculateValue(x, y);
 
+            // determine biome of pixel
             foreach (var layer in layers)
             {
                 if (height < layer.Height)
                 {
+                    // set biome to pixel
                     pixels[i] = layer.Terrain.Color;
                     terrainMap[y][x] = layer.Terrain;
 
+                    // try to spawn resource
                     if (layer.Terrain.Resource != null && chances[i] < layer.Terrain.ResourceSpawnChance)
                     {
                         lock (spawnResourceLock)
                         {
-                            factory.CreateResource
-                            (
-                                layer.Terrain.Resource,
-                                new Vector2(x - worldSize / 2, y - worldSize / 2)
-                            );
+                            factory.CreateResource(layer.Terrain.Resource, new Vector2(x, y));
                         }
                     }
 
@@ -124,6 +127,30 @@ internal class GameWorldGenerator
 
         terrainTexture.SetData(pixels);
         return terrain;
+    }
+
+    /// <summary>
+    /// Generate grid graph for path-finding for movement around the map.
+    /// </summary>
+    private void GenerateGraph()
+    {
+        for (int x = BorderSize; x < WorldSize - BorderSize; x += GridDistance)
+        {
+            for (int y = BorderSize; y < WorldSize - BorderSize; y += GridDistance)
+            {
+                if (!terrainMap[y][x].Walkable)
+                    continue;
+
+                if (terrainMap[x - GridDistance][y].Walkable)
+                    graph.AddEdge(new Vector2(x, y), new Vector2(x, y - GridDistance));
+                if (terrainMap[y + GridDistance][x].Walkable)
+                    graph.AddEdge(new Vector2(x, y), new Vector2(x, y + GridDistance));
+                if (terrainMap[y][x - GridDistance].Walkable)
+                    graph.AddEdge(new Vector2(x, y), new Vector2(x - GridDistance, y));
+                if (terrainMap[y][x + GridDistance].Walkable)
+                    graph.AddEdge(new Vector2(x, y), new Vector2(x + GridDistance, y));
+            }
+        }
     }
 
     private struct BiomeLayer

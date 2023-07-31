@@ -72,6 +72,7 @@ internal class LevelFactory
         {
             Speed = 30.0f,
         });
+        builder.AddComponent<PathFollow>();
         builder.AddComponent<AnimalController>();
 
         return builder;
@@ -84,16 +85,6 @@ internal class LevelFactory
         IEntity entity = builder.Build();
 
         entity.GetComponent<Transform>().Position = position;
-
-        return entity;
-    }
-
-    private static IEntity CreateAnimal(IEntityBuilder builder, Vector2 position)
-    {
-        IEntity entity = builder.Build();
-
-        entity.GetComponent<Transform>().Position = position;
-        entity.GetComponent<Movement>().Destination = position;
 
         return entity;
     }
@@ -123,14 +114,13 @@ internal class LevelFactory
         => CreateEntity(depositeBuilder, position);
 
     public IEntity CreateDeer(Vector2 position)
-        => CreateAnimal(deerBuilder, position);
+        => CreateEntity(deerBuilder, position);
 
     public IEntity CreateTerrain(Texture2D texture)
     {
         IEntity entity = terrainBuilder.Build();
 
         entity.GetComponent<Appearance>().Sprite.Texture = texture;
-        entity.GetComponent<Appearance>().Sprite.Origin = texture.GetSize() / 2.0f;
 
         return entity;
     }

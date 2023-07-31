@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+
+using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Systems;
@@ -13,6 +15,7 @@ public class LevelState : GameState
     {
         LevelFactory = new LevelFactory(Game, this);
         GameWorldGenerator worldGenerator = new(Game, LevelFactory);
+        Camera.Position = new Vector2(GameWorldGenerator.WorldSize) / 2.0f;
 
         GameWorld = worldGenerator.Generate();
     }
@@ -22,7 +25,8 @@ public class LevelState : GameState
         return new List<IECSSystem>()
         {
             new InputSystem(Game, Camera),
-            Game.Factory.CreateSystem(new AnimalControllerSystem(Game)),
+            Game.Factory.CreateSystem(new AnimalControllerSystem(Game, GameWorld)),
+            Game.Factory.CreateSystem(new PathFollowSystem()),
             Game.Factory.CreateSystem(new MovementSystem()),
         };
     }

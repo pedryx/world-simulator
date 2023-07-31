@@ -39,9 +39,9 @@ public abstract class GameState
         ECSWorld = Game.Factory.CreateWorld();
         Camera = new Camera(game);
 
+        CreateEntities();
         systems = CreateSystems();
         renderSystems = CreateRenderSystems();
-        CreateEntities();
 
         foreach (var system in systems)
         {
