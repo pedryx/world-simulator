@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 using WorldSimulator.ECS.AbstractECS;
@@ -13,6 +14,7 @@ internal class GameWorldGenerator
     /// Size of world width and height in pixels.
     /// </summary>
     private const int worldSize = 4096;
+    private const int borderSize = 8;
 
     private readonly object spawnResourceLock = new();
     private readonly Game game;
@@ -86,6 +88,14 @@ internal class GameWorldGenerator
         {
             int x = i % worldSize;
             int y = i / worldSize;
+
+            if (x < borderSize || x >= worldSize - borderSize || y < borderSize || y >= worldSize - borderSize)
+            {
+                pixels[i] = Terrains.Border.Color;
+                terrainMap[y][x] = Terrains.Border;
+                return;
+            }
+
             float height = terrainNoise.CalculateValue(x, y);
 
             foreach (var layer in layers)

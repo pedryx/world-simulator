@@ -21,6 +21,7 @@ internal class Terrain
 
 internal static class Terrains
 {
+    public readonly static Terrain Border = new(new Color(30, 30, 30), false, false);
     public readonly static Terrain DeepWater = new(new Color(48, 62, 255), false, false);
     public readonly static Terrain ShallowWater = new(new Color(71, 185, 255), false, false);
     public readonly static Terrain Beach = new(new Color(255, 253, 158), true, true);
