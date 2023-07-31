@@ -17,7 +17,7 @@ internal readonly struct OrientationUpdateSystem : IEntityProcessor<Transform, M
         if (direction.X == 0)
             return;
 
-        if (direction.X < 0.0f)
+        if (direction.X > 0.0f)
             appearance.Sprite.Effects = SpriteEffects.FlipHorizontally;
         else
             appearance.Sprite.Effects = SpriteEffects.None;

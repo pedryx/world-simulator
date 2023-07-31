@@ -21,6 +21,7 @@ internal class LevelFactory
     private readonly IEntityBuilder rockBuilder;
     private readonly IEntityBuilder depositeBuilder;
     private readonly IEntityBuilder deerBuilder;
+    private readonly IEntityBuilder villagerBuilder;
 
     public LevelFactory(Game game, LevelState gameState)
     {
@@ -28,10 +29,11 @@ internal class LevelFactory
         levelState = gameState;
 
         terrainBuilder = CreateTerrainBuilder();
-        treeBuilder = CreateResourceBuilder("pine tree", 0.5f);
-        rockBuilder = CreateResourceBuilder("rock pile", 0.1f);
-        depositeBuilder = CreateResourceBuilder("ore", 0.6f, new Rectangle(32, 0, 32, 32));
-        deerBuilder = CreateAnimalBuilder("deer", 0.8f, new Rectangle(0, 0, 32, 32));
+        treeBuilder = CreateStaticBuilder("tree", 0.4f);
+        rockBuilder = CreateStaticBuilder("boulder", 0.1f);
+        depositeBuilder = CreateStaticBuilder("iron deposite", 0.1f);
+        deerBuilder = CreateAnimalBuilder("deer", 0.1f);
+        villagerBuilder = CreateAnimalBuilder("villager", 0.1f);
     }
 
     #region builders
@@ -45,7 +47,7 @@ internal class LevelFactory
         return builder;
     }
 
-    private IEntityBuilder CreateResourceBuilder(string textureName, float scale, Rectangle? sourceRectangle = null)
+    private IEntityBuilder CreateStaticBuilder(string textureName, float scale, Rectangle? sourceRectangle = null)
     {
         IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
         Texture2D texture = game.GetResourceManager<Texture2D>()[textureName];
@@ -64,9 +66,9 @@ internal class LevelFactory
         return builder;
     }
 
-    private IEntityBuilder CreateAnimalBuilder(string textureName, float scale, Rectangle? sourceRectangle)
+    private IEntityBuilder CreateAnimalBuilder(string textureName, float scale, Rectangle? sourceRectangle = null)
     {
-        IEntityBuilder builder = CreateResourceBuilder(textureName, scale, sourceRectangle);
+        IEntityBuilder builder = CreateStaticBuilder(textureName, scale, sourceRectangle);
 
         builder.AddComponent(new Movement()
         {
@@ -89,6 +91,9 @@ internal class LevelFactory
         return entity;
     }
     #endregion
+
+    public IEntity CreateVillager(Vector2 position)
+        => CreateEntity(villagerBuilder, position);
 
     public IEntity CreateResource(Resource resource, Vector2 position)
     {

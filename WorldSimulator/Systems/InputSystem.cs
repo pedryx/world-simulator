@@ -22,7 +22,7 @@ internal struct InputSystem : IECSSystem
     /// <summary>
     /// Maximum camera zoomed value.
     /// </summary>
-    private const float cameraMaxZoom = 2.0f;
+    private const float cameraMaxZoom = 4.0f;
 
     private readonly Point fullscreenResolution = new(1920, 1080);
     private readonly Point windowedResolution = new(1280, 720);

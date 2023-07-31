@@ -20,10 +20,6 @@
 	<Content Include="Content\**">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
-	  
-	<None Update="Credits.txt">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
   </ItemGroup>
 
 </Project>

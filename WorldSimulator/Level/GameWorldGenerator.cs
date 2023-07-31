@@ -63,6 +63,8 @@ internal class GameWorldGenerator
         GenerateTerrain();
         GenerateGraph();
 
+        factory.CreateVillager(new Vector2(WorldSize) / 2.0f);
+
         return new(terrainMap, graph);
     }
 
