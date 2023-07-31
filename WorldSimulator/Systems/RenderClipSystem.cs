@@ -25,7 +25,7 @@ internal readonly struct RenderClipSystem : IEntityProcessor<Transform, Appearan
 
     public void Process(ref Transform transform, ref Appearance appearance, float deltaTime)
     {
-        float maxWindowSize = game.Resolution.Length() * (1.0f / camera.Scale);
+        float maxWindowSize = game.Resolution.Length() * (1.0f / camera.Scale) * 1.1f;
         float maxSpriteSize = (appearance.Sprite.GetSize() * transform.Scale).Length() * camera.Scale;
 
         if (maxSpriteSize < sizeThreshold)

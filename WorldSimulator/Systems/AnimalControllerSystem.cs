@@ -11,7 +11,8 @@ using WorldSimulator.Level;
 namespace WorldSimulator.Systems;
 internal readonly struct AnimalControllerSystem : IEntityProcessor<Transform, PathFollow, AnimalController>
 {
-    private const float radius = 80.0f;
+    private const float maxRadius = 80.0f;
+    private const float minRadius = 20.0f;
 
     private readonly Random random;
     private readonly GameWorld gameWorld;
@@ -31,7 +32,7 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Transform, Pa
             Vector2 destination;
             do
             {
-                destination = random.NextUnitVector2() * radius + transform.Position;
+                destination = random.NextPointInRing(transform.Position, minRadius, maxRadius);
             }
             while (!gameWorld.IsAnimalWalkable(destination));
 
