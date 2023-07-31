@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using WorldSimulator.ECS.AbstractECS;
 
-namespace WorldSimulator;
+namespace WorldSimulator.Level;
 internal class GameWorldGenerator
 {
     /// <summary>
@@ -34,6 +34,7 @@ internal class GameWorldGenerator
         new BiomeLayer(1.00f, Terrains.HighMountain),
     };
     private readonly LevelFactory factory;
+    private readonly Terrain[][] terrainMap = new Terrain[worldSize][];
 
     public GameWorldGenerator(Game game, LevelFactory factory)
     {
@@ -42,11 +43,17 @@ internal class GameWorldGenerator
 
         // Noise parameters are fine-tuned.
         terrainNoise = new Noise(game.GenerateSeed(), 0.0008f, 0.0016f, 0.0032f);
+        for (int i = 0; i < terrainMap.Length; i++)
+        {
+            terrainMap[i] = new Terrain[worldSize];
+        }
     }
 
-    public void Generate()
+    public GameWorld Generate()
     {
         GenerateTerrain();
+
+        return new(terrainMap);
     }
 
     /// <summary>
@@ -86,19 +93,17 @@ internal class GameWorldGenerator
                 if (height < layer.Height)
                 {
                     pixels[i] = layer.Terrain.Color;
+                    terrainMap[y][x] = layer.Terrain;
 
-                    if (layer.Terrain.Resource != null)
+                    if (layer.Terrain.Resource != null && chances[i] < layer.Terrain.ResourceSpawnChance)
                     {
-                        if (chances[i] < layer.Terrain.ResourceSpawnChance)
+                        lock (spawnResourceLock)
                         {
-                            lock (spawnResourceLock)
-                            {
-                                factory.CreateResource
-                                (
-                                    layer.Terrain.Resource,
-                                    new Vector2(x - worldSize / 2, y - worldSize / 2)
-                                );
-                            }
+                            factory.CreateResource
+                            (
+                                layer.Terrain.Resource,
+                                new Vector2(x - worldSize / 2, y - worldSize / 2)
+                            );
                         }
                     }
 

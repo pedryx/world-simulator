@@ -3,17 +3,18 @@
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Systems;
 
-namespace WorldSimulator.GameStates;
+namespace WorldSimulator.Level;
 public class LevelState : GameState
 {
     internal LevelFactory LevelFactory { get; private set; }
+    internal GameWorld GameWorld { get; private set; }
 
     protected override void CreateEntities()
     {
         LevelFactory = new LevelFactory(Game, this);
         GameWorldGenerator worldGenerator = new(Game, LevelFactory);
 
-        worldGenerator.Generate();
+        GameWorld = worldGenerator.Generate();
     }
 
     protected override IEnumerable<IECSSystem> CreateSystems()
@@ -21,7 +22,7 @@ public class LevelState : GameState
         return new List<IECSSystem>()
         {
             new InputSystem(Game, Camera),
-            Game.Factory.CreateSystem(new RandomMovementSystem(Game)),
+            Game.Factory.CreateSystem(new AnimalControllerSystem(Game)),
             Game.Factory.CreateSystem(new MovementSystem()),
         };
     }

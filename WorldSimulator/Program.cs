@@ -5,7 +5,7 @@ using WorldSimulator.ECS.DefaultEcs;
 using WorldSimulator.ECS.Entitas;
 using WorldSimulator.ECS.HypEcs;
 using WorldSimulator.ECS.LeoEcs;
-using WorldSimulator.GameStates;
+using WorldSimulator.Level;
 
 const int seed = 0;
 ECSFactory factory = new ArchFactory();

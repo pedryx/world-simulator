@@ -3,6 +3,9 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components;
+/// <summary>
+/// Entities with this component moves towards <see cref="Destination"/>.
+/// </summary>
 [Component]
 internal struct Movement
 {
@@ -11,13 +14,7 @@ internal struct Movement
     /// </summary>
     public float Speed;
     /// <summary>
-    /// Unit vector, which represent movement direction.
+    /// Destination towards which will entitiy move.
     /// </summary>
-    public Vector2 Direction;
-
-    public Movement(float speed = 0.0f, Vector2 direction = default) 
-    {
-        Speed = speed;
-        Direction = direction;
-    }
+    public Vector2 Destination;
 }
