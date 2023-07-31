@@ -24,7 +24,7 @@ public class LevelState : GameState
     {
         return new List<IECSSystem>()
         {
-            new InputSystem(Game, Camera),
+            new InputSystem(Game, Camera, GameWorld),
             Game.Factory.CreateSystem(new AnimalControllerSystem(Game, GameWorld)),
             Game.Factory.CreateSystem(new PathFollowSystem()),
             Game.Factory.CreateSystem(new MovementSystem()),

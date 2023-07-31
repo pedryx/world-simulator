@@ -13,13 +13,14 @@ internal class GameWorld
     /// Grid used for path-finding of moving entities.
     /// </summary>
     private readonly Graph graph;
-    private readonly Rectangle worldBounds;
+
+    public Rectangle Bounds { get; private set; }
 
     public GameWorld(Terrain[][] terrainMap, Graph graph)
     {
         this.terrainMap = terrainMap;
         this.graph = graph;
-        worldBounds = new Rectangle(Point.Zero, new Point(GameWorldGenerator.WorldSize));
+        Bounds = new Rectangle(Point.Zero, new Point(GameWorldGenerator.WorldSize));
     }
 
     /// <summary>
@@ -46,7 +47,7 @@ internal class GameWorld
     /// </summary>
     public bool IsWalkable(Vector2 position)
     {
-        if (!worldBounds.Contains(position))
+        if (!Bounds.Contains(position))
             return false;
 
         return terrainMap[(int)position.Y][(int)position.X].Walkable;

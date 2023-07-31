@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 
-using WorldSimulator.Components;
-
 namespace WorldSimulator;
 /// <summary>
 /// Simple 2D camera.
@@ -13,9 +11,9 @@ internal class Camera
     /// <summary>
     /// Position of the center of the camera.
     /// </summary>
-    public Vector2 Position { get; set; }
-    public float Scale { get; set; } = 1.0f;
-    public float Rotation { get; set; }
+    public Vector2 Position;
+    public float Scale = 1.0f;
+    public float Rotation;
 
     public Camera(Game game)
     {
