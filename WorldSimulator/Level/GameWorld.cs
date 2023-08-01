@@ -6,6 +6,11 @@ namespace WorldSimulator.Level;
 internal class GameWorld
 {
     /// <summary>
+    /// Width and heigt of world in pixels.
+    /// </summary>
+    public const int Size = 8192;
+
+    /// <summary>
     /// Contains terrain information for each pixel of the map.
     /// </summary>
     private readonly Terrain[][] terrainMap;
@@ -20,7 +25,7 @@ internal class GameWorld
     {
         this.terrainMap = terrainMap;
         this.graph = graph;
-        Bounds = new Rectangle(Point.Zero, new Point(GameWorldGenerator.WorldSize));
+        Bounds = new Rectangle(Point.Zero, new Point(Size));
     }
 
     /// <summary>

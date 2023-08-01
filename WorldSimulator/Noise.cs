@@ -1,6 +1,8 @@
 ﻿namespace WorldSimulator;
 /// <summary>
-/// Simplex noise generator with 3 octanes.
+/// Simplex noise generator with 3 octanes. You need to call <see cref="Begin"/> at least once before calling
+/// <see cref="CalculateValue(int, int)"/>. When you call <see cref="Begin"/> on another noise instance the begin call
+/// on all other instances is invalidated.
 /// </summary>
 internal class Noise
 {
@@ -40,11 +42,16 @@ internal class Noise
         Scale1 = scale1;
         Scale2 = scale2;
         Scale3 = scale3;
-        SimplexNoise.Noise.Seed = Seed;
     }
 
     /// <summary>
-    /// Calculate noise value at specific position..
+    /// Call this before starting go calculate values.
+    /// </summary>
+    public void Begin()
+        => SimplexNoise.Noise.Seed = Seed;
+
+    /// <summary>
+    /// Calculate noise value at specific position.
     /// </summary>
     public float CalculateValue(int x, int y)
     {

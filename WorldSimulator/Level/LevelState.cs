@@ -15,7 +15,7 @@ public class LevelState : GameState
     {
         LevelFactory = new LevelFactory(Game, this);
         GameWorldGenerator worldGenerator = new(Game, LevelFactory);
-        Camera.Position = new Vector2(GameWorldGenerator.WorldSize) / 2.0f;
+        Camera.Position = new Vector2(GameWorld.Size) / 2.0f;
 
         GameWorld = worldGenerator.Generate();
     }
@@ -24,9 +24,9 @@ public class LevelState : GameState
     {
         return new List<IECSSystem>()
         {
+            new DebugSystem(Game, Camera),
             new InputSystem(Game, Camera, GameWorld),
             Game.Factory.CreateSystem(new AnimalControllerSystem(Game, GameWorld)),
-            Game.Factory.CreateSystem(new PathFollowSystem()),
             Game.Factory.CreateSystem(new MovementSystem()),
         };
     }
