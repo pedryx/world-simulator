@@ -5,10 +5,11 @@ using System.Collections.Generic;
 namespace WorldSimulator.Level;
 internal class GameWorld
 {
+    // TODO: change back to original
     /// <summary>
     /// Width and heigt of world in pixels.
     /// </summary>
-    public const int Size = 8192;
+    public const int Size = 8192 / 4;
 
     /// <summary>
     /// Contains terrain information for each pixel of the map.
