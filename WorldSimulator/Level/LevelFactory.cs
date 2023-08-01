@@ -29,9 +29,9 @@ internal class LevelFactory
         levelState = gameState;
 
         terrainBuilder = CreateTerrainBuilder();
-        treeBuilder = CreateStaticBuilder("tree", 0.4f);
-        rockBuilder = CreateStaticBuilder("boulder", 0.1f);
-        depositeBuilder = CreateStaticBuilder("iron deposite", 0.1f);
+        treeBuilder = CreateBasicBuilder("tree", 0.4f);
+        rockBuilder = CreateBasicBuilder("boulder", 0.1f);
+        depositeBuilder = CreateBasicBuilder("iron deposite", 0.1f);
         deerBuilder = CreateAnimalBuilder("deer", 0.1f);
         villagerBuilder = CreateAnimalBuilder("villager", 0.1f);
     }
@@ -47,7 +47,7 @@ internal class LevelFactory
         return builder;
     }
 
-    private IEntityBuilder CreateStaticBuilder(string textureName, float scale, Rectangle? sourceRectangle = null)
+    private IEntityBuilder CreateBasicBuilder(string textureName, float scale, Rectangle? sourceRectangle = null)
     {
         IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
         Texture2D texture = game.GetResourceManager<Texture2D>()[textureName];
@@ -68,13 +68,12 @@ internal class LevelFactory
 
     private IEntityBuilder CreateAnimalBuilder(string textureName, float scale, Rectangle? sourceRectangle = null)
     {
-        IEntityBuilder builder = CreateStaticBuilder(textureName, scale, sourceRectangle);
+        IEntityBuilder builder = CreateBasicBuilder(textureName, scale, sourceRectangle);
 
         builder.AddComponent(new Movement()
         {
             Speed = 30.0f,
         });
-        builder.AddComponent<PathFollow>();
         builder.AddComponent<AnimalController>();
 
         return builder;
@@ -82,7 +81,7 @@ internal class LevelFactory
     #endregion
 
     #region shared create methods
-    private static IEntity CreateEntity(IEntityBuilder builder, Vector2 position)
+    private static IEntity CreateStaticEntity(IEntityBuilder builder, Vector2 position)
     {
         IEntity entity = builder.Build();
 
@@ -90,10 +89,20 @@ internal class LevelFactory
 
         return entity;
     }
+
+    private static IEntity CreateDynamicEntity(IEntityBuilder builder, Vector2 position)
+    {
+        IEntity entity = builder.Build();
+
+        entity.GetComponent<Transform>().Position = position;
+        entity.GetComponent<Movement>().Destination = position;
+
+        return entity;
+    }
     #endregion
 
     public IEntity CreateVillager(Vector2 position)
-        => CreateEntity(villagerBuilder, position);
+        => CreateDynamicEntity(villagerBuilder, position);
 
     public IEntity CreateResource(Resource resource, Vector2 position)
     {
@@ -110,21 +119,22 @@ internal class LevelFactory
     }
 
     public IEntity CreateTree(Vector2 position)
-        => CreateEntity(treeBuilder, position);
+        => CreateStaticEntity(treeBuilder, position);
 
     public IEntity CreateRock(Vector2 position)
-        => CreateEntity(rockBuilder, position);
+        => CreateStaticEntity(rockBuilder, position);
 
     public IEntity CreateDeposite(Vector2 position)
-        => CreateEntity(depositeBuilder, position);
+        => CreateStaticEntity(depositeBuilder, position);
 
     public IEntity CreateDeer(Vector2 position)
-        => CreateEntity(deerBuilder, position);
+        => CreateDynamicEntity(deerBuilder, position);
 
-    public IEntity CreateTerrain(Texture2D texture)
+    public IEntity CreateTerrain(Texture2D texture, Vector2 position)
     {
         IEntity entity = terrainBuilder.Build();
 
+        entity.GetComponent<Transform>().Position = position;
         entity.GetComponent<Appearance>().Sprite.Texture = texture;
 
         return entity;

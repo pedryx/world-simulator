@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
 using System;
-using System.Linq;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
@@ -9,7 +8,7 @@ using WorldSimulator.Extensions;
 using WorldSimulator.Level;
 
 namespace WorldSimulator.Systems;
-internal readonly struct AnimalControllerSystem : IEntityProcessor<Transform, PathFollow, AnimalController>
+internal readonly struct AnimalControllerSystem : IEntityProcessor<Transform, Movement, AnimalController>
 {
     private const float maxRadius = 80.0f;
     private const float minRadius = 20.0f;
@@ -24,21 +23,26 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Transform, Pa
         random = new Random(game.GenerateSeed());
     }
 
-    public void Process(ref Transform transform, ref PathFollow pathFollow, ref AnimalController _, float deltaTime)
+    public void Process(ref Transform transform, ref Movement movement, ref AnimalController _, float deltaTime)
     {
-        if (pathFollow.Current == pathFollow.Path.Length)
+        if (Vector2.Distance(transform.Position, movement.Destination) <= movement.Speed * deltaTime)
         {
-            // Generate random destinations around this position until one is valid. This usually succeed at first try.
+            // 
+            /*
+             * Generate random destinations around this position until one is valid.
+             * This usually succeed at first try.
+             * On failure, increase search radius.
+             */
+            float radiusOffset = 0.0f;
             Vector2 destination;
             do
             {
-                destination = random.NextPointInRing(transform.Position, minRadius, maxRadius);
+                destination = random.NextPointInRing(transform.Position, minRadius, maxRadius + radiusOffset);
+                radiusOffset += 1.0f;
             }
             while (!gameWorld.IsAnimalWalkable(destination));
 
-            // Find path between current position and destination. Usually size of the path is two, but can be bigger.
-            pathFollow.Current = 0;
-            pathFollow.Path = gameWorld.FindPath(transform.Position, destination).ToArray();
+            movement.Destination = destination;
         }
     }
 }

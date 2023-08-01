@@ -18,7 +18,7 @@ internal struct InputSystem : IECSSystem
     /// <summary>
     /// Minimum camera zoomed value.
     /// </summary>
-    private const float cameraMinZoom = 0.2f;
+    private const float cameraMinZoom = 0.5f;
     /// <summary>
     /// Maximum camera zoomed value.
     /// </summary>
