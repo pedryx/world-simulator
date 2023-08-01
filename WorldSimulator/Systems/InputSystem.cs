@@ -30,13 +30,15 @@ internal readonly struct InputSystem : IECSSystem
     private readonly Game game;
     private readonly Camera camera;
     private readonly GameWorld gameWorld;
+    private readonly GameState gameState;
     private readonly InputState state = new();
 
-    public InputSystem(Game game, Camera camera, GameWorld gameWorld)
+    public InputSystem(LevelState levelState)
     {
-        this.game = game;
-        this.camera = camera;
-        this.gameWorld = gameWorld;
+        game = levelState.Game;
+        camera = levelState.Camera;
+        gameWorld = levelState.GameWorld;
+        gameState = levelState;
     }
 
     public void Initialize(IECSWorld world) { }
@@ -75,10 +77,13 @@ internal readonly struct InputSystem : IECSSystem
 
         // get zoom direction
         float zoomDirection = 0.0f;
-        if (state.CurrentMouse.ScrollWheelValue > state.LastMouse.ScrollWheelValue)
-            zoomDirection = 1.0f;
-        else if (state.CurrentMouse.ScrollWheelValue < state.LastMouse.ScrollWheelValue)
-            zoomDirection = -1.0f;
+        if (!gameState.UILayer.MouseHover)
+        {
+            if (state.CurrentMouse.ScrollWheelValue > state.LastMouse.ScrollWheelValue)
+                zoomDirection = 1.0f;
+            else if (state.CurrentMouse.ScrollWheelValue < state.LastMouse.ScrollWheelValue)
+                zoomDirection = -1.0f;
+        }
 
         // compute changes
         camera.Position += movementDirection * cameraMoveSpeed * deltaTime * (1 / camera.Scale);

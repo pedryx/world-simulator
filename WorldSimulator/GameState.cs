@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.UI;
 
 namespace WorldSimulator;
 /// <summary>
@@ -21,6 +22,7 @@ public abstract class GameState
     internal Game Game { get; private set; }
     internal IECSWorld ECSWorld { get; private set; }
     internal Camera Camera { get; private set; }
+    internal UILayer UILayer { get; private set; }
 
     protected abstract void CreateEntities();
     /// <summary>
@@ -38,6 +40,7 @@ public abstract class GameState
         Game = game;
         ECSWorld = Game.Factory.CreateWorld();
         Camera = new Camera(game);
+        UILayer = new UILayer(this);
 
         CreateEntities();
         systems = CreateSystems();
@@ -61,6 +64,7 @@ public abstract class GameState
         }
 
         ECSWorld.Update();
+        UILayer.Update(deltaTime);
     }
 
     internal void Draw(float deltaTime)
@@ -69,5 +73,7 @@ public abstract class GameState
         {
             system.Update(deltaTime);
         }
+
+        UILayer.Draw(deltaTime);
     }
 }
