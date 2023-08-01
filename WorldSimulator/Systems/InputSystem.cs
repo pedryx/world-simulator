@@ -14,7 +14,7 @@ internal struct InputSystem : IECSSystem
     /// <summary>
     /// Speed of camera zooming in/out.
     /// </summary>
-    private const float cameraZoomSpeed = 0.2f;
+    private const float cameraZoomSpeed = 70f;
     /// <summary>
     /// Minimum camera zoomed value.
     /// </summary>
@@ -89,7 +89,7 @@ internal struct InputSystem : IECSSystem
 
         // compute changes
         camera.Position += movementDirection * cameraMoveSpeed * deltaTime * (1 / camera.Scale);
-        camera.Scale *= (1.0f + zoomDirection * cameraZoomSpeed);
+        camera.Scale *= (1.0f + zoomDirection * cameraZoomSpeed * deltaTime);
 
         // clamp values
         camera.Position.X = MathHelper.Clamp(camera.Position.X, gameWorld.Bounds.Left, gameWorld.Bounds.Right);
