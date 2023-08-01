@@ -8,7 +8,7 @@ namespace WorldSimulator.Systems;
 /// <summary>
 /// handles input from mouse and keyboard.
 /// </summary>
-internal struct InputSystem : IECSSystem
+internal readonly struct InputSystem : IECSSystem
 {
     private const float cameraMoveSpeed = 2250.0f;
     /// <summary>
@@ -30,11 +30,7 @@ internal struct InputSystem : IECSSystem
     private readonly Game game;
     private readonly Camera camera;
     private readonly GameWorld gameWorld;
-
-    private KeyboardState lastKeyboardState;
-    private KeyboardState currentKeyboardState = Keyboard.GetState();
-    private MouseState lastMouseState;
-    private MouseState currentMouseState = Mouse.GetState();
+    private readonly InputState state;
 
     public InputSystem(Game game, Camera camera, GameWorld gameWorld)
     {
@@ -47,10 +43,7 @@ internal struct InputSystem : IECSSystem
 
     public void Update(float deltaTime)
     {
-        lastKeyboardState = currentKeyboardState;
-        currentKeyboardState = Keyboard.GetState();
-        lastMouseState = currentMouseState;
-        currentMouseState = Mouse.GetState();
+        state.Update();
 
         HandleSystemControl();
         HandleCameraControl(deltaTime);
@@ -82,9 +75,9 @@ internal struct InputSystem : IECSSystem
 
         // get zoom direction
         float zoomDirection = 0.0f;
-        if (currentMouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
+        if (state.CurrentMouse.ScrollWheelValue > state.LastMouse.ScrollWheelValue)
             zoomDirection = 1.0f;
-        else if (currentMouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue)
+        else if (state.CurrentMouse.ScrollWheelValue < state.LastMouse.ScrollWheelValue)
             zoomDirection = -1.0f;
 
         // compute changes
@@ -115,8 +108,24 @@ internal struct InputSystem : IECSSystem
     }
 
     private bool IsDown(Keys key)
-        => currentKeyboardState.IsKeyDown(key);
+        => state.CurrentKeyboard.IsKeyDown(key);
 
     private bool IsPressed(Keys key)
-        => currentKeyboardState.IsKeyDown(key) && lastKeyboardState.IsKeyUp(key);
+        => state.CurrentKeyboard.IsKeyDown(key) && state.LastKeyboard.IsKeyUp(key);
+
+    private class InputState
+    {
+        public KeyboardState LastKeyboard;
+        public KeyboardState CurrentKeyboard = Keyboard.GetState();
+        public MouseState LastMouse;
+        public MouseState CurrentMouse = Mouse.GetState();
+
+        public void Update()
+        {
+            LastKeyboard = CurrentKeyboard;
+            CurrentKeyboard = Keyboard.GetState();
+            LastMouse = CurrentMouse;
+            CurrentMouse = Mouse.GetState();
+        }
+    }
 }
