@@ -37,7 +37,7 @@ internal class Minimap : UIElement
     {
         spriteBatch = Game.SpriteBatch;
 
-        Vector2 viewFrameSize = Game.Resolution * scale;
+        Vector2 viewFrameSize = Game.DefaultResolution * scale;
         viewFrameTexture = new Texture2D(Game.GraphicsDevice, (int)viewFrameSize.X, (int)viewFrameSize.Y);
         Color[] pixels = new Color[viewFrameTexture.Width * viewFrameTexture.Height];
         for (int i = 0; i < pixels.Length; i++)
@@ -63,8 +63,16 @@ internal class Minimap : UIElement
     public override void Draw(Vector2 position, float deltaTime)
     {
         var original = Game.GraphicsDevice.ScissorRectangle;
-        spriteBatch.Begin(rasterizerState: new RasterizerState() { ScissorTestEnable = true });
-        Game.GraphicsDevice.ScissorRectangle = new Rectangle(position.ToPoint(), Size.ToPoint());
+        Game.GraphicsDevice.ScissorRectangle = new Rectangle
+        (
+            (position * Game.ResolutionScale).ToPoint(),
+            (Size * Game.ResolutionScale).ToPoint()
+        );
+        spriteBatch.Begin
+        (
+            rasterizerState: new RasterizerState() { ScissorTestEnable = true },
+            transformMatrix: Matrix.CreateScale(Game.ResolutionScale.X, Game.ResolutionScale.Y, 1.0f)
+        );
 
         // render chunks
         foreach (var chunk in gameWorld.Chunks.SelectMany(c => c))

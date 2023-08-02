@@ -40,7 +40,7 @@ public abstract class GameState
     {
         Game = game;
         ECSWorld = Game.Factory.CreateWorld();
-        Camera = new Camera(game);
+        Camera = new Camera();
         UILayer = new UILayer(this);
 
         CreateEntities();

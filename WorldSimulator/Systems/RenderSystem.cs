@@ -38,7 +38,8 @@ internal readonly struct RenderSystem : IEntityProcessor<Position, Appearance>
 
     void IEntityProcessor.PreUpdate(float deltaTime)
     {
-        transform.Value = camera.GetTransformMatrix();
+        transform.Value = camera.GetTransformMatrix() 
+            * Matrix.CreateScale(game.ResolutionScale.X, game.ResolutionScale.Y, 1.0f);
         layerViewSize.Value = game.Resolution + new Vector2(2.0f * layerViewOffset * camera.Scale);
 
         spriteBatch.Begin

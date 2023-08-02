@@ -43,9 +43,9 @@ public class LevelState : GameState
 
     protected override void CreateUI()
     {
-        UILayer.AddElement(new Minimap(this, new Vector2(200.0f, 200.0f))
+        UILayer.AddElement(new Minimap(this, new Vector2(300.0f, 300.0f))
         {
-            Offset = new Vector2(Game.Resolution.X - 200.0f - 5.0f, 5.0f),
+            Offset = new Vector2(Game.DefaultResolution.X - 300.0f - 5.0f, 5.0f),
         });
 
         base.CreateUI();

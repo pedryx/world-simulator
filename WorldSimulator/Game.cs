@@ -15,6 +15,8 @@ namespace WorldSimulator;
 /// </summary>
 public class Game : MonoGameBaseGame
 {
+    private const int defaultResolutionWidth = 1920;
+    private const int defaultResolutionHeight = 1080;
     private const int resolutionWidth = 1280;
     private const int resolutionHeight = 720;
     private readonly Color clearColor = Color.Black;
@@ -36,8 +38,14 @@ public class Game : MonoGameBaseGame
     /// <summary>
     /// Width and height of game window.
     /// </summary>
-    internal Vector2 Resolution 
-        => new(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
+    internal Vector2 Resolution => new(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
+
+    /// <summary>
+    /// Default width and height of game window.
+    /// </summary>
+    internal static Vector2 DefaultResolution => new(defaultResolutionWidth, defaultResolutionHeight);
+
+    internal Vector2 ResolutionScale => Resolution / DefaultResolution;
 
     public Game(ECSFactory factory, int seed)
     {

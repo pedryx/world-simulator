@@ -6,18 +6,11 @@ namespace WorldSimulator;
 /// </summary>
 internal class Camera
 {
-    private readonly Game game;
-
     /// <summary>
     /// Position of the center of the camera.
     /// </summary>
     public Vector2 Position;
     public float Scale = 1.0f;
-
-    public Camera(Game game)
-    {
-        this.game = game;
-    }
 
     /// <summary>
     /// Bounding rectangle of camera's viev.
@@ -26,7 +19,7 @@ internal class Camera
     {
         get
         {
-            Vector2 size = game.Resolution / Scale;
+            Vector2 size = Game.DefaultResolution / Scale;
             return new((Position - size / 2.0f).ToPoint(), size.ToPoint());
         }
     }
@@ -38,5 +31,5 @@ internal class Camera
     public Matrix GetTransformMatrix()
         => Matrix.CreateTranslation(-Position.X, -Position.Y, 0)
         * Matrix.CreateScale(Scale, Scale, 1.0f)
-        * Matrix.CreateTranslation(game.Resolution.X / 2, game.Resolution.Y / 2, 0);
+        * Matrix.CreateTranslation(Game.DefaultResolution.X / 2, Game.DefaultResolution.Y / 2, 0);
 }
