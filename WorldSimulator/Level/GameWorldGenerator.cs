@@ -50,7 +50,8 @@ internal class GameWorldGenerator
     /// <summary>
     /// Maps pixels to terrains.
     /// </summary>
-    private Terrain[][] terrainMap = new Terrain[GameWorld.Size][];
+    private Terrain[][] terrainMap;
+    private IEntity[][] chunks;
 
     public GameWorldGenerator(Game game, LevelFactory factory)
     {
@@ -74,32 +75,35 @@ internal class GameWorldGenerator
 
     public GameWorld Generate()
     {
-        // Noise parameters are fine-tuned.
-        terrainNoise = new Noise(game.GenerateSeed(), 0.0008f, 0.0016f, 0.0032f);
-        graph = new Graph();
-        terrainMap = new Terrain[GameWorld.Size][];
-        for (int i = 0; i < terrainMap.Length; i++)
-        {
-            terrainMap[i] = new Terrain[GameWorld.Size];
-        }
-
         GenerateTerrain();
         CreateGraph();
 
-        //factory.CreateVillager(new Vector2(WorldSize) / 2.0f);
-
-        return new(terrainMap, graph);
+        return new(chunks, terrainMap, graph);
     }
 
     private void GenerateTerrain()
     {
         int chunkCount = GameWorld.Size / chunkSize;
 
+        // Noise parameters are fine-tuned.
+        terrainNoise = new Noise(game.GenerateSeed(), 0.0008f, 0.0016f, 0.0032f);
+        terrainMap = new Terrain[GameWorld.Size][];
+        for (int i = 0; i < terrainMap.Length; i++)
+        {
+            terrainMap[i] = new Terrain[GameWorld.Size];
+        }
+        chunks = new IEntity[chunkCount][];
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i] = new IEntity[chunkCount];
+        }
+
         for (int y = 0; y < chunkCount; y++)
         {
             for (int x = 0; x < chunkCount; x++)
             {
-                GenerateChunk(new Point(x * chunkSize, y * chunkSize));
+                chunks[y][x] = GenerateChunk(new Vector2(x, y) * chunkSize);
+
             }
         }
     }
@@ -107,11 +111,11 @@ internal class GameWorldGenerator
     /// <summary>
     /// Generate one chunk of terrain.
     /// </summary>
-    private void GenerateChunk(Point offset)
+    private IEntity GenerateChunk(Vector2 offset)
     {
         Color[] pixels = new Color[chunkSize * chunkSize];
         Texture2D terrainTexture = new(game.GraphicsDevice, chunkSize, chunkSize);
-        IEntity terrain = factory.CreateTerrain(terrainTexture, offset.ToVector2());
+        IEntity entity = factory.CreateTerrain(terrainTexture, offset);
 
         /*
          * Pregenerate random value for each pixel, later this value will be used to determine if resource should be
@@ -128,8 +132,8 @@ internal class GameWorldGenerator
         terrainNoise.Begin();
         Parallel.For(0, pixels.Length, i =>
         {
-            int x = i % chunkSize + offset.X;
-            int y = i / chunkSize + offset.Y;
+            int x = i % chunkSize + (int)offset.X;
+            int y = i / chunkSize + (int)offset.Y;
 
             // set border biome, GridDistance is also size of border
             if (x < GridDistance || x >= GameWorld.Size - GridDistance 
@@ -156,6 +160,7 @@ internal class GameWorldGenerator
         });
 
         terrainTexture.SetData(pixels);
+        return entity;
     }
 
     /// <summary>
@@ -163,6 +168,8 @@ internal class GameWorldGenerator
     /// </summary>
     private void CreateGraph()
     {
+        graph = new Graph();
+
         // its a grid so we just need to create edges for all adject grid points, GridDistance is also size of border
         for (int y = GridDistance; y < GameWorld.Size - GridDistance; y += GridDistance)
             {

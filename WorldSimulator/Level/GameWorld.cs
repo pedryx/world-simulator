@@ -2,6 +2,8 @@
 
 using System.Collections.Generic;
 
+using WorldSimulator.ECS.AbstractECS;
+
 namespace WorldSimulator.Level;
 internal class GameWorld
 {
@@ -22,8 +24,11 @@ internal class GameWorld
 
     public Rectangle Bounds { get; private set; }
 
-    public GameWorld(Terrain[][] terrainMap, Graph graph)
+    public IEntity[][] Chunks { get; private set; }
+
+    public GameWorld(IEntity[][] chunks, Terrain[][] terrainMap, Graph graph)
     {
+        Chunks = chunks;
         this.terrainMap = terrainMap;
         this.graph = graph;
         Bounds = new Rectangle(Point.Zero, new Point(Size));

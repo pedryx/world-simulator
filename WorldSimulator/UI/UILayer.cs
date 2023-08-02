@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 using System.Collections.Generic;
 
@@ -55,13 +56,9 @@ internal class UILayer
 
     public void Draw(float deltaTime)
     {
-        Game.SpriteBatch.Begin();
-
         foreach (var element in elements)
         {
             element.Draw(element.Offset, deltaTime);
         }
-
-        Game.SpriteBatch.End();
     }
 }

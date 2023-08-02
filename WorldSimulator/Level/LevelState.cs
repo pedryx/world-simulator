@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Systems;
+using WorldSimulator.UI.Elements;
 
 namespace WorldSimulator.Level;
 public class LevelState : GameState
@@ -40,5 +41,15 @@ public class LevelState : GameState
             Game.Factory.CreateSystem(new LayerUpdateSystem(Game, Camera)),
             Game.Factory.CreateSystem(new RenderSystem(Game.SpriteBatch, Camera)),
         };
+    }
+
+    protected override void CreateUI()
+    {
+        UILayer.AddElement(new Minimap(this, new Vector2(200.0f, 200.0f))
+        {
+            Offset = new Vector2(Game.Resolution.X - 200.0f - 5.0f, 5.0f),
+        });
+
+        base.CreateUI();
     }
 }

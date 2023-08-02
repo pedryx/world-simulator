@@ -29,4 +29,27 @@ internal static class SpriteBatchExtensions
             sprite.LayerDepth
         );
     }
+
+    public static void Draw
+    (
+        this SpriteBatch spriteBatch,
+        Sprite sprite,
+        Vector2 positionOffset,
+        Vector2 scaleOffset,
+        float rotationOffset
+    )
+    {
+        spriteBatch.Draw
+        (
+            sprite.Texture,
+            sprite.Position + positionOffset,
+            sprite.SourceRectangle,
+            sprite.Color,
+            sprite.Rotation + rotationOffset,
+            sprite.Origin,
+            sprite.Scale * scaleOffset,
+            sprite.Effects,
+            sprite.LayerDepth
+        );
+    }
 }

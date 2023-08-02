@@ -34,6 +34,7 @@ public abstract class GameState
     /// </summary>
     /// <returns></returns>
     protected abstract IEnumerable<IECSSystem> CreateRenderSystems();
+    protected virtual void CreateUI() { }
 
     internal void Initialize(Game game)
     {
@@ -45,6 +46,7 @@ public abstract class GameState
         CreateEntities();
         systems = CreateSystems();
         renderSystems = CreateRenderSystems();
+        CreateUI();
 
         foreach (var system in systems)
         {
