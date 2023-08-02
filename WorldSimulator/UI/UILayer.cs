@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ internal class UILayer
     /// Contains elements which belongs to this layer.
     /// </summary>
     private readonly List<UIElement> elements = new();
+    private readonly SpriteBatch spriteBatch;
 
     private MouseState mouseState;
 
@@ -27,6 +29,7 @@ internal class UILayer
     {
         Game = gameState.Game;
         GameState = gameState;
+        spriteBatch = Game.SpriteBatch;
     }
 
     public void AddElement(UIElement element)
@@ -56,9 +59,16 @@ internal class UILayer
 
     public void Draw(float deltaTime)
     {
+        spriteBatch.Begin
+        (
+            transformMatrix: Matrix.CreateScale(Game.ResolutionScale.X, Game.ResolutionScale.Y, 1.0f)
+        );
+
         foreach (var element in elements)
         {
             element.Draw(element.Offset, deltaTime);
         }
+
+        spriteBatch.End();
     }
 }

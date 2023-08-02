@@ -31,11 +31,12 @@ internal class Minimap : UIElement
         camera = levelState.Camera;
         Size = size;
         scale = Size / new Vector2(GameWorld.Size);
+
     }
 
     protected override void Initialize()
     {
-        spriteBatch = Game.SpriteBatch;
+        spriteBatch = new SpriteBatch(Game.GraphicsDevice);
 
         Vector2 viewFrameSize = Game.DefaultResolution * scale;
         viewFrameTexture = new Texture2D(Game.GraphicsDevice, (int)viewFrameSize.X, (int)viewFrameSize.Y);
@@ -62,6 +63,7 @@ internal class Minimap : UIElement
 
     public override void Draw(Vector2 position, float deltaTime)
     {
+        // set scissor
         var original = Game.GraphicsDevice.ScissorRectangle;
         Game.GraphicsDevice.ScissorRectangle = new Rectangle
         (
@@ -73,6 +75,7 @@ internal class Minimap : UIElement
             rasterizerState: new RasterizerState() { ScissorTestEnable = true },
             transformMatrix: Matrix.CreateScale(Game.ResolutionScale.X, Game.ResolutionScale.Y, 1.0f)
         );
+
 
         // render chunks
         foreach (var chunk in gameWorld.Chunks.SelectMany(c => c))
@@ -106,6 +109,7 @@ internal class Minimap : UIElement
         );
 
         spriteBatch.End();
+        // restore original scissor
         Game.GraphicsDevice.ScissorRectangle = original;
 
         base.Draw(position, deltaTime);
