@@ -6,7 +6,7 @@ using WorldSimulator.Level;
 
 namespace WorldSimulator.Systems;
 /// <summary>
-/// handles input from mouse and keyboard.
+/// System responsible for handling input from mouse and keyboard.
 /// </summary>
 internal readonly struct InputSystem : IECSSystem
 {
@@ -18,7 +18,7 @@ internal readonly struct InputSystem : IECSSystem
     /// <summary>
     /// Minimum camera zoomed value.
     /// </summary>
-    private const float cameraMinZoom = 0.5f;
+    private const float cameraMinZoom = 0.08f;
     /// <summary>
     /// Maximum camera zoomed value.
     /// </summary>

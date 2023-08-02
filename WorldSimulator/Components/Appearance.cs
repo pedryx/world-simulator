@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 using WorldSimulator.ECS.AbstractECS;
 
@@ -6,21 +7,16 @@ namespace WorldSimulator.Components;
 [Component]
 internal struct Appearance
 {
-    public Sprite Sprite = new();
+    public Texture2D Texture;
     /// <summary>
-    /// Is appearance visible by camera (dont take alpha into cosideration).
+    /// Origin point of a <see cref="Texture"/>  in normalized format, using a coordinates within the range [0, 1].
     /// </summary>
-    public bool Visible;
+    public Vector2 Origin;
+    /// <summary>
+    /// Scaling factor applied to the <see cref="Texture"/> during rendering.
+    /// </summary>
+    public float Scale = 1.0f;
+    public SpriteEffects Effects;
 
     public Appearance() { }
-
-    public Appearance(Sprite sprite)
-    {
-        Sprite = sprite;
-    }
-
-    public Appearance(Texture2D texture, float scale = 1.0f)
-    {
-        Sprite = new Sprite(texture, scale);
-    }
 }

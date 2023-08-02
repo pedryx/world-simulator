@@ -4,14 +4,14 @@ using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems;
-internal readonly struct MovementSystem : IEntityProcessor<Transform, Movement>
+internal readonly struct MovementSystem : IEntityProcessor<Position, Movement>
 {
-    public void Process(ref Transform transform, ref Movement movement, float deltaTime)
+    public void Process(ref Position position, ref Movement movement, float deltaTime)
     {
-        if (movement.Destination == transform.Position)
+        if (movement.Destination == position.Coordinates)
             return;
 
-        transform.Position += Vector2.Normalize(movement.Destination - transform.Position) 
+        position.Coordinates += Vector2.Normalize(movement.Destination - position.Coordinates) 
             * movement.Speed * deltaTime;
     }
 }

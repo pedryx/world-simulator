@@ -6,20 +6,17 @@ using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems;
 /// <summary>
-/// Dynamically changes orientation of entity based on its moving direction.
+/// System which dynamically changes orientation of entities based on their moving direction.
 /// </summary>
-internal readonly struct OrientationUpdateSystem : IEntityProcessor<Transform, Movement, Appearance>
+internal readonly struct OrientationUpdateSystem : IEntityProcessor<Position, Movement, Appearance>
 {
-    public void Process(ref Transform transform, ref Movement movement, ref Appearance appearance, float deltaTime)
+    public void Process(ref Position position, ref Movement movement, ref Appearance appearance, float deltaTime)
     {
-        Vector2 direction = movement.Destination - transform.Position;
+        Vector2 direction = movement.Destination - position.Coordinates;
 
         if (direction.X == 0)
             return;
 
-        if (direction.X > 0.0f)
-            appearance.Sprite.Effects = SpriteEffects.FlipHorizontally;
-        else
-            appearance.Sprite.Effects = SpriteEffects.None;
+        appearance.Effects = direction.X > 0.0f ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
     }
 }

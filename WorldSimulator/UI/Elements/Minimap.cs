@@ -69,10 +69,18 @@ internal class Minimap : UIElement
         // render chunks
         foreach (var chunk in gameWorld.Chunks.SelectMany(c => c))
         {
-            var transform = chunk.GetComponent<Transform>();
-            var appearance = chunk.GetComponent<Appearance>();
-
-            spriteBatch.Draw(appearance.Sprite, transform.Position * scale + position, transform.Scale * scale, 0.0f);
+            spriteBatch.Draw
+            (
+                chunk.GetComponent<Appearance>().Texture,
+                chunk.GetComponent<Position>().Coordinates * scale + position,
+                null,
+                Color.White,
+                0.0f,
+                Vector2.Zero,
+                scale,
+                SpriteEffects.None,
+                0.0f
+            );
         }
 
         // render view frame

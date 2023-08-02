@@ -41,34 +41,30 @@ internal class LevelFactory
     {
         IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
 
-        builder.AddComponent<Transform>();
+        builder.AddComponent<Position>();
         builder.AddComponent<Appearance>();
 
         return builder;
     }
 
-    private IEntityBuilder CreateBasicBuilder(string textureName, float scale, Rectangle? sourceRectangle = null)
+    private IEntityBuilder CreateBasicBuilder(string textureName, float scale)
     {
         IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
-        Texture2D texture = game.GetResourceManager<Texture2D>()[textureName];
 
-        builder.AddComponent<Transform>();
-        builder.AddComponent(new Appearance(new Sprite()
+        builder.AddComponent<Position>();
+        builder.AddComponent(new Appearance()
         {
-            Texture = texture,
-            Origin = (sourceRectangle == null ? texture.GetSize() : sourceRectangle.Value.Size.ToVector2())
-                * new Vector2(0.5f, 1.0f),
+            Texture = game.GetResourceManager<Texture2D>()[textureName],
+            Origin = new Vector2(0.5f, 1.0f),
             Scale = scale,
-            SourceRectangle = sourceRectangle,
-        }));
-        builder.AddComponent<LayerUpdate>();
+        });
 
         return builder;
     }
 
-    private IEntityBuilder CreateAnimalBuilder(string textureName, float scale, Rectangle? sourceRectangle = null)
+    private IEntityBuilder CreateAnimalBuilder(string textureName, float scale)
     {
-        IEntityBuilder builder = CreateBasicBuilder(textureName, scale, sourceRectangle);
+        IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
 
         builder.AddComponent(new Movement()
         {
@@ -85,7 +81,7 @@ internal class LevelFactory
     {
         IEntity entity = builder.Build();
 
-        entity.GetComponent<Transform>().Position = position;
+        entity.GetComponent<Position>().Coordinates = position;
 
         return entity;
     }
@@ -94,7 +90,7 @@ internal class LevelFactory
     {
         IEntity entity = builder.Build();
 
-        entity.GetComponent<Transform>().Position = position;
+        entity.GetComponent<Position>().Coordinates = position;
         entity.GetComponent<Movement>().Destination = position;
 
         return entity;
@@ -134,8 +130,8 @@ internal class LevelFactory
     {
         IEntity entity = terrainBuilder.Build();
 
-        entity.GetComponent<Transform>().Position = position;
-        entity.GetComponent<Appearance>().Sprite.Texture = texture;
+        entity.GetComponent<Position>().Coordinates = position;
+        entity.GetComponent<Appearance>().Texture = texture;
 
         return entity;
     }
