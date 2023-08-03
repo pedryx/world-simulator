@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 using System.Collections.Generic;
 
@@ -43,7 +44,9 @@ public class LevelState : GameState
 
     protected override void CreateUI()
     {
-        UILayer.AddElement(new Minimap(this, new Vector2(300.0f, 300.0f))
+        Texture2D bigBorder = Game.GetResourceManager<Texture2D>()["ui border big"];
+
+        UILayer.AddElement(new Minimap(this, new Vector2(300.0f, 300.0f), bigBorder)
         {
             Offset = new Vector2(Game.DefaultResolution.X - 300.0f - 5.0f, 5.0f),
         });

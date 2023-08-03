@@ -13,10 +13,10 @@ namespace WorldSimulator.UI.Elements;
 internal class Minimap : UIElement
 {
     private const int viewFrameThickness = 3;
-    private const int borderSize = 10;
+    private const int borderSize = 15;
 
     private readonly Color viewFrameColor = Color.White;
-    private readonly Color borderColor = new(230, 255, 186);
+    private readonly Color borderColor = Color.Black;
 
     private readonly GameWorld gameWorld;
     private readonly Camera camera;
@@ -24,6 +24,7 @@ internal class Minimap : UIElement
     /// Scale factor for chunks which ensures that they fit the minimap.
     /// </summary>
     private readonly Vector2 scale;
+    private readonly Texture2D borderTexture;
 
     /// <summary>
     /// Custom spritebatch instance, which does not affect rendering of other UI elements.
@@ -34,11 +35,12 @@ internal class Minimap : UIElement
 
     public Vector2 Size { get; private set; }
 
-    public Minimap(LevelState levelState, Vector2 size)
+    public Minimap(LevelState levelState, Vector2 size, Texture2D borderTexture)
     {
         gameWorld = levelState.GameWorld;
         camera = levelState.Camera;
         Size = size;
+        this.borderTexture = borderTexture;
         scale = (Size - new Vector2(borderSize * 2.0f)) / new Vector2(GameWorld.Size);
 
     }
@@ -52,14 +54,6 @@ internal class Minimap : UIElement
 
     public override void Draw(Vector2 position, float deltaTime)
     {
-        // render border
-        spriteBatch.Begin
-        (
-            transformMatrix: Matrix.CreateScale(Game.ResolutionScale.X, Game.ResolutionScale.Y, 1.0f)
-        );
-        spriteBatch.Draw(Game.BlankTexture, new Rectangle(position.ToPoint(), Size.ToPoint()), borderColor);
-        spriteBatch.End();
-
         // set scissor
         var original = Game.GraphicsDevice.ScissorRectangle;
         Game.GraphicsDevice.ScissorRectangle = new Rectangle
@@ -96,6 +90,14 @@ internal class Minimap : UIElement
         spriteBatch.End();
         // restore original scissor
         Game.GraphicsDevice.ScissorRectangle = original;
+
+        // render border
+        spriteBatch.Begin
+        (
+            transformMatrix: Matrix.CreateScale(Game.ResolutionScale.X, Game.ResolutionScale.Y, 1.0f)
+        );
+        spriteBatch.Draw(borderTexture, new Rectangle(position.ToPoint(), Size.ToPoint()), borderColor);
+        spriteBatch.End();
 
         base.Draw(position, deltaTime);
     }
