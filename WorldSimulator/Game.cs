@@ -34,7 +34,7 @@ public class Game : MonoGameBaseGame
     internal GameState ActiveState { get; private set; }
     internal SpriteBatch SpriteBatch { get; private set; }
     internal GraphicsDeviceManager Graphics { get; private set; }
-    internal TextureFactory TextureFactory { get; private set; }
+    internal Texture2D BlankTexture { get; private set; }
 
     /// <summary>
     /// Width and height of game window.
@@ -95,7 +95,10 @@ public class Game : MonoGameBaseGame
     protected override void LoadContent()
     {
         SpriteBatch = new SpriteBatch(GraphicsDevice);
-        TextureFactory = new TextureFactory(GraphicsDevice);
+
+        BlankTexture = new Texture2D(GraphicsDevice, 1, 1);
+        BlankTexture.SetData(new Color[] { Color.White });
+
         resourceManagers = new Dictionary<Type, IResourceManager>()
         {
             { typeof(Texture2D) ,new TextureManager(GraphicsDevice) },
