@@ -30,7 +30,7 @@ internal readonly struct DebugSystem : IECSSystem
         }
 
         float average = samples.Average();
-        game.Window.Title = $"FPS: {1 / average:#}, deltaTime: {average:#.###}, position: {camera.Position}";
+        game.Window.Title = $"FPS: {1 / average:#}, deltaTime: {average:#.######}, position: {camera.Position}";
 
     }
 }

@@ -1,8 +1,6 @@
 ﻿
 using DefaultEcs;
 
-using System;
-
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.DefaultEcs;

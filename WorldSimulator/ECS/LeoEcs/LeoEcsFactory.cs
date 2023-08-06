@@ -24,7 +24,7 @@ public class LeoEcsFactory : ECSFactory
             (types, values, world) =>
             {
                 EcsEntity entity = ((BasicECSWorld<EcsWorld>)world).World.NewEntity();
-                MethodInfo method = typeof(EcsEntityExtensions).GetMethod("Replace");
+                MethodInfo method = typeof(EcsEntityExtensions).GetMethod(nameof(EcsEntityExtensions.Replace));
 
                 for (int i = 0; i < types.Count; i++)
                 {
