@@ -17,6 +17,10 @@ internal class GameWorldGenerator
     /// Width and height of one chunk in pixels.
     /// </summary>
     private const int chunkSize = 512;
+    /// <summary>
+    /// Chance that village will be spawned at specific pixel.
+    /// </summary>
+    private const float spawnVillageChance = 0.000001f;
 
     private readonly Game game;
     /// <summary>
@@ -149,8 +153,16 @@ internal class GameWorldGenerator
             pixels[i] = terrain.Color;
             terrainMap[y][x] = terrain;
             
+            // try to spawn village
+            if (terrain.Buildable && chances[i] < spawnVillageChance)
+            {
+                lock(factoryLock)
+                {
+                    SpawnVillage(new Vector2(x, y));
+                }
+            }
             // try to spawn resource
-            if (terrain.Resource != null && chances[i] < terrain.ResourceSpawnChance)
+            else if (terrain.Resource != null && chances[i] < terrain.ResourceSpawnChance)
             {
                 lock (factoryLock)
                 {
@@ -161,6 +173,15 @@ internal class GameWorldGenerator
 
         terrainTexture.SetData(pixels);
         return entity;
+    }
+
+    private void SpawnVillage(Vector2 position)
+    {
+        factory.CreateMainBuilding(position);
+
+        factory.CreateVillager(position);
+        factory.CreateVillager(position);
+        factory.CreateVillager(position);
     }
 
     /// <summary>

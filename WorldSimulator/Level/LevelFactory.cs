@@ -17,11 +17,14 @@ internal class LevelFactory
     private readonly LevelState levelState;
 
     private readonly IEntityBuilder terrainBuilder;
+    private readonly IEntityBuilder villagerBuilder;
+
     private readonly IEntityBuilder treeBuilder;
     private readonly IEntityBuilder rockBuilder;
     private readonly IEntityBuilder depositeBuilder;
     private readonly IEntityBuilder deerBuilder;
-    private readonly IEntityBuilder villagerBuilder;
+
+    private readonly IEntityBuilder mainBuildingBuilder;
 
     public LevelFactory(Game game, LevelState gameState)
     {
@@ -33,7 +36,8 @@ internal class LevelFactory
         rockBuilder = CreateBasicBuilder("boulder", 0.1f);
         depositeBuilder = CreateBasicBuilder("iron deposite", 0.1f);
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
-        villagerBuilder = CreateAnimalBuilder("villager", 0.1f);
+        villagerBuilder = CreateAnimalBuilder("villager", 0.2f);
+        mainBuildingBuilder = CreateBasicBuilder("main building", 0.5f);
     }
 
     #region builders
@@ -99,6 +103,9 @@ internal class LevelFactory
 
     public IEntity CreateVillager(Vector2 position)
         => CreateDynamicEntity(villagerBuilder, position);
+
+    public IEntity CreateMainBuilding(Vector2 position)
+        => CreateStaticEntity(mainBuildingBuilder, position);
 
     public IEntity CreateResource(Resource resource, Vector2 position)
     {
