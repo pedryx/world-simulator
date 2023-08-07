@@ -5,6 +5,12 @@
 /// </summary>
 public interface IEntity
 {
+    /// <summary>
+    /// Determine if entity has been destroyed by calling <see cref="Destroy"/>.
+    /// </summary>
+    /// <returns>True, if entity has been destroyed, otherwise false.</returns>
+    bool IsDestroyed();
+
     void AddComponent<TComponent>(TComponent component)
         where TComponent : struct;
 

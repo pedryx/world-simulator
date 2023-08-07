@@ -30,4 +30,7 @@ internal class DefaultEcsEntity : IEntity
     public void RemoveComponent<TComponent>()
         where TComponent : struct
         => Entity.Remove<TComponent>();
+
+    public bool IsDestroyed()
+        => Entity.IsAlive;
 }

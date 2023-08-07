@@ -29,6 +29,9 @@ internal class HypEcsEntity : IEntity
         where TComponent : struct 
         => world.HasComponent<TComponent>(entity);
 
+    public bool IsDestroyed()
+        => world.IsAlive(entity);
+
     public void RemoveComponent<TComponent>()
         where TComponent : struct 
         => world.RemoveComponent<TComponent>(entity);

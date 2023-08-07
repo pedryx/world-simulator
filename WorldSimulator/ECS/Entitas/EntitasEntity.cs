@@ -3,6 +3,8 @@
 namespace WorldSimulator.ECS.Entitas;
 internal class EntitasEntity : AbstractECS.IEntity
 {
+    private bool isDestroyed = false;
+
     public Entity Entity { get; private set; }
 
     public EntitasEntity(Entity entity)
@@ -15,7 +17,10 @@ internal class EntitasEntity : AbstractECS.IEntity
         => Entity.AddComponent(ComponentWrapper<TComponent>.ID, new ComponentWrapper<TComponent>(component));
 
     public void Destroy()
-        => Entity.Destroy();
+    {
+        isDestroyed = true;
+        Entity.Destroy();
+    }
 
     public ref TComponent GetComponent<TComponent>()
         where TComponent : struct
@@ -28,4 +33,7 @@ internal class EntitasEntity : AbstractECS.IEntity
     public void RemoveComponent<TComponent>()
         where TComponent : struct
         => Entity.RemoveComponent(ComponentWrapper<TComponent>.ID);
+
+    public bool IsDestroyed()
+        => isDestroyed;
 }

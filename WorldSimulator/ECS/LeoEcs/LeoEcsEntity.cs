@@ -33,4 +33,7 @@ internal class LeoEcsEntity : IEntity
     public void RemoveComponent<TComponent>()
         where TComponent : struct 
         => Entity.Del<TComponent>();
+
+    public bool IsDestroyed()
+        => Entity.IsAlive();
 }
