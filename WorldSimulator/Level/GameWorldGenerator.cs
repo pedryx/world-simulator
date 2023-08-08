@@ -1,10 +1,16 @@
-﻿using Microsoft.Xna.Framework;
+﻿using KdTree;
+using KdTree.Math;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Level;
 internal class GameWorldGenerator
@@ -56,6 +62,7 @@ internal class GameWorldGenerator
     /// </summary>
     private TerrainType[][] terrainMap;
     private IEntity[][] chunks;
+    private IDictionary<ResourceType, KdTree<float, IEntity>> resources;
 
     public GameWorldGenerator(Game game, LevelFactory factory)
     {
@@ -82,13 +89,14 @@ internal class GameWorldGenerator
         GenerateTerrain();
         CreateGraph();
 
-        return new(chunks, terrainMap, graph);
+        return new(chunks, terrainMap, graph, resources);
     }
 
     private void GenerateTerrain()
     {
         int chunkCount = GameWorld.Size / chunkSize;
 
+        // Prepare data structures for game world.
         // Noise parameters are fine-tuned.
         terrainNoise = new Noise(game.GenerateSeed(), 0.0008f, 0.0016f, 0.0032f);
         terrainMap = new TerrainType[GameWorld.Size][];
@@ -101,13 +109,16 @@ internal class GameWorldGenerator
         {
             chunks[i] = new IEntity[chunkCount];
         }
+        resources = ResourceTypes
+            .GetAllTypes()
+            .ToDictionary(type => type, type => new KdTree<float, IEntity>(2, new FloatMath()));
 
+        // Generate game world chunks.
         for (int y = 0; y < chunkCount; y++)
         {
             for (int x = 0; x < chunkCount; x++)
             {
                 chunks[y][x] = GenerateChunk(new Vector2(x, y) * chunkSize);
-
             }
         }
     }
@@ -166,7 +177,8 @@ internal class GameWorldGenerator
             {
                 lock (factoryLock)
                 {
-                    factory.CreateResource(terrain.Resource, new Vector2(x, y));
+                    IEntity resource = factory.CreateResource(terrain.Resource, new Vector2(x, y));
+                    resources[terrain.Resource].Add(new float[] { x, y }, resource);
                 }
             }
         });

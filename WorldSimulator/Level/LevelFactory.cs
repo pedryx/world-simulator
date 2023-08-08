@@ -74,7 +74,11 @@ internal class LevelFactory
         {
             Speed = 30.0f,
         });
-        builder.AddComponent<AnimalController>();
+        builder.AddComponent(new AnimalController()
+        {
+            ResourceType = ResourceTypes.Deer,
+        });
+        builder.AddComponent<Owner>();
 
         return builder;
     }
@@ -131,7 +135,13 @@ internal class LevelFactory
         => CreateStaticEntity(depositeBuilder, position);
 
     public IEntity CreateDeer(Vector2 position)
-        => CreateDynamicEntity(deerBuilder, position);
+    {
+        IEntity deer = CreateDynamicEntity(deerBuilder, position);
+
+        deer.GetComponent<Owner>().Entity = deer;
+
+        return deer;
+    }
 
     public IEntity CreateTerrain(Texture2D texture, Vector2 position)
     {

@@ -1,5 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace WorldSimulator;
 internal class TerrainType
 {
@@ -84,4 +87,7 @@ internal static class TerrainTypes
         Resource = ResourceTypes.Deposite,
         ResourceSpawnChance = 0.002f,
     };
+
+    public static IEnumerable<TerrainType> GetAllTypes()
+        => typeof(TerrainTypes).GetFields().Select(p => (TerrainType)p.GetValue(null));
 }

@@ -1,8 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using KdTree;
+
+using Microsoft.Xna.Framework;
 
 using System.Collections.Generic;
+using System.Linq;
 
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Level;
 internal class GameWorld
@@ -21,17 +25,55 @@ internal class GameWorld
     /// Grid used for path-finding of moving entities.
     /// </summary>
     private readonly Graph graph;
+    /// <summary>
+    /// Contains mapping between resource types and kd-trees of resources of corresponding resource type. These
+    /// kd-trees are used for finding nearest resource (<see cref="GetNearestResource(ResourceType, Vector2)"/>).
+    /// </summary>
+    private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
 
     public Rectangle Bounds { get; private set; }
 
     public IEntity[][] Chunks { get; private set; }
 
-    public GameWorld(IEntity[][] chunks, TerrainType[][] terrainMap, Graph graph)
+    public GameWorld
+    (
+        IEntity[][] chunks,
+        TerrainType[][] terrainMap,
+        Graph graph,
+        IDictionary<ResourceType, KdTree<float, IEntity>> resources
+    )
     {
-        Chunks = chunks;
         this.terrainMap = terrainMap;
         this.graph = graph;
+        this.resources = resources;
+        
+        Chunks = chunks;
         Bounds = new Rectangle(Point.Zero, new Point(Size));
+    }
+
+    /// <summary>
+    /// Get resource nearest to specific position.
+    /// </summary>
+    /// <param name="type">Type of resource to get.</param>
+    public IEntity GetNearestResource(ResourceType type, Vector2 position)
+        => resources[type].GetNearestNeighbours(position.ToFloat(), 1).FirstOrDefault()?.Value;
+
+    /// <summary>
+    /// Update resource's position in kd-tree.
+    /// </summary>
+    /// <param name="type">Type of resource to update.</param>
+    /// <param name="entity">Entity representing resource to update.</param>
+    /// <param name="oldPosition">Old position of entity to update.</param>
+    /// <param name="newPosition">New position of entity to update.</param>
+    public void UpdateResourcePosition(ResourceType type, IEntity entity, Vector2 oldPosition, Vector2 newPosition)
+    {
+        var resourceTree = resources[type];
+
+        if (resourceTree.TryFindValueAt(oldPosition.ToFloat(), out _))
+        {
+            resourceTree.RemoveAt(oldPosition.ToFloat());
+        }
+        resourceTree.Add(newPosition.ToFloat(), entity);
     }
 
     /// <summary>

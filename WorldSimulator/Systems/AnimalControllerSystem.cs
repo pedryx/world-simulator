@@ -11,23 +11,47 @@ namespace WorldSimulator.Systems;
 /// <summary>
 /// System responsible for controlling movement of animals.
 /// </summary>
-internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Movement, AnimalController>
+internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Movement, AnimalController, Owner>
 {
     private const float maxRadius = 80.0f;
     private const float minRadius = 20.0f;
+    private const float maxTimeToUpdate = 1.0f;
+    private const float minTimeToUpdate = 0.5f;
 
-    private readonly Random random;
+    private readonly Random destinationRandom;
+    private readonly Random timeToUpdateRandom = new();
     private readonly GameWorld gameWorld;
 
     public AnimalControllerSystem(Game game, GameWorld gameWorld)
     {
         this.gameWorld = gameWorld;
 
-        random = new Random(game.GenerateSeed());
+        destinationRandom = new Random(game.GenerateSeed());
     }
 
-    public void Process(ref Position position, ref Movement movement, ref AnimalController _, float deltaTime)
+    public void Process
+    (
+        ref Position position,
+        ref Movement movement,
+        ref AnimalController controller,
+        ref Owner owner,
+        float deltaTime
+    )
     {
+        controller.TimeToUpdate -= deltaTime;
+        // check if entity position in corresponding kd-tree should be updated
+        if (controller.TimeToUpdate >= 0.0f)
+        {
+            controller.TimeToUpdate = timeToUpdateRandom.NextSingle(minTimeToUpdate, maxTimeToUpdate);
+            gameWorld.UpdateResourcePosition
+            (
+                controller.ResourceType,
+                owner.Entity,
+                controller.PreviousPosition,
+                position.Coordinates
+            );
+        }
+
         // Check if the animal has reached its destination.
         if (Vector2.Distance(position.Coordinates, movement.Destination) <= movement.Speed * deltaTime)
         {
@@ -39,7 +63,7 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
             Vector2 destination;
             do
             {
-                destination = random.NextPointInRing(position.Coordinates, minRadius, maxRadius + radiusOffset);
+                destination = destinationRandom.NextPointInRing(position.Coordinates, minRadius, maxRadius + radiusOffset);
                 radiusOffset += 1.0f;
             }
             while (!gameWorld.IsAnimalWalkable(destination));
