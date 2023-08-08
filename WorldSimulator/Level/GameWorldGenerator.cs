@@ -173,12 +173,12 @@ internal class GameWorldGenerator
                 }
             }
             // try to spawn resource
-            else if (terrain.Resource != null && chances[i] < terrain.ResourceSpawnChance)
+            else if (terrain.ResourceType != null && chances[i] < terrain.ResourceSpawnChance)
             {
                 lock (factoryLock)
                 {
-                    IEntity resource = factory.CreateResource(terrain.Resource, new Vector2(x, y));
-                    resources[terrain.Resource].Add(new float[] { x, y }, resource);
+                    IEntity resource = factory.CreateResource(terrain.ResourceType, new Vector2(x, y));
+                    resources[terrain.ResourceType].Add(new float[] { x, y }, resource);
                 }
             }
         });

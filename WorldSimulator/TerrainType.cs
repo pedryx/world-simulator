@@ -18,9 +18,9 @@ internal class TerrainType
     /// <summary>
     /// Resource which can spawn on this terrain or null if no resource can spawn on this terrain.
     /// </summary>
-    public ResourceType Resource { get; init; }
+    public ResourceType ResourceType { get; init; }
     /// <summary>
-    /// Chance that <see cref="Resource"/> will be spawned at specific pixel of this terrain.
+    /// Chance that <see cref="ResourceType"/> will be spawned at specific pixel of this terrain.
     /// </summary>
     public float ResourceSpawnChance { get; init; }
 }
@@ -57,7 +57,7 @@ internal static class TerrainTypes
         Color = new Color(85, 201, 90),
         Buildable = true,
         Walkable = true,
-        Resource = ResourceTypes.Deer,
+        ResourceType = ResourceTypes.Deer,
         ResourceSpawnChance = 0.0001f,
     };
     
@@ -66,7 +66,7 @@ internal static class TerrainTypes
         Color = new Color(25, 133, 30),
         Buildable = true,
         Walkable = true,
-        Resource = ResourceTypes.Tree,
+        ResourceType = ResourceTypes.Tree,
         ResourceSpawnChance = 0.0002f
     };
     
@@ -75,7 +75,7 @@ internal static class TerrainTypes
         Color = new Color(143, 143, 143),
         Buildable = true,
         Walkable = true,
-        Resource = ResourceTypes.Rock,
+        ResourceType = ResourceTypes.Rock,
         ResourceSpawnChance = 0.001f
     };
 
@@ -84,7 +84,7 @@ internal static class TerrainTypes
         Color = Color.White,
         Buildable = false,
         Walkable = true,
-        Resource = ResourceTypes.Deposite,
+        ResourceType = ResourceTypes.Deposite,
         ResourceSpawnChance = 0.002f,
     };
 
