@@ -28,18 +28,18 @@ internal class GameWorldGenerator
     /// </summary>
     private readonly BiomeLayer[] layers = new BiomeLayer[]
     {
-        new BiomeLayer(0.30f, Terrains.DeepWater),
-        new BiomeLayer(0.35f, Terrains.ShallowWater),
-        new BiomeLayer(0.40f, Terrains.Beach),
-        new BiomeLayer(0.50f, Terrains.Plain),
-        new BiomeLayer(0.70f, Terrains.Forest),
-        new BiomeLayer(0.80f, Terrains.Mountain),
-        new BiomeLayer(1.00f, Terrains.HighMountain),
+        new BiomeLayer(0.30f, TerrainTypes.DeepWater),
+        new BiomeLayer(0.35f, TerrainTypes.ShallowWater),
+        new BiomeLayer(0.40f, TerrainTypes.Beach),
+        new BiomeLayer(0.50f, TerrainTypes.Plain),
+        new BiomeLayer(0.70f, TerrainTypes.Forest),
+        new BiomeLayer(0.80f, TerrainTypes.Mountain),
+        new BiomeLayer(1.00f, TerrainTypes.HighMountain),
     };
     /// <summary>
     /// Values generated from noise are mapped to this array.
     /// </summary>
-    private readonly Terrain[] layersArray;
+    private readonly TerrainType[] layersArray;
     private readonly object factoryLock = new();
     private readonly LevelFactory factory;
 
@@ -54,7 +54,7 @@ internal class GameWorldGenerator
     /// <summary>
     /// Maps pixels to terrains.
     /// </summary>
-    private Terrain[][] terrainMap;
+    private TerrainType[][] terrainMap;
     private IEntity[][] chunks;
 
     public GameWorldGenerator(Game game, LevelFactory factory)
@@ -63,7 +63,7 @@ internal class GameWorldGenerator
         this.factory = factory;
 
         // create mapping of noise values to terrains
-        layersArray = new Terrain[20];
+        layersArray = new TerrainType[20];
         for (int i = 0; i < layersArray.Length; i++)
         {
             foreach (var layer in layers)
@@ -91,10 +91,10 @@ internal class GameWorldGenerator
 
         // Noise parameters are fine-tuned.
         terrainNoise = new Noise(game.GenerateSeed(), 0.0008f, 0.0016f, 0.0032f);
-        terrainMap = new Terrain[GameWorld.Size][];
+        terrainMap = new TerrainType[GameWorld.Size][];
         for (int i = 0; i < terrainMap.Length; i++)
         {
-            terrainMap[i] = new Terrain[GameWorld.Size];
+            terrainMap[i] = new TerrainType[GameWorld.Size];
         }
         chunks = new IEntity[chunkCount][];
         for (int i = 0; i < chunks.Length; i++)
@@ -143,13 +143,13 @@ internal class GameWorldGenerator
             if (x < GridDistance || x >= GameWorld.Size - GridDistance 
                 || y < GridDistance || y >= GameWorld.Size - GridDistance)
             {
-                pixels[i] = Terrains.Border.Color;
-                terrainMap[y][x] = Terrains.Border;
+                pixels[i] = TerrainTypes.Border.Color;
+                terrainMap[y][x] = TerrainTypes.Border;
                 return;
             }
 
             // set terrain according to generated noise value
-            Terrain terrain = layersArray[(int)(terrainNoise.CalculateValue(x, y) * layersArray.Length)];
+            TerrainType terrain = layersArray[(int)(terrainNoise.CalculateValue(x, y) * layersArray.Length)];
             pixels[i] = terrain.Color;
             terrainMap[y][x] = terrain;
             
@@ -214,9 +214,9 @@ internal class GameWorldGenerator
     private struct BiomeLayer
     {
         public float Height { get; private set; }
-        public Terrain Terrain { get; private set; }
+        public TerrainType Terrain { get; private set; }
 
-        public BiomeLayer(float height, Terrain terrain)
+        public BiomeLayer(float height, TerrainType terrain)
         {
             Height = height;
             Terrain = terrain;

@@ -107,15 +107,15 @@ internal class LevelFactory
     public IEntity CreateMainBuilding(Vector2 position)
         => CreateStaticEntity(mainBuildingBuilder, position);
 
-    public IEntity CreateResource(Resource resource, Vector2 position)
+    public IEntity CreateResource(ResourceType resource, Vector2 position)
     {
-        if (resource == Resources.Tree)
+        if (resource == ResourceTypes.Tree)
             return CreateTree(position);
-        else if (resource == Resources.Rock)
+        else if (resource == ResourceTypes.Rock)
             return CreateRock(position);
-        else if (resource == Resources.Deposite)
+        else if (resource == ResourceTypes.Deposite)
             return CreateDeposite(position);
-        else if (resource == Resources.Deer)
+        else if (resource == ResourceTypes.Deer)
             return CreateDeer(position);
 
         throw new InvalidOperationException("Entity for this resoure not exist!");

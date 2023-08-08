@@ -16,7 +16,7 @@ internal class GameWorld
     /// <summary>
     /// Contains terrain information for each pixel of the map.
     /// </summary>
-    private readonly Terrain[][] terrainMap;
+    private readonly TerrainType[][] terrainMap;
     /// <summary>
     /// Grid used for path-finding of moving entities.
     /// </summary>
@@ -26,7 +26,7 @@ internal class GameWorld
 
     public IEntity[][] Chunks { get; private set; }
 
-    public GameWorld(IEntity[][] chunks, Terrain[][] terrainMap, Graph graph)
+    public GameWorld(IEntity[][] chunks, TerrainType[][] terrainMap, Graph graph)
     {
         Chunks = chunks;
         this.terrainMap = terrainMap;
@@ -68,5 +68,5 @@ internal class GameWorld
     /// Determine if specific position is walkable for animals. Animals can walk only on plains.
     /// </summary>
     public bool IsAnimalWalkable(Vector2 position)
-        => IsWalkable(position) && terrainMap[(int)position.Y][(int)position.X] == Terrains.Plain;
+        => IsWalkable(position) && terrainMap[(int)position.Y][(int)position.X] == TerrainTypes.Plain;
 }
