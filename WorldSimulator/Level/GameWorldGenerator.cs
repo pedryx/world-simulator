@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using WorldSimulator.ECS.AbstractECS;
-using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Level;
 internal class GameWorldGenerator
@@ -26,7 +25,7 @@ internal class GameWorldGenerator
     /// <summary>
     /// Chance that village will be spawned at specific pixel.
     /// </summary>
-    private const float villageSpawnChance = 0.000001f;
+    private const float villageSpawnChance = 0.0000004f;
 
     private readonly Game game;
     /// <summary>

@@ -37,7 +37,7 @@ internal class LevelFactory
         depositeBuilder = CreateBasicBuilder("iron deposite", 0.1f);
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
         villagerBuilder = CreateVillagerBuilder();
-        mainBuildingBuilder = CreateBasicBuilder("main building", 0.5f);
+        mainBuildingBuilder = CreateBasicBuilder("main building", 0.6f);
     }
 
     #region builders
