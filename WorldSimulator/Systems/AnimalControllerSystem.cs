@@ -40,7 +40,7 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
     {
         controller.TimeToUpdate -= deltaTime;
         // check if entity position in corresponding kd-tree should be updated
-        if (controller.TimeToUpdate >= 0.0f)
+        if (controller.TimeToUpdate <= 0.0f)
         {
             controller.TimeToUpdate = timeToUpdateRandom.NextSingle(minTimeToUpdate, maxTimeToUpdate);
             gameWorld.UpdateResourcePosition
@@ -50,6 +50,7 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
                 controller.PreviousPosition,
                 position.Coordinates
             );
+            controller.PreviousPosition = position.Coordinates;
         }
 
         // Check if the animal has reached its destination.
@@ -66,7 +67,7 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
                 destination = destinationRandom.NextPointInRing(position.Coordinates, minRadius, maxRadius + radiusOffset);
                 radiusOffset += 1.0f;
             }
-            while (!gameWorld.IsAnimalWalkable(destination));
+            while (!gameWorld.IsWalkableForAnimals(destination));
 
             movement.Destination = destination;
         }

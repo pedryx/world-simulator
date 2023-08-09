@@ -36,7 +36,7 @@ internal class LevelFactory
         rockBuilder = CreateBasicBuilder("boulder", 0.1f);
         depositeBuilder = CreateBasicBuilder("iron deposite", 0.1f);
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
-        villagerBuilder = CreateBasicBuilder("villager", 0.2f);
+        villagerBuilder = CreateVillagerBuilder();
         mainBuildingBuilder = CreateBasicBuilder("main building", 0.5f);
     }
 
@@ -79,6 +79,15 @@ internal class LevelFactory
             ResourceType = ResourceTypes.Deer,
         });
         builder.AddComponent<Owner>();
+
+        return builder;
+    }
+
+    private IEntityBuilder CreateVillagerBuilder()
+    {
+        IEntityBuilder builder = CreateBasicBuilder("villager", 0.2f);
+
+        builder.AddComponent<Movement>();
 
         return builder;
     }

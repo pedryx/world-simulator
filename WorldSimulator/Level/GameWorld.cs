@@ -13,38 +13,37 @@ internal class GameWorld
 {
     // TODO: change back to original
     /// <summary>
-    /// Width and heigt of world in pixels.
+    /// Width and height of the game world.
     /// </summary>
-    public const int Size = 8192 / 4;
+    public const int Size = 8192;
 
     /// <summary>
-    /// Contains terrain information for each pixel of the map.
+    /// Maps coordinates of each pixel to its terrain type.
     /// </summary>
     private readonly TerrainType[][] terrainMap;
     /// <summary>
-    /// Grid used for path-finding of moving entities.
-    /// </summary>
-    private readonly Graph graph;
-    /// <summary>
-    /// Contains mapping between resource types and kd-trees of resources of corresponding resource type. These
+    /// Contains mapping between resource types and kd-trees of resources of corresponding resource entities. These
     /// kd-trees are used for finding nearest resource (<see cref="GetNearestResource(ResourceType, Vector2)"/>).
     /// </summary>
     private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
 
+    /// <summary>
+    /// Bounding rectangle of the game world.
+    /// </summary>
     public Rectangle Bounds { get; private set; }
-
-    public IEntity[][] Chunks { get; private set; }
+    /// <summary>
+    /// Contains chunk entities.
+    /// </summary>
+    public IEnumerable<IEntity> Chunks { get; private set; }
 
     public GameWorld
     (
-        IEntity[][] chunks,
+        IEnumerable<IEntity> chunks,
         TerrainType[][] terrainMap,
-        Graph graph,
         IDictionary<ResourceType, KdTree<float, IEntity>> resources
     )
     {
         this.terrainMap = terrainMap;
-        this.graph = graph;
         this.resources = resources;
         
         Chunks = chunks;
@@ -77,25 +76,6 @@ internal class GameWorld
     }
 
     /// <summary>
-    /// Find walable path from start to end.
-    /// </summary>
-    public IEnumerable<Vector2> FindPath(Vector2 start, Vector2 end)
-    {
-        Vector2 nearestStart = graph.GetNearest(start);
-        Vector2 nearestEnd = graph.GetNearest(end);
-
-        graph.AddEdge(start, nearestStart);
-        graph.AddEdge(end, nearestEnd);
-
-        IEnumerable<Vector2> path = graph.FindPath(start, end);
-
-        graph.RemoveEdge(start, nearestStart);
-        graph.RemoveEdge(end, nearestEnd);
-
-        return path;
-    }
-
-    /// <summary>
     /// Determine if specific position is walkable.
     /// </summary>
     public bool IsWalkable(Vector2 position)
@@ -109,6 +89,6 @@ internal class GameWorld
     /// <summary>
     /// Determine if specific position is walkable for animals. Animals can walk only on plains.
     /// </summary>
-    public bool IsAnimalWalkable(Vector2 position)
+    public bool IsWalkableForAnimals(Vector2 position)
         => IsWalkable(position) && terrainMap[(int)position.Y][(int)position.X] == TerrainTypes.Plain;
 }

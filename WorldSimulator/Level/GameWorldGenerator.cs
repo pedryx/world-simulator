@@ -16,17 +16,17 @@ namespace WorldSimulator.Level;
 internal class GameWorldGenerator
 {
     /// <summary>
-    /// Distance between nodes in movement grid. Also represent size of border.
+    /// Size of game world border.
     /// </summary>
-    private const int GridDistance = 16;
+    private const int border = 16;
     /// <summary>
-    /// Width and height of one chunk in pixels.
+    /// Width and height of one chunk.
     /// </summary>
     private const int chunkSize = 512;
     /// <summary>
     /// Chance that village will be spawned at specific pixel.
     /// </summary>
-    private const float spawnVillageChance = 0.000001f;
+    private const float villageSpawnChance = 0.000001f;
 
     private readonly Game game;
     /// <summary>
@@ -43,25 +43,21 @@ internal class GameWorldGenerator
         new BiomeLayer(1.00f, TerrainTypes.HighMountain),
     };
     /// <summary>
-    /// Values generated from noise are mapped to this array.
+    /// Maps noise values into terrain types.
     /// </summary>
     private readonly TerrainType[] layersArray;
-    private readonly object factoryLock = new();
     private readonly LevelFactory factory;
+    private readonly object factoryLock = new();
 
     /// <summary>
     /// Noise used for terrain generation.
     /// </summary>
     private Noise terrainNoise;
     /// <summary>
-    /// Graph for path-finding for movement.
-    /// </summary>
-    private Graph graph;
-    /// <summary>
     /// Maps pixels to terrains.
     /// </summary>
     private TerrainType[][] terrainMap;
-    private IEntity[][] chunks;
+    private IEnumerable<IEntity> chunks;
     private IDictionary<ResourceType, KdTree<float, IEntity>> resources;
 
     public GameWorldGenerator(Game game, LevelFactory factory)
@@ -87,9 +83,8 @@ internal class GameWorldGenerator
     public GameWorld Generate()
     {
         GenerateTerrain();
-        CreateGraph();
 
-        return new(chunks, terrainMap, graph, resources);
+        return new(chunks, terrainMap, resources);
     }
 
     private void GenerateTerrain()
@@ -104,23 +99,23 @@ internal class GameWorldGenerator
         {
             terrainMap[i] = new TerrainType[GameWorld.Size];
         }
-        chunks = new IEntity[chunkCount][];
-        for (int i = 0; i < chunks.Length; i++)
-        {
-            chunks[i] = new IEntity[chunkCount];
-        }
-        resources = ResourceTypes
-            .GetAllTypes()
-            .ToDictionary(type => type, type => new KdTree<float, IEntity>(2, new FloatMath()));
+        List<IEntity> chunks = new();
+        resources = ResourceTypes.GetAllTypes().ToDictionary
+        (
+            type => type,
+            type => new KdTree<float, IEntity>(2, new FloatMath())
+        );
 
         // Generate game world chunks.
         for (int y = 0; y < chunkCount; y++)
         {
             for (int x = 0; x < chunkCount; x++)
             {
-                chunks[y][x] = GenerateChunk(new Vector2(x, y) * chunkSize);
+                chunks.Add(GenerateChunk(new Vector2(x, y) * chunkSize));
             }
         }
+
+        this.chunks = chunks; 
     }
 
     /// <summary>
@@ -151,8 +146,7 @@ internal class GameWorldGenerator
             int y = i / chunkSize + (int)offset.Y;
 
             // set border biome, GridDistance is also size of border
-            if (x < GridDistance || x >= GameWorld.Size - GridDistance 
-                || y < GridDistance || y >= GameWorld.Size - GridDistance)
+            if (x < border || x >= GameWorld.Size - border || y < border || y >= GameWorld.Size - border)
             {
                 pixels[i] = TerrainTypes.Border.Color;
                 terrainMap[y][x] = TerrainTypes.Border;
@@ -165,7 +159,7 @@ internal class GameWorldGenerator
             terrainMap[y][x] = terrain;
             
             // try to spawn village
-            if (terrain.Buildable && chances[i] < spawnVillageChance)
+            if (terrain.Buildable && chances[i] < villageSpawnChance)
             {
                 lock(factoryLock)
                 {
@@ -194,33 +188,6 @@ internal class GameWorldGenerator
         factory.CreateVillager(position);
         factory.CreateVillager(position);
         factory.CreateVillager(position);
-    }
-
-    /// <summary>
-    /// Generate grid graph for path-finding for movement around the map.
-    /// </summary>
-    private void CreateGraph()
-    {
-        graph = new Graph();
-
-        // its a grid so we just need to create edges for all adject grid points, GridDistance is also size of border
-        for (int y = GridDistance; y < GameWorld.Size - GridDistance; y += GridDistance)
-            {
-            for (int x = GridDistance; x < GameWorld.Size - GridDistance; x += GridDistance)
-            {
-                if (!terrainMap[y][x].Walkable)
-                    continue;
-
-                if (terrainMap[x - GridDistance][y].Walkable)
-                    graph.AddEdge(new Vector2(x, y), new Vector2(x, y - GridDistance));
-                if (terrainMap[y + GridDistance][x].Walkable)
-                    graph.AddEdge(new Vector2(x, y), new Vector2(x, y + GridDistance));
-                if (terrainMap[y][x - GridDistance].Walkable)
-                    graph.AddEdge(new Vector2(x, y), new Vector2(x - GridDistance, y));
-                if (terrainMap[y][x + GridDistance].Walkable)
-                    graph.AddEdge(new Vector2(x, y), new Vector2(x + GridDistance, y));
-            }
-        }
     }
 
     private struct BiomeLayer

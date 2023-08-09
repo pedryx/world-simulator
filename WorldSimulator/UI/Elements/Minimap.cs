@@ -68,7 +68,7 @@ internal class Minimap : UIElement
         );
 
         // render chunks
-        foreach (var chunk in gameWorld.Chunks.SelectMany(c => c))
+        foreach (var chunk in gameWorld.Chunks)
         {
             spriteBatch.Draw
             (
