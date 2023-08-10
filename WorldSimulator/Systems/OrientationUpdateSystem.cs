@@ -14,7 +14,7 @@ internal readonly struct OrientationUpdateSystem : IEntityProcessor<Position, Mo
     {
         Vector2 direction = movement.Destination - position.Coordinates;
 
-        if (direction.X == 0)
+        if (direction.X < movement.Speed * deltaTime)
             return;
 
         appearance.Effects = direction.X > 0.0f ? SpriteEffects.FlipHorizontally : SpriteEffects.None;

@@ -60,10 +60,11 @@ internal readonly struct VillagerBehaviorSystem : IEntityProcessor<VillagerBehav
         ref Movement movement = ref context.Entity.GetComponent<Movement>();
         ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
 
-        movement.Destination = behavior.MovementTarget.GetComponent<Position>().Coordinates;
+        movement.Destination = behavior.MovementTarget.GetComponent<Position>().Coordinates + new Vector2(0.0f, 1.0f);
 
         if (Vector2.Distance(position.Coordinates, movement.Destination) < movement.Speed * deltaTime)
         {
+            position.Coordinates = movement.Destination;
             return BehaviorTreeNodeState.Success;
         }
 
