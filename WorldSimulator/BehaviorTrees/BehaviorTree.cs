@@ -15,6 +15,11 @@ internal class BehaviorTree<TContext>
     private readonly BehaviorTreeNodeDescriptor<TContext>[] descriptors;
     private readonly Stack<int> stack = new();
 
+    /// <summary>
+    /// Number of nodes in behavior tree.
+    /// </summary>
+    public int NodeCount => descriptors.Length;
+
     public BehaviorTree(BehaviorTreeNodeDescriptor<TContext>[] descriptors)
     {
         this.descriptors = descriptors;

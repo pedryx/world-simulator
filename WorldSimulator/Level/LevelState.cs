@@ -30,6 +30,7 @@ public class LevelState : GameState
             new InputSystem(this),
             Game.Factory.CreateSystem(new AnimalControllerSystem(Game, GameWorld)),
             Game.Factory.CreateSystem(new MovementSystem()),
+            Game.Factory.CreateSystem(new VillagerBehaviorSystem(GameWorld)),
         };
     }
 
