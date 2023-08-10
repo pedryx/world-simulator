@@ -5,7 +5,6 @@ using System;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
-using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Level;
 /// <summary>
@@ -32,11 +31,13 @@ internal class LevelFactory
         levelState = gameState;
 
         terrainBuilder = CreateTerrainBuilder();
+        villagerBuilder = CreateVillagerBuilder();
+
         treeBuilder = CreateBasicBuilder("tree", 0.4f);
         rockBuilder = CreateBasicBuilder("boulder", 0.1f);
         depositeBuilder = CreateBasicBuilder("iron deposite", 0.1f);
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
-        villagerBuilder = CreateVillagerBuilder();
+
         mainBuildingBuilder = CreateBasicBuilder("main building", 0.6f);
     }
 
@@ -62,6 +63,7 @@ internal class LevelFactory
             Origin = new Vector2(0.5f, 1.0f),
             Scale = scale,
         });
+        builder.AddComponent<Owner>();
 
         return builder;
     }
@@ -78,7 +80,6 @@ internal class LevelFactory
         {
             ResourceType = ResourceTypes.Deer,
         });
-        builder.AddComponent<Owner>();
 
         return builder;
     }
@@ -87,7 +88,10 @@ internal class LevelFactory
     {
         IEntityBuilder builder = CreateBasicBuilder("villager", 0.2f);
 
-        builder.AddComponent<Movement>();
+        builder.AddComponent(new Movement()
+        {
+            Speed = 60.0f,
+        });
 
         return builder;
     }
@@ -99,6 +103,7 @@ internal class LevelFactory
         IEntity entity = builder.Build();
 
         entity.GetComponent<Position>().Coordinates = position;
+        entity.GetComponent<Owner>().Entity = entity;
 
         return entity;
     }
@@ -108,6 +113,7 @@ internal class LevelFactory
         IEntity entity = builder.Build();
 
         entity.GetComponent<Position>().Coordinates = position;
+        entity.GetComponent<Owner>().Entity = entity;
         entity.GetComponent<Movement>().Destination = position;
 
         return entity;
@@ -144,13 +150,7 @@ internal class LevelFactory
         => CreateStaticEntity(depositeBuilder, position);
 
     public IEntity CreateDeer(Vector2 position)
-    {
-        IEntity deer = CreateDynamicEntity(deerBuilder, position);
-
-        deer.GetComponent<Owner>().Entity = deer;
-
-        return deer;
-    }
+        => CreateDynamicEntity(deerBuilder, position);
 
     public IEntity CreateTerrain(Texture2D texture, Vector2 position)
     {
