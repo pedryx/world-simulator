@@ -43,14 +43,17 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
         if (controller.TimeToUpdate <= 0.0f)
         {
             controller.TimeToUpdate = timeToUpdateRandom.NextSingle(minTimeToUpdate, maxTimeToUpdate);
-            gameWorld.UpdateResourcePosition
-            (
-                controller.ResourceType,
-                owner.Entity,
-                controller.PreviousPosition,
-                position.Coordinates
-            );
-            controller.PreviousPosition = position.Coordinates;
+            if (controller.PreviousPosition != position.Coordinates)
+            {
+                gameWorld.UpdateResourcePosition
+                (
+                    controller.ResourceType,
+                    owner.Entity,
+                    controller.PreviousPosition,
+                    position.Coordinates
+                );
+                controller.PreviousPosition = position.Coordinates;
+            }
         }
 
         // Check if the animal has reached its destination.

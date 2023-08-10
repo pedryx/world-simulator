@@ -23,7 +23,7 @@ internal class GameWorld
     private readonly TerrainType[][] terrainMap;
     /// <summary>
     /// Contains mapping between resource types and kd-trees of resources of corresponding resource entities. These
-    /// kd-trees are used for finding nearest resource (<see cref="GetNearestResource(ResourceType, Vector2)"/>).
+    /// kd-trees are used for finding nearest resource (<see cref="GetNearestAndRemoveResource(ResourceType, Vector2)"/>).
     /// </summary>
     private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
 
@@ -51,11 +51,20 @@ internal class GameWorld
     }
 
     /// <summary>
-    /// Get resource nearest to specific position.
+    /// Get resource nearest to specific position and remove it from kd-tree.
     /// </summary>
     /// <param name="type">Type of resource to get.</param>
-    public IEntity GetNearestResource(ResourceType type, Vector2 position)
-        => resources[type].GetNearestNeighbours(position.ToFloat(), 1).FirstOrDefault()?.Value;
+    public IEntity GetAndRemoveNearestResource(ResourceType type, Vector2 position)
+    {
+        var node = resources[type].GetNearestNeighbours(position.ToFloat(), 1).FirstOrDefault();
+
+        if (node != null)
+        {
+            resources[type].RemoveAt(node.Point);
+        }
+
+        return node?.Value;
+    }
 
     /// <summary>
     /// Update resource's position in kd-tree.
