@@ -69,15 +69,14 @@ internal class BehaviorTreeBuilder<TContext>
         return this;
     }
 
-    public BehaviorTreeBuilder<TContext> Inverter(Func<TContext, BehaviorTreeNodeState> action)
+    public BehaviorTreeBuilder<TContext> Inverter()
     {
         nodes.Add(new RefWrapper<BehaviorTreeNodeDescriptor<TContext>>()
         {
             Value = new BehaviorTreeNodeDescriptor<TContext>()
             {
-                Type = BehaviorTreeNodeType.Action,
+                Type = BehaviorTreeNodeType.Inverter,
                 ID = nodes.Count,
-                Data = action,
             }
         });
 
@@ -111,7 +110,7 @@ internal class BehaviorTreeBuilder<TContext>
         {
             Value = new BehaviorTreeNodeDescriptor<TContext>()
             {
-                Type = BehaviorTreeNodeType.Action,
+                Type = BehaviorTreeNodeType.Condition,
                 ID = nodes.Count,
                 Data = predicate,
             }
@@ -129,7 +128,7 @@ internal class BehaviorTreeBuilder<TContext>
         {
             Value = new BehaviorTreeNodeDescriptor<TContext>()
             {
-                Type = BehaviorTreeNodeType.Action,
+                Type = BehaviorTreeNodeType.Wait,
                 ID = nodes.Count,
                 Data = new WaitNodeData(waitTime),
             }
