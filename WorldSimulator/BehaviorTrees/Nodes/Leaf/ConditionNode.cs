@@ -8,9 +8,9 @@ namespace WorldSimulator.BehaviorTrees.Nodes.Leaf;
 /// <typeparam name="TContext"></typeparam>
 internal static class ConditionNode<TContext>
 {
-    public static BehaviorTreeNodeState Update(BehaviorTree<TContext> tree, TContext context)
+    public static BehaviorTreeNodeState Update(BehaviorTree<TContext> tree, TContext context, float deltaTime)
     {
-        return ((Func<TContext, bool>)tree.GetData()).Invoke(context)
+        return ((Func<TContext, float, bool>)tree.GetData()).Invoke(context, deltaTime)
             ? BehaviorTreeNodeState.Success 
             : BehaviorTreeNodeState.Failure;
     }

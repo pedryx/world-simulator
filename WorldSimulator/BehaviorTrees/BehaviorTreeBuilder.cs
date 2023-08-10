@@ -87,7 +87,7 @@ internal class BehaviorTreeBuilder<TContext>
         return this;
     }
 
-    public BehaviorTreeBuilder<TContext> Action(Func<TContext, BehaviorTreeNodeState> action)
+    public BehaviorTreeBuilder<TContext> Action(Func<TContext, float, BehaviorTreeNodeState> action)
     {
         nodes.Add(new RefWrapper<BehaviorTreeNodeDescriptor<TContext>>()
         {
@@ -105,25 +105,7 @@ internal class BehaviorTreeBuilder<TContext>
         return this;
     }
 
-    public BehaviorTreeBuilder<TContext> Condition(Func<TContext, BehaviorTreeNodeState> action)
-    {
-        nodes.Add(new RefWrapper<BehaviorTreeNodeDescriptor<TContext>>()
-        {
-            Value = new BehaviorTreeNodeDescriptor<TContext>()
-            {
-                Type = BehaviorTreeNodeType.Action,
-                ID = nodes.Count,
-                Data = action,
-            }
-        });
-
-        if (stack.Count > 0)
-            stack.Peek().Children.Add(nodes.Count - 1);
-
-        return this;
-    }
-
-    public BehaviorTreeBuilder<TContext> Condition(Func<TContext, bool> predicate)
+    public BehaviorTreeBuilder<TContext> Condition(Func<TContext, float, bool> predicate)
     {
         nodes.Add(new RefWrapper<BehaviorTreeNodeDescriptor<TContext>>()
         {

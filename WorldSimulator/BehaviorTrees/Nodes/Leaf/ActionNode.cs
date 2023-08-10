@@ -7,6 +7,6 @@ namespace WorldSimulator.BehaviorTrees.Nodes.Leaf;
 /// </summary>
 internal static class ActionNode<TContext>
 {
-    public static BehaviorTreeNodeState Update(BehaviorTree<TContext> tree, TContext context)
-        => ((Func<TContext, BehaviorTreeNodeState>)tree.GetData()).Invoke(context);
+    public static BehaviorTreeNodeState Update(BehaviorTree<TContext> tree, TContext context, float deltaTime)
+        => ((Func<TContext, float, BehaviorTreeNodeState>)tree.GetData()).Invoke(context, deltaTime);
 }

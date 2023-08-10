@@ -92,8 +92,8 @@ internal class BehaviorTree<TContext>
 
             BehaviorTreeNodeType.Inverter  => InverterNode<TContext> .Update(this, context, state, deltaTime),
 
-            BehaviorTreeNodeType.Action    => ActionNode<TContext>   .Update(this, context                  ),
-            BehaviorTreeNodeType.Condition => ConditionNode<TContext>.Update(this, context                  ),
+            BehaviorTreeNodeType.Action    => ActionNode<TContext>   .Update(this, context,        deltaTime),
+            BehaviorTreeNodeType.Condition => ConditionNode<TContext>.Update(this, context,        deltaTime),
             BehaviorTreeNodeType.Wait      => WaitNode<TContext>     .Update(this,                 deltaTime),
 
             _ => throw new InvalidOperationException("Unsupported node type!"),
