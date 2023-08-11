@@ -7,6 +7,6 @@ namespace WorldSimulator.Components;
 [Component]
 internal struct VillagerBehavior
 {
-    public int[] TreeState;
+    public int VillageID;
     public IEntity MovementTarget;
 }

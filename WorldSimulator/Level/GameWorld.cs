@@ -7,6 +7,7 @@ using System.Linq;
 
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
+using WorldSimulator.Villages;
 
 namespace WorldSimulator.Level;
 internal class GameWorld
@@ -26,6 +27,7 @@ internal class GameWorld
     /// kd-trees are used for finding nearest resource (<see cref="GetNearestAndRemoveResource(ResourceType, Vector2)"/>).
     /// </summary>
     private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
+    private readonly IList<Village> villages;
 
     /// <summary>
     /// Bounding rectangle of the game world.
@@ -40,15 +42,20 @@ internal class GameWorld
     (
         IEnumerable<IEntity> chunks,
         TerrainType[][] terrainMap,
-        IDictionary<ResourceType, KdTree<float, IEntity>> resources
+        IDictionary<ResourceType, KdTree<float, IEntity>> resources,
+        IList<Village> villages
     )
     {
         this.terrainMap = terrainMap;
         this.resources = resources;
+        this.villages = villages;
         
         Chunks = chunks;
         Bounds = new Rectangle(Point.Zero, new Point(Size));
     }
+
+    public Village GetVillage(int id)
+        => villages[id];
 
     /// <summary>
     /// Get resource nearest to specific position and remove it from kd-tree.

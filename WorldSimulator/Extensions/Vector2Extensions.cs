@@ -12,4 +12,10 @@ internal static class Vector2Extensions
     /// </summary>
     public static float[] ToFloat(this Vector2 vector)
         => new float[] { vector.X, vector.Y };
+
+    /// <summary>
+    /// Determine if position is close enough to destination (their distance is smaller than threshold).
+    /// </summary>
+    public static bool IsCloseEnough(this Vector2 position, Vector2 destination, float threshold)
+        => Vector2.DistanceSquared(position, destination) < threshold * threshold;
 }

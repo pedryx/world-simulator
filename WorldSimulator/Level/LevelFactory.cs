@@ -121,8 +121,14 @@ internal class LevelFactory
     }
     #endregion
 
-    public IEntity CreateVillager(Vector2 position)
-        => CreateDynamicEntity(villagerBuilder, position);
+    public IEntity CreateVillager(Vector2 position, int villageID)
+    {
+        IEntity villager = CreateDynamicEntity(villagerBuilder, position);
+
+        villager.GetComponent<VillagerBehavior>().VillageID = villageID;
+
+        return villager;
+    }
 
     public IEntity CreateMainBuilding(Vector2 position)
         => CreateStaticEntity(mainBuildingBuilder, position);

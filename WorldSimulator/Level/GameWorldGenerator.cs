@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Villages;
 
 namespace WorldSimulator.Level;
 internal class GameWorldGenerator
@@ -58,6 +59,7 @@ internal class GameWorldGenerator
     private TerrainType[][] terrainMap;
     private IEnumerable<IEntity> chunks;
     private IDictionary<ResourceType, KdTree<float, IEntity>> resources;
+    private List<Village> villages;
 
     public GameWorldGenerator(Game game, LevelFactory factory)
     {
@@ -83,7 +85,7 @@ internal class GameWorldGenerator
     {
         GenerateTerrain();
 
-        return new(chunks, terrainMap, resources);
+        return new(chunks, terrainMap, resources, villages);
     }
 
     private void GenerateTerrain()
@@ -104,6 +106,7 @@ internal class GameWorldGenerator
             type => type,
             type => new KdTree<float, IEntity>(2, new FloatMath())
         );
+        villages = new List<Village>();
 
         // Generate game world chunks.
         for (int y = 0; y < chunkCount; y++)
@@ -182,11 +185,14 @@ internal class GameWorldGenerator
 
     private void SpawnVillage(Vector2 position)
     {
+        villages.Add(new Village());
         factory.CreateMainBuilding(position);
 
-        factory.CreateVillager(position);
-        factory.CreateVillager(position);
-        factory.CreateVillager(position);
+        for (int i = 0; i < 3; i++)
+        {
+            IEntity villager = factory.CreateVillager(position, villages.Count - 1);
+            villages.Last().AddVillager(villager);
+        }
     }
 
     private struct BiomeLayer
