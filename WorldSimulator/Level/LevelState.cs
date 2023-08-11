@@ -20,6 +20,7 @@ public class LevelState : GameState
         Camera.Position = new Vector2(GameWorld.Size) / 2.0f;
 
         GameWorld = worldGenerator.Generate();
+
     }
 
     protected override IEnumerable<IECSSystem> CreateSystems()
@@ -31,6 +32,7 @@ public class LevelState : GameState
             Game.Factory.CreateSystem(new AnimalControllerSystem(Game, GameWorld)),
             Game.Factory.CreateSystem(new MovementSystem()),
             Game.Factory.CreateSystem(new VillagerBehaviorSystem(GameWorld)),
+            Game.Factory.CreateSystem(new PathFollowSystem())
         };
     }
 

@@ -1,13 +1,10 @@
 ﻿using BehaviourTree;
 using BehaviourTree.FluentBuilder;
 
-using Microsoft.Xna.Framework;
-
 using System.Collections.Generic;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
-using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Villages;
 internal class Village
@@ -36,31 +33,29 @@ internal class Village
     #region behavior tree actions and conditions
     private static BehaviourStatus FindNearestResource(VillagerContext context)
     {
-        ref Position position = ref context.Entity.GetComponent<Position>();
+        Position position = context.Entity.GetComponent<Position>();
         ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
+        ref PathFollow pathFollow = ref context.Entity.GetComponent<PathFollow>();
 
         IEntity resource = context.GameWorld.GetAndRemoveNearestResource(ResourceTypes.Tree, position.Coordinates);
+        Position resourcePosition = resource.GetComponent<Position>();
 
         if (resource == null)
             return BehaviourStatus.Failed;
 
-        behavior.MovementTarget = resource;
+        behavior.HarvestedResource = resource;
+        pathFollow.Path = context.GameWorld.FindPath(position.Coordinates, resourcePosition.Coordinates);
+        pathFollow.PathIndex = 0;
+
         return BehaviourStatus.Succeeded;
     }
 
     private static BehaviourStatus MoveTo(VillagerContext context)
     {
-        ref Position position = ref context.Entity.GetComponent<Position>();
-        ref Movement movement = ref context.Entity.GetComponent<Movement>();
-        ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
+        PathFollow pathFollow = context.Entity.GetComponent<PathFollow>();
 
-        movement.Destination = behavior.MovementTarget.GetComponent<Position>().Coordinates + new Vector2(0.0f, 1.0f);
-
-        if (position.Coordinates.IsCloseEnough(movement.Destination, movement.Speed * context.DeltaTime))
-        {
-            position.Coordinates = movement.Destination;
+        if (pathFollow.PathIndex == pathFollow.Path.Length)
             return BehaviourStatus.Succeeded;
-        }
 
         return BehaviourStatus.Running;
     }
@@ -69,7 +64,7 @@ internal class Village
     {
         ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
 
-        behavior.MovementTarget.Destroy();
+        behavior.HarvestedResource.Destroy();
 
         return BehaviourStatus.Succeeded;
     }

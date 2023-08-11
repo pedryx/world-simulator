@@ -8,5 +8,6 @@ namespace WorldSimulator.Components;
 internal struct VillagerBehavior
 {
     public int VillageID;
-    public IEntity MovementTarget;
+    public IEntity HarvestedResource;
 }
+// 8162 6050

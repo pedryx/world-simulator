@@ -1,22 +1,23 @@
-﻿using Microsoft.Xna.Framework;
-
-using WorldSimulator.Components;
+﻿using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Systems;
 internal struct PathFollowSystem : IEntityProcessor<Position, Movement, PathFollow>
 {
     public void Process(ref Position position, ref Movement movement, ref PathFollow pathFollow, float deltaTime)
     {
-        // check if we are clone enough to next path node
-        if (Vector2.Distance(position.Coordinates, pathFollow.Path[pathFollow.Current]) <= movement.Speed * deltaTime)
+        if (pathFollow.PathIndex == pathFollow.Path.Length)
+            return;
+
+        if (position.Coordinates.IsCloseEnough(pathFollow.Path[pathFollow.PathIndex], movement.Speed * deltaTime))
         {
-            // advance to the next path node
-            pathFollow.Current++;
-            // set new destination only if we are not at the end of path
-            if (pathFollow.Current < pathFollow.Path.Length)
+            position.Coordinates = movement.Destination;
+
+            pathFollow.PathIndex++;
+            if (pathFollow.PathIndex != pathFollow.Path.Length)
             {
-                movement.Destination = pathFollow.Path[pathFollow.Current];
+                movement.Destination = pathFollow.Path[pathFollow.PathIndex];
             }
         }
     }

@@ -2,6 +2,7 @@
 
 using Microsoft.Xna.Framework;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,6 +29,7 @@ internal class GameWorld
     /// </summary>
     private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
     private readonly IList<Village> villages;
+    private readonly Grid grid;
 
     /// <summary>
     /// Bounding rectangle of the game world.
@@ -52,6 +54,7 @@ internal class GameWorld
         
         Chunks = chunks;
         Bounds = new Rectangle(Point.Zero, new Point(Size));
+        grid = new Grid(this);
     }
 
     public Village GetVillage(int id)
@@ -107,4 +110,38 @@ internal class GameWorld
     /// </summary>
     public bool IsWalkableForAnimals(Vector2 position)
         => IsWalkable(position) && terrainMap[(int)position.Y][(int)position.X] == TerrainTypes.Plain;
+
+    /// <summary>
+    /// Find path from start to end.
+    /// </summary>
+    public Vector2[] FindPath(Vector2 start, Vector2 end)
+    {
+        if (RayCast(start, end))
+            return new Vector2[] { start, end };
+
+        return grid.FindPath(start, end);
+    }
+
+    public bool RayCast(Vector2 start, Vector2 end)
+    {
+        const float sampleDistance = 16.0f;
+
+        float distance = Vector2.Distance(start, end);
+
+        if (distance <= sampleDistance)
+            return true;
+
+        int sampleCount = (int)(distance / sampleDistance);
+        Vector2 direction = sampleDistance * Vector2.Normalize(end - start);
+
+        for (int i = 1; i <= sampleCount; i++)
+        {
+            Vector2 position = start + direction * i;
+
+            if (!IsWalkable(position))
+                return false;
+        }
+
+        return true;
+    }
 }

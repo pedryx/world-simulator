@@ -15,7 +15,7 @@ internal struct PathFollow
     /// <summary>
     /// Index of current path node (element of <see cref="Path"/> array).
     /// </summary>
-    public int Current;
+    public int PathIndex;
 
     public PathFollow() { }
 }

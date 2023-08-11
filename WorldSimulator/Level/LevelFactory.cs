@@ -93,6 +93,7 @@ internal class LevelFactory
             Speed = 60.0f,
         });
         builder.AddComponent<VillagerBehavior>();
+        builder.AddComponent<PathFollow>();
 
         return builder;
     }
