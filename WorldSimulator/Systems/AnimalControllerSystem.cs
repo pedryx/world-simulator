@@ -38,26 +38,29 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
         float deltaTime
     )
     {
-        controller.TimeToUpdate -= deltaTime;
-        // check if entity position in corresponding kd-tree should be updated
-        if (controller.TimeToUpdate <= 0.0f)
+        if (controller.UpdateEnabled)
         {
-            controller.TimeToUpdate = timeToUpdateRandom.NextSingle(minTimeToUpdate, maxTimeToUpdate);
-            if (controller.PreviousPosition != position.Coordinates)
+            controller.TimeToUpdate -= deltaTime;
+            // check if entity position in corresponding kd-tree should be updated
+            if (controller.TimeToUpdate <= 0.0f)
             {
-                gameWorld.UpdateResourcePosition
-                (
-                    controller.ResourceType,
-                    owner.Entity,
-                    controller.PreviousPosition,
-                    position.Coordinates
-                );
-                controller.PreviousPosition = position.Coordinates;
+                controller.TimeToUpdate = timeToUpdateRandom.NextSingle(minTimeToUpdate, maxTimeToUpdate);
+                if (controller.PreviousPosition != position.Coordinates)
+                {
+                    gameWorld.UpdateResourcePosition
+                    (
+                        controller.ResourceType,
+                        owner.Entity,
+                        controller.PreviousPosition,
+                        position.Coordinates
+                    );
+                    controller.PreviousPosition = position.Coordinates;
+                }
             }
         }
 
         // Check if the animal has reached its destination.
-        if (Vector2.Distance(position.Coordinates, movement.Destination) <= movement.Speed * deltaTime)
+        if (position.Coordinates.IsCloseEnough(movement.Destination, movement.Speed * deltaTime))
         {
             /*
              * Keep generating random destination around entity's position until valid location is found. The search
