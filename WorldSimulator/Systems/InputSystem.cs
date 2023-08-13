@@ -29,7 +29,6 @@ internal readonly struct InputSystem : IECSSystem
 
     private readonly Game game;
     private readonly Camera camera;
-    private readonly GameWorld gameWorld;
     private readonly GameState gameState;
     private readonly InputState state = new();
 
@@ -37,7 +36,6 @@ internal readonly struct InputSystem : IECSSystem
     {
         game = levelState.Game;
         camera = levelState.Camera;
-        gameWorld = levelState.GameWorld;
         gameState = levelState;
     }
 
@@ -90,8 +88,8 @@ internal readonly struct InputSystem : IECSSystem
         camera.Scale *= 1.0f + zoomDirection * cameraZoomAmount;
 
         // clamp values
-        camera.Position.X = MathHelper.Clamp(camera.Position.X, gameWorld.Bounds.Left, gameWorld.Bounds.Right);
-        camera.Position.Y = MathHelper.Clamp(camera.Position.Y, gameWorld.Bounds.Top, gameWorld.Bounds.Bottom);
+        camera.Position.X = MathHelper.Clamp(camera.Position.X, GameWorld.Bounds.Left, GameWorld.Bounds.Right);
+        camera.Position.Y = MathHelper.Clamp(camera.Position.Y, GameWorld.Bounds.Top, GameWorld.Bounds.Bottom);
         camera.Scale = MathHelper.Clamp(camera.Scale, cameraMinZoom, cameraMaxZoom);
     }
 

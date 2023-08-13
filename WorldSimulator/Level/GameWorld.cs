@@ -18,6 +18,10 @@ internal class GameWorld
     /// Width and height of the game world.
     /// </summary>
     public const int Size = 8192;
+    /// <summary>
+    /// Bounding rectangle of the game world.
+    /// </summary>
+    public static readonly Rectangle Bounds = new(0, 0, Size, Size);
 
     /// <summary>
     /// Maps coordinates of each pixel to its terrain type.
@@ -31,10 +35,6 @@ internal class GameWorld
     private readonly IList<Village> villages;
     private readonly Grid grid;
 
-    /// <summary>
-    /// Bounding rectangle of the game world.
-    /// </summary>
-    public Rectangle Bounds { get; private set; }
     /// <summary>
     /// Contains chunk entities.
     /// </summary>
@@ -53,7 +53,6 @@ internal class GameWorld
         this.villages = villages;
         
         Chunks = chunks;
-        Bounds = new Rectangle(Point.Zero, new Point(Size));
         grid = new Grid(this);
     }
 
