@@ -102,6 +102,7 @@ public class Game : MonoGameBaseGame
         resourceManagers = new Dictionary<Type, IResourceManager>()
         {
             { typeof(Texture2D) ,new TextureManager(GraphicsDevice) },
+            { typeof(Effect), new ShaderManager(GraphicsDevice) },
         };
         foreach (var manager in resourceManagers.Values)
         {
