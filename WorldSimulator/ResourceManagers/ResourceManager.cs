@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace WorldSimulator.ContentResources;
+namespace WorldSimulator.ResourceManagers;
 internal interface IResourceManager
 {
     public void LoadAll();
