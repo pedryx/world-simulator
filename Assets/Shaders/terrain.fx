@@ -1,5 +1,4 @@
 #include "lygia/generative/snoise.hlsl"
-#include "lygia/generative/fbm.hlsl"
 
 struct Octave
 {
