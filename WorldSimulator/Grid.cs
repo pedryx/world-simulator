@@ -23,11 +23,11 @@ internal class Grid
     /// Maximum number of nodes which could be in priority queue at one time. This value is needed for
     /// <see cref="FastPriorityQueue{T}"/> to work properly.
     /// </summary>
-    private const int maxPriorityQueueNodes = (GameWorld.Size * GameWorld.Size) / (gridDistance * gridDistance);
+    private const int maxPriorityQueueNodes = (LegacyGameWorld.Size * LegacyGameWorld.Size) / (gridDistance * gridDistance);
 
-    private readonly GameWorld gameWorld;
+    private readonly LegacyGameWorld gameWorld;
 
-    public Grid(GameWorld gameWorld)
+    public Grid(LegacyGameWorld gameWorld)
     {
         this.gameWorld = gameWorld;
     }

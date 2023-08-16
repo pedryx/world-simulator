@@ -18,7 +18,7 @@ internal class Minimap : UIElement
     private readonly Color viewFrameColor = Color.White;
     private readonly Color borderColor = Color.Black;
 
-    private readonly GameWorld gameWorld;
+    private readonly LegacyGameWorld gameWorld;
     private readonly Camera camera;
     /// <summary>
     /// Scale factor for chunks which ensures that they fit the minimap.
@@ -41,7 +41,7 @@ internal class Minimap : UIElement
         camera = levelState.Camera;
         Size = size;
         this.borderTexture = borderTexture;
-        scale = (Size - new Vector2(borderSize * 2.0f)) / new Vector2(GameWorld.Size);
+        scale = (Size - new Vector2(borderSize * 2.0f)) / new Vector2(LegacyGameWorld.Size);
 
     }
 

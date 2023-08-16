@@ -11,7 +11,7 @@ using WorldSimulator.Extensions;
 using WorldSimulator.Villages;
 
 namespace WorldSimulator.Level;
-internal class GameWorld
+internal class LegacyGameWorld
 {
     // TODO: change back to original
     /// <summary>
@@ -40,7 +40,7 @@ internal class GameWorld
     /// </summary>
     public IEnumerable<IEntity> Chunks { get; private set; }
 
-    public GameWorld
+    public LegacyGameWorld
     (
         IEnumerable<IEntity> chunks,
         TerrainType[][] terrainMap,

@@ -11,13 +11,13 @@ namespace WorldSimulator.Level;
 public class LevelState : GameState
 {
     internal LevelFactory LevelFactory { get; private set; }
-    internal GameWorld GameWorld { get; private set; }
+    internal LegacyGameWorld GameWorld { get; private set; }
 
     protected override void CreateEntities()
     {
         LevelFactory = new LevelFactory(Game, this);
-        GameWorldGenerator worldGenerator = new(Game, LevelFactory);
-        Camera.Position = new Vector2(GameWorld.Size) / 2.0f;
+        LegacyGameWorldGenerator worldGenerator = new(Game, LevelFactory);
+        Camera.Position = new Vector2(LegacyGameWorld.Size) / 2.0f;
 
         GameWorld = worldGenerator.Generate();
 

@@ -13,7 +13,7 @@ using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Villages;
 
 namespace WorldSimulator.Level;
-internal class GameWorldGenerator
+internal class LegacyGameWorldGenerator
 {
     /// <summary>
     /// Size of game world border.
@@ -61,7 +61,7 @@ internal class GameWorldGenerator
     private IDictionary<ResourceType, KdTree<float, IEntity>> resources;
     private List<Village> villages;
 
-    public GameWorldGenerator(Game game, LevelFactory factory)
+    public LegacyGameWorldGenerator(Game game, LevelFactory factory)
     {
         this.game = game;
         this.factory = factory;
@@ -81,7 +81,7 @@ internal class GameWorldGenerator
         }
     }
 
-    public GameWorld Generate()
+    public LegacyGameWorld Generate()
     {
         GenerateTerrain();
 
@@ -90,15 +90,15 @@ internal class GameWorldGenerator
 
     private void GenerateTerrain()
     {
-        int chunkCount = GameWorld.Size / chunkSize;
+        int chunkCount = LegacyGameWorld.Size / chunkSize;
 
         // Prepare data structures for game world.
         // Noise parameters are fine-tuned.
         terrainNoise = new Noise(game.GenerateSeed(), 0.0008f, 0.0016f, 0.0032f);
-        terrainMap = new TerrainType[GameWorld.Size][];
+        terrainMap = new TerrainType[LegacyGameWorld.Size][];
         for (int i = 0; i < terrainMap.Length; i++)
         {
-            terrainMap[i] = new TerrainType[GameWorld.Size];
+            terrainMap[i] = new TerrainType[LegacyGameWorld.Size];
         }
         List<IEntity> chunks = new();
         resources = ResourceTypes.GetAllTypes().ToDictionary
@@ -148,7 +148,7 @@ internal class GameWorldGenerator
             int y = i / chunkSize + (int)offset.Y;
 
             // set border biome, GridDistance is also size of border
-            if (x < border || x >= GameWorld.Size - border || y < border || y >= GameWorld.Size - border)
+            if (x < border || x >= LegacyGameWorld.Size - border || y < border || y >= LegacyGameWorld.Size - border)
             {
                 pixels[i] = TerrainTypes.Border.Color;
                 terrainMap[y][x] = TerrainTypes.Border;

@@ -29,7 +29,7 @@ internal readonly struct InputSystem : IECSSystem
 
     private readonly Game game;
     private readonly Camera camera;
-    private readonly GameWorld gameWorld;
+    private readonly LegacyGameWorld gameWorld;
     private readonly GameState gameState;
     private readonly InputState state = new();
 

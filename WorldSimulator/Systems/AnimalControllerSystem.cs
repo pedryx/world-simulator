@@ -20,9 +20,9 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
 
     private readonly Random destinationRandom;
     private readonly Random timeToUpdateRandom = new();
-    private readonly GameWorld gameWorld;
+    private readonly LegacyGameWorld gameWorld;
 
-    public AnimalControllerSystem(Game game, GameWorld gameWorld)
+    public AnimalControllerSystem(Game game, LegacyGameWorld gameWorld)
     {
         this.gameWorld = gameWorld;
 
