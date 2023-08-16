@@ -12,7 +12,6 @@ namespace WorldSimulator.Level;
 public class LevelState : GameState
 {
     internal LevelFactory LevelFactory { get; private set; }
-    internal LegacyGameWorld LegacyGameWorld { get; private set; }
     internal GameWorld GameWorld { get; private set; }
 
     protected override void CreateEntities()
@@ -30,9 +29,9 @@ public class LevelState : GameState
         {
             new DebugSystem(Game, Camera),
             new InputSystem(this),
-            //Game.Factory.CreateSystem(new AnimalControllerSystem(Game, LegacyGameWorld)),
+            Game.Factory.CreateSystem(new AnimalControllerSystem(Game, GameWorld)),
             Game.Factory.CreateSystem(new MovementSystem()),
-            Game.Factory.CreateSystem(new VillagerBehaviorSystem(LegacyGameWorld)),
+            //Game.Factory.CreateSystem(new VillagerBehaviorSystem(LegacyGameWorld)),
             Game.Factory.CreateSystem(new PathFollowSystem())
         };
     }

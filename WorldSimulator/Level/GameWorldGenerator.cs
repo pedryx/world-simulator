@@ -1,5 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using KdTree;
+using KdTree.Math;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Level;
 internal class GameWorldGenerator
@@ -8,8 +17,10 @@ internal class GameWorldGenerator
     private readonly GraphicsDevice graphicsDevice;
     private readonly LevelFactory levelFactory;
 
-    private int[] terrains;
     private Vector2[] resourcePositions;
+
+    private int[] terrains;
+    private IDictionary<ResourceType, KdTree<float, IEntity>> resources;
 
     public GameWorldGenerator(Game game, LevelFactory levelFactory)
     {
@@ -24,7 +35,7 @@ internal class GameWorldGenerator
         GenerateTerrain();
         SpawnResources();
 
-        return new GameWorld();
+        return new GameWorld(terrains, resources);
     }
 
     private void GenerateTerrain()
@@ -51,7 +62,7 @@ internal class GameWorldGenerator
         (
             graphicsDevice,
             typeof(int),
-            2,
+            1,
             BufferUsage.None,
             ShaderAccess.None
         );
@@ -77,13 +88,29 @@ internal class GameWorldGenerator
 
     private void SpawnResources()
     {
+        resources = ResourceTypes.GetAllTypes().ToDictionary
+        (
+            type => type,
+            type => new KdTree<float, IEntity>(2, new FloatMath())
+        );
+
         foreach (var position in resourcePositions)
         {
             int index = ((int)position.Y * GameWorld.Size.X + (int)position.X) / GameWorldGrid.Distance;
 
-            ResourceType type = TerrainTypes.GetTerrainType(terrains[index]).ResourceType;
-            if (type != null)
-                levelFactory.CreateResource(type, position);
+            TerrainType terrainType = TerrainTypes.GetTerrainType(terrains[index]);
+            ResourceType resourceType = terrainType.ResourceType;
+
+            /* 
+             * because [psitions were calculated on graphics card, on biome transitions they could result onto
+             * neighbor biome
+             */
+            if (resourceType == null)
+                continue;
+
+            IEntity entity = levelFactory.CreateResource(resourceType, position);
+            resources[resourceType].Add(position.ToFloat(), entity);
         }
+        resourcePositions = null;
     }
 }

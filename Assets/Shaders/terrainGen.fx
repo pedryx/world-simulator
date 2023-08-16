@@ -24,13 +24,6 @@ void MainCS(int id : SV_DispatchThreadID)
         int index = id * gridDistance + i;
         uint2 pos = float2(index % worldSize.x, worldSize.y - (index / worldSize.x + 1));
 
-        if ( pos.y >= worldSize.y)
-        {
-            int a;
-            InterlockedAdd(sizeBuffer[1], 1, a);
-            terrainBuffer[a] = index;
-        }
-
         float value = CalcNoise(pos);
         Terrain terrain = GetTerrain(value);
 
