@@ -11,8 +11,11 @@ internal class TextureManager : ResourceManager<Texture2D>
         this.graphics = graphics;
     }
 
-    public override Texture2D Load(string file)
+    public override Texture2D Load(string file, string name)
     {
-        return Texture2D.FromFile(graphics, file);
+        var texture = Texture2D.FromFile(graphics, file);
+        texture.Name = name;
+
+        return texture;
     }
 }

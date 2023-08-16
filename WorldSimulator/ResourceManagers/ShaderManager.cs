@@ -13,8 +13,11 @@ internal class ShaderManager : ResourceManager<Effect>
         this.graphics = graphics;
     }
 
-    public override Effect Load(string file)
+    public override Effect Load(string file, string name)
     {
-        return new Effect(graphics, File.ReadAllBytes(file));
+        return new Effect(graphics, File.ReadAllBytes(file))
+        {
+            Name = name,
+        };
     }
 }

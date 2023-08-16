@@ -30,6 +30,9 @@ internal abstract class ResourceManager<TResource> : IResourceManager
     /// </summary>
     public void LoadAll()
     {
+        if (!Directory.Exists(contentFolder))
+            return;
+
         string[] files = Directory.GetFiles
         (
             contentFolder,
@@ -39,7 +42,7 @@ internal abstract class ResourceManager<TResource> : IResourceManager
         foreach (var file in files)
         {
             string name = GetName(file);
-            TResource value = Load(file);
+            TResource value = Load(file, name);
 
             resources.Add(name, value);
         }
@@ -54,7 +57,7 @@ internal abstract class ResourceManager<TResource> : IResourceManager
     /// <summary>
     /// Load resource from file.
     /// </summary>
-    public abstract TResource Load(string file);
+    public abstract TResource Load(string file, string name);
 
     public TResource this[string name] => resources[name];
 }
