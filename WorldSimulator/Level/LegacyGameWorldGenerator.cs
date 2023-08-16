@@ -34,7 +34,7 @@ internal class LegacyGameWorldGenerator
     /// </summary>
     private readonly BiomeLayer[] layers = new BiomeLayer[]
     {
-        new BiomeLayer(0.30f, TerrainTypes.DeepWater),
+        //new BiomeLayer(0.30f, TerrainTypes.DeepWater),
         new BiomeLayer(0.35f, TerrainTypes.ShallowWater),
         new BiomeLayer(0.40f, TerrainTypes.Beach),
         new BiomeLayer(0.50f, TerrainTypes.Plain),
@@ -150,14 +150,14 @@ internal class LegacyGameWorldGenerator
             // set border biome, GridDistance is also size of border
             if (x < border || x >= LegacyGameWorld.Size - border || y < border || y >= LegacyGameWorld.Size - border)
             {
-                pixels[i] = TerrainTypes.Border.Color;
-                terrainMap[y][x] = TerrainTypes.Border;
+                //pixels[i] = TerrainTypes.Border.Color;
+                //terrainMap[y][x] = TerrainTypes.Border;
                 return;
             }
 
             // set terrain according to generated noise value
             TerrainType terrain = layersArray[(int)(terrainNoise.CalculateValue(x, y) * layersArray.Length)];
-            pixels[i] = terrain.Color;
+            //pixels[i] = terrain.Color;
             terrainMap[y][x] = terrain;
             
             // try to spawn village
@@ -169,7 +169,7 @@ internal class LegacyGameWorldGenerator
                 }
             }
             // try to spawn resource
-            else if (terrain.ResourceType != null && chances[i] < terrain.ResourceSpawnChance)
+            else if (terrain.ResourceType != null /*&& chances[i] < terrain.ResourceSpawnChance*/)
             {
                 lock (factoryLock)
                 {

@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace WorldSimulator;
 internal class TerrainType
 {
-    public Color Color { get; init; }
     /// <summary>
     /// Determine if structures can be builded on this terrain.
     /// </summary>
@@ -19,10 +19,6 @@ internal class TerrainType
     /// Resource which can spawn on this terrain or null if no resource can spawn on this terrain.
     /// </summary>
     public ResourceType ResourceType { get; init; }
-    /// <summary>
-    /// Chance that <see cref="ResourceType"/> will be spawned at specific pixel of this terrain.
-    /// </summary>
-    public float ResourceSpawnChance { get; init; }
 }
 
 /// <summary>
@@ -30,63 +26,56 @@ internal class TerrainType
 /// </summary>
 internal static class TerrainTypes
 {
-    public readonly static TerrainType Border = new()
-    {
-        Color = new Color(30, 30, 30),
-    };
-
-    public readonly static TerrainType DeepWater = new()
-    {
-        Color = new Color(48, 62, 255),
-    };
-
-    public readonly static TerrainType ShallowWater = new()
-    {
-        Color = new Color(71, 185, 255),
-    };
+    public readonly static TerrainType ShallowWater = new();
 
     public readonly static TerrainType Beach = new()
     {
-        Color = new Color(255, 253, 158),
         Buildable = true,
         Walkable = true,
     };
 
     public readonly static TerrainType Plain = new()
     {
-        Color = new Color(85, 201, 90),
         Buildable = true,
         Walkable = true,
         ResourceType = ResourceTypes.Deer,
-        ResourceSpawnChance = 0.0001f,
     };
     
     public readonly static TerrainType Forest = new()
     {
-        Color = new Color(25, 133, 30),
         Buildable = true,
         Walkable = true,
         ResourceType = ResourceTypes.Tree,
-        ResourceSpawnChance = 0.0002f
     };
     
     public readonly static TerrainType Mountain = new()
     {
-        Color = new Color(143, 143, 143),
         Buildable = true,
         Walkable = true,
         ResourceType = ResourceTypes.Rock,
-        ResourceSpawnChance = 0.001f
     };
 
     public readonly static TerrainType HighMountain = new()
     {
-        Color = Color.White,
         Buildable = false,
         Walkable = true,
         ResourceType = ResourceTypes.Deposite,
-        ResourceSpawnChance = 0.002f,
     };
+
+    public static TerrainType GetTerrainType(int id)
+    {
+        return id switch
+        {
+            0 => ShallowWater,
+            1 => Beach,
+            2 => Plain,
+            3 => Forest,
+            4 => Mountain,
+            5 => HighMountain,
+
+            _ => throw new InvalidOperationException("Invalid terrain id!"),
+        };
+    }
 
     public static IEnumerable<TerrainType> GetAllTypes()
         => typeof(TerrainTypes).GetFields().Select(p => (TerrainType)p.GetValue(null));

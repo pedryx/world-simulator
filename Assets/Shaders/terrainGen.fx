@@ -4,7 +4,7 @@ extern float2 worldSize;
 extern int gridDistance;
 
 extern RWStructuredBuffer<int> terrainBuffer;
-extern AppendStructuredBuffer<float2> resourceBuffer;
+extern RWStructuredBuffer<float2> resourceBuffer;
 extern RWStructuredBuffer<int> sizeBuffer;
 
 uint random(uint seed, uint exclusive)
@@ -22,15 +22,23 @@ void MainCS(int id : SV_DispatchThreadID)
     for (int i = 0; i < gridDistance; i++)
     {
         int index = id * gridDistance + i;
-        uint2 pos = float2(index % worldSize.x, index / worldSize.x);
+        uint2 pos = float2(index % worldSize.x, worldSize.y - (index / worldSize.x + 1));
+
+        if ( pos.y >= worldSize.y)
+        {
+            int a;
+            InterlockedAdd(sizeBuffer[1], 1, a);
+            terrainBuffer[a] = index;
+        }
 
         float value = CalcNoise(pos);
         Terrain terrain = GetTerrain(value);
 
         if (random(index, 100000) < terrain.resourceSpawnChance)
         {
-            resourceBuffer.Append(float2(pos.x, worldSize.y - pos.y));
-            InterlockedAdd(sizeBuffer[0], 1);
+            int bufferIndex;
+            InterlockedAdd(sizeBuffer[0], 1, bufferIndex);
+            resourceBuffer[bufferIndex] = float2(pos.x, worldSize.y - (pos.y + 1));
         }
 
         if (i == 0)

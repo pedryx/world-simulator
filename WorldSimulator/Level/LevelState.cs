@@ -18,7 +18,7 @@ public class LevelState : GameState
     protected override void CreateEntities()
     {
         LevelFactory = new LevelFactory(Game, this);
-        GameWorldGenerator worldGenerator = new();
+        GameWorldGenerator worldGenerator = new(Game, LevelFactory);
         Camera.Position = GameWorld.Size.ToVector2() / 2.0f;
 
         GameWorld = worldGenerator.Generate();
@@ -30,7 +30,7 @@ public class LevelState : GameState
         {
             new DebugSystem(Game, Camera),
             new InputSystem(this),
-            Game.Factory.CreateSystem(new AnimalControllerSystem(Game, LegacyGameWorld)),
+            //Game.Factory.CreateSystem(new AnimalControllerSystem(Game, LegacyGameWorld)),
             Game.Factory.CreateSystem(new MovementSystem()),
             Game.Factory.CreateSystem(new VillagerBehaviorSystem(LegacyGameWorld)),
             Game.Factory.CreateSystem(new PathFollowSystem())

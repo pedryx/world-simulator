@@ -34,8 +34,8 @@ internal class LevelFactory
         villagerBuilder = CreateVillagerBuilder();
 
         treeBuilder = CreateBasicBuilder("tree", 0.4f);
-        rockBuilder = CreateBasicBuilder("boulder", 0.1f);
-        depositeBuilder = CreateBasicBuilder("iron deposite", 0.1f);
+        rockBuilder = CreateBasicBuilder("boulder", 0.15f);
+        depositeBuilder = CreateBasicBuilder("iron deposite", 0.15f);
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
 
         mainBuildingBuilder = CreateBasicBuilder("main building", 0.6f);
