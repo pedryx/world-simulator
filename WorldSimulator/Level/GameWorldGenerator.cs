@@ -40,13 +40,11 @@ internal class GameWorldGenerator
 
     private void GenerateTerrain()
     {
-        int totalWorldSize = GameWorld.Size.X * GameWorld.Size.Y;
-
         StructuredBuffer terrainBuffer = new
         (
             graphicsDevice,
             typeof(int),
-            totalWorldSize / GameWorldGrid.Distance,
+            GameWorld.TotalSize / GameWorldGrid.Distance,
             BufferUsage.None,
             ShaderAccess.None
         );
@@ -54,7 +52,7 @@ internal class GameWorldGenerator
         (
             graphicsDevice,
             typeof(Vector2),
-            totalWorldSize,
+            GameWorld.TotalSize,
             BufferUsage.None,
             ShaderAccess.None
         );
@@ -74,7 +72,7 @@ internal class GameWorldGenerator
         terrainGenShader.Parameters["sizeBuffer"].SetValue(sizeBuffer);
 
         terrainGenShader.CurrentTechnique.Passes[0].ApplyCompute();
-        graphicsDevice.DispatchCompute(totalWorldSize / GameWorldGrid.Distance, 1, 1);
+        graphicsDevice.DispatchCompute(GameWorld.TotalSize / GameWorldGrid.Distance, 1, 1);
 
         terrains = new int[terrainBuffer.ElementCount];
         terrainBuffer.GetData(terrains);
@@ -96,7 +94,8 @@ internal class GameWorldGenerator
 
         foreach (var position in resourcePositions)
         {
-            int index = ((int)position.Y * GameWorld.Size.X + (int)position.X) / GameWorldGrid.Distance;
+            Vector2 point = GameWorldGrid.GetClosestPoint(position);
+            int index = ((int)point.Y * GameWorld.Size.X + (int)point.X) / GameWorldGrid.Distance;
 
             TerrainType terrainType = TerrainTypes.GetTerrainType(terrains[index]);
             ResourceType resourceType = terrainType.ResourceType;

@@ -25,14 +25,21 @@ internal class GameWorld
     /// </summary>
     public static readonly Point Size = new(8192);
     public static readonly Rectangle Bounds = new(Point.Zero, Size);
+    /// <summary>
+    /// Total size (width * height) of game world in pixels.
+    /// </summary>
+    public static readonly int TotalSize = Size.X * Size.Y;
 
     private readonly int[] terrains;
     private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
+    private readonly GameWorldGrid grid;
 
     public GameWorld(int[] terrains, IDictionary<ResourceType, KdTree<float, IEntity>> resources)
     {
         this.terrains = terrains;
         this.resources = resources;
+
+        grid = new GameWorldGrid(this);
     }
 
     /// <summary>
@@ -86,12 +93,51 @@ internal class GameWorld
     public bool IsWalkableForAnimals(Vector2 position)
         => IsWalkable(position) && GetTerrainType(position) == TerrainTypes.Plain;
 
+    public Vector2[] FindPath(Vector2 start, Vector2 end)
+    {
+        if (RayCast(start, end))
+            return new Vector2[] { start, end };
+
+        return grid.FindPath(start, end);
+    }
+
+    /// <summary>
+    /// Ray trace from the start point to the end point. Determine if there is non-walkable terrain which intersect
+    /// with theray.
+    /// </summary>
+    /// <param name="start">Start point of ray cast.</param>
+    /// <param name="end">End popint of ray cast.</param>
+    /// <returns>True if there is no non-walkable terrain which intersect with ray cast, ortherwise false.</returns>
+    public bool RayCast(Vector2 start, Vector2 end)
+    {
+        float distance = Vector2.Distance(start, end);
+
+        if (distance <= GameWorldGrid.Distance)
+            return true;
+
+        int sampleCount = (int)(distance / GameWorldGrid.Distance);
+        Vector2 direction = GameWorldGrid.Distance * Vector2.Normalize(end - start);
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            Vector2 position = start + direction * i;
+
+            if (!IsWalkable(position))
+                return false;
+        }
+
+        return true;
+    }
+
+
     /// <summary>
     /// Get terrain type at specific position.
     /// </summary>
     private TerrainType GetTerrainType(Vector2 position)
     {
-        int index = ((int)position.Y * GameWorld.Size.X + (int)position.X) / GameWorldGrid.Distance;
+        Vector2 point = GameWorldGrid.GetClosestPoint(position);
+        int index = ((int)point.Y * GameWorld.Size.X + (int)point.X) / GameWorldGrid.Distance;
+
         return TerrainTypes.GetTerrainType(terrains[index]);
     }
 }
