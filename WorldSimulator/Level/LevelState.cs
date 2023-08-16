@@ -13,14 +13,15 @@ public class LevelState : GameState
 {
     internal LevelFactory LevelFactory { get; private set; }
     internal LegacyGameWorld LegacyGameWorld { get; private set; }
+    internal GameWorld GameWorld { get; private set; }
 
     protected override void CreateEntities()
     {
         LevelFactory = new LevelFactory(Game, this);
-        //LegacyGameWorldGenerator worldGenerator = new(Game, LevelFactory);
+        GameWorldGenerator worldGenerator = new();
         Camera.Position = GameWorld.Size.ToVector2() / 2.0f;
 
-        //GameWorld = worldGenerator.Generate();
+        GameWorld = worldGenerator.Generate();
     }
 
     protected override IEnumerable<IECSSystem> CreateSystems()
