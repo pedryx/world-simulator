@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using System;
 using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
@@ -11,16 +12,15 @@ namespace WorldSimulator.Level;
 public class LevelState : GameState
 {
     internal LevelFactory LevelFactory { get; private set; }
-    internal LegacyGameWorld GameWorld { get; private set; }
+    internal LegacyGameWorld LegacyGameWorld { get; private set; }
 
     protected override void CreateEntities()
     {
         LevelFactory = new LevelFactory(Game, this);
-        LegacyGameWorldGenerator worldGenerator = new(Game, LevelFactory);
-        Camera.Position = new Vector2(LegacyGameWorld.Size) / 2.0f;
+        //LegacyGameWorldGenerator worldGenerator = new(Game, LevelFactory);
+        Camera.Position = GameWorld.Size.ToVector2() / 2.0f;
 
-        GameWorld = worldGenerator.Generate();
-
+        //GameWorld = worldGenerator.Generate();
     }
 
     protected override IEnumerable<IECSSystem> CreateSystems()
@@ -29,9 +29,9 @@ public class LevelState : GameState
         {
             new DebugSystem(Game, Camera),
             new InputSystem(this),
-            Game.Factory.CreateSystem(new AnimalControllerSystem(Game, GameWorld)),
+            Game.Factory.CreateSystem(new AnimalControllerSystem(Game, LegacyGameWorld)),
             Game.Factory.CreateSystem(new MovementSystem()),
-            Game.Factory.CreateSystem(new VillagerBehaviorSystem(GameWorld)),
+            Game.Factory.CreateSystem(new VillagerBehaviorSystem(LegacyGameWorld)),
             Game.Factory.CreateSystem(new PathFollowSystem())
         };
     }
@@ -47,13 +47,13 @@ public class LevelState : GameState
 
     protected override void CreateUI()
     {
-        Texture2D bigBorder = Game.GetResourceManager<Texture2D>()["ui border big"];
+        /*Texture2D bigBorder = Game.GetResourceManager<Texture2D>()["ui border big"];
 
         UILayer.AddElement(new Minimap(this, new Vector2(300.0f, 300.0f), bigBorder)
         {
             Offset = new Vector2(Game.DefaultResolution.X - 300.0f - 5.0f, 5.0f),
-        });
-
+        });*/
+        
         base.CreateUI();
     }
 }

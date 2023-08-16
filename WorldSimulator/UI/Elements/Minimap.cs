@@ -37,7 +37,7 @@ internal class Minimap : UIElement
 
     public Minimap(LevelState levelState, Vector2 size, Texture2D borderTexture)
     {
-        gameWorld = levelState.GameWorld;
+        gameWorld = levelState.LegacyGameWorld;
         camera = levelState.Camera;
         Size = size;
         this.borderTexture = borderTexture;

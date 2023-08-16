@@ -17,7 +17,7 @@ internal class LegacyGameWorld
     /// <summary>
     /// Width and height of the game world.
     /// </summary>
-    public const int Size = 8192;
+    public const int Size = 8192 / 4;
 
     /// <summary>
     /// Maps coordinates of each pixel to its terrain type.
