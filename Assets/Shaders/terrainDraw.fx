@@ -21,8 +21,8 @@ void MainPS(in float4 screenPos : SV_Position, out float4 color : SV_Target)
         return;
     }
 
-    float value = CalcNoise(noisePos);
-    color =  float4(GetTerrain(value).color, 1.0);
+    float height = CalcNoise(noisePos);
+    color =  float4(GetTerrain(height).color, 1.0);
 }
 
 technique TerrainDraw

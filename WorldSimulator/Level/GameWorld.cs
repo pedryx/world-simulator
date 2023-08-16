@@ -7,6 +7,7 @@ using System.Linq;
 
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
+using WorldSimulator.Villages;
 
 namespace WorldSimulator.Level;
 internal class GameWorld
@@ -32,15 +33,25 @@ internal class GameWorld
 
     private readonly int[] terrains;
     private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
+    private readonly IList<Village> villages;
     private readonly GameWorldGrid grid;
 
-    public GameWorld(int[] terrains, IDictionary<ResourceType, KdTree<float, IEntity>> resources)
+    public GameWorld
+    (
+        int[] terrains,
+        IDictionary<ResourceType, KdTree<float, IEntity>> resources,
+        IList<Village> villages
+    )
     {
         this.terrains = terrains;
         this.resources = resources;
+        this.villages = villages;
 
         grid = new GameWorldGrid(this);
     }
+
+    public Village GetVillage(int id)
+        => villages[id];
 
     /// <summary>
     /// Get resource nearest to specific position and remove it from kd-tree.

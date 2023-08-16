@@ -24,6 +24,8 @@ static const Octave octaves[] =
     { 4.0, 0.25}
 };
 
+static const int chancesOrder = 10000000;
+
 static const int terrainCount = 6;
 static const Terrain terrains[] =
 {
@@ -32,13 +34,13 @@ static const Terrain terrains[] =
     // beach
     { 1, 0.40,   0, float3(1.000, 0.992, 0.620) },
     // plain
-    { 2, 0.50,   5, float3(0.333, 0.788, 0.353) },
+    { 2, 0.50,   500, float3(0.333, 0.788, 0.353) },
     // forest
-    { 3, 0.70,  20, float3(0.098, 0.522, 0.118) },
+    { 3, 0.70,  2000, float3(0.098, 0.522, 0.118) },
     // mountain
-    { 4, 0.80,  50, float3(0.561, 0.561, 0.561) },
+    { 4, 0.80,  5000, float3(0.561, 0.561, 0.561) },
     // high mountain
-    { 5, 1.00, 100, float3(1.000, 1.000, 1.000) },
+    { 5, 1.00, 10000, float3(1.000, 1.000, 1.000) },
 };
 
 float CalcNoise(float2 pos)

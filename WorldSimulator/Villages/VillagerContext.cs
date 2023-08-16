@@ -8,10 +8,10 @@ namespace WorldSimulator.Villages;
 internal class VillagerContext
 {
     public IEntity Entity { get; private set; }
-    public LegacyGameWorld GameWorld { get; private set; }
+    public GameWorld GameWorld { get; private set; }
     public float DeltaTime { get; private set; }
 
-    public VillagerContext(IEntity entity, LegacyGameWorld gameWorld, float deltaTime)
+    public VillagerContext(IEntity entity, GameWorld gameWorld, float deltaTime)
     {
         Entity = entity;
         GameWorld = gameWorld;

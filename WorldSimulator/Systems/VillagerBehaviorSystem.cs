@@ -9,9 +9,9 @@ namespace WorldSimulator.Systems;
 /// </summary>
 internal readonly struct VillagerBehaviorSystem : IEntityProcessor<VillagerBehavior, Owner>
 {
-    private readonly LegacyGameWorld gameWorld;
+    private readonly GameWorld gameWorld;
 
-    public VillagerBehaviorSystem(LegacyGameWorld gameWorld)
+    public VillagerBehaviorSystem(GameWorld gameWorld)
     {
         this.gameWorld = gameWorld;
     }

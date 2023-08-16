@@ -24,10 +24,10 @@ void MainCS(int id : SV_DispatchThreadID)
         int index = id * gridDistance + i;
         uint2 pos = float2(index % worldSize.x, worldSize.y - (index / worldSize.x + 1));
 
-        float value = CalcNoise(pos);
-        Terrain terrain = GetTerrain(value);
+        float height = CalcNoise(pos);
+        Terrain terrain = GetTerrain(height);
 
-        if (random(index, 100000) < terrain.resourceSpawnChance)
+        if (random(index, chancesOrder) < terrain.resourceSpawnChance)
         {
             int bufferIndex;
             InterlockedAdd(sizeBuffer[0], 1, bufferIndex);
