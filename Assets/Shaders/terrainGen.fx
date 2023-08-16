@@ -16,7 +16,7 @@ uint random(uint seed, uint exclusive)
     return (seed * 1664525 + 1013904223) % exclusive;
 }
 
-[numthreads(1, 1, 1)]
+[numthreads(1024, 1, 1)]
 void MainCS(int id : SV_DispatchThreadID)
 {
     for (int i = 0; i < gridDistance; i++)

@@ -13,6 +13,8 @@ using WorldSimulator.Extensions;
 namespace WorldSimulator.Level;
 internal class GameWorldGenerator
 {
+    private const int shaderThreadGroupSize = 1024;
+
     private readonly Effect terrainGenShader;
     private readonly GraphicsDevice graphicsDevice;
     private readonly LevelFactory levelFactory;
@@ -72,7 +74,7 @@ internal class GameWorldGenerator
         terrainGenShader.Parameters["sizeBuffer"].SetValue(sizeBuffer);
 
         terrainGenShader.CurrentTechnique.Passes[0].ApplyCompute();
-        graphicsDevice.DispatchCompute(GameWorld.TotalSize / GameWorldGrid.Distance, 1, 1);
+        graphicsDevice.DispatchCompute((GameWorld.TotalSize / GameWorldGrid.Distance) / shaderThreadGroupSize, 1, 1);
 
         terrains = new int[terrainBuffer.ElementCount];
         terrainBuffer.GetData(terrains);
