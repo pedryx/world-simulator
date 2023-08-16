@@ -1,6 +1,5 @@
 #include "lygia/generative/snoise.hlsl"
-
-extern float2 worldSize;
+#include "lygia/generative/fbm.hlsl"
 
 struct Octave
 {
@@ -12,7 +11,7 @@ struct Terrain
 {
     int id;
     float height;
-    float resourceSpawnChance;
+    uint resourceSpawnChance;
     float3 color;
 };
 
@@ -30,33 +29,31 @@ static const int terrainCount = 6;
 static const Terrain terrains[] =
 {
     // water
-    { 0, 0.35, 0.0000, float3(0.278, 0.725, 1.000) },
+    { 0, 0.35,   0, float3(0.278, 0.725, 1.000) },
     // beach
-    { 1, 0.40, 0.0000, float3(1.000, 0.992, 0.620) },
+    { 1, 0.40,   0, float3(1.000, 0.992, 0.620) },
     // plain
-    { 2, 0.50, 0.0001, float3(0.333, 0.788, 0.353) },
+    { 2, 0.50,   5, float3(0.333, 0.788, 0.353) },
     // forest
-    { 3, 0.70, 0.0002, float3(0.098, 0.522, 0.118) },
+    { 3, 0.70,  20, float3(0.098, 0.522, 0.118) },
     // mountain
-    { 4, 0.80, 0.0010, float3(0.561, 0.561, 0.561) },
+    { 4, 0.80,  50, float3(0.561, 0.561, 0.561) },
     // high mountain
-    { 5, 1.00, 0.0020, float3(1.000, 1.000, 1.000) },
+    { 5, 1.00, 100, float3(1.000, 1.000, 1.000) },
 };
 
 float CalcNoise(float2 pos)
 {
-    pos /= noiseScale;
-
     float value = 0.0;
     float sum = 0.0;
 
     for (int i = 0; i < octaveCount; i++)
     {
-        value += octaves[i].weight * snoise(pos * octaves[i].frequency);
+        value += octaves[i].weight * snoise((pos / noiseScale) * octaves[i].frequency);
         sum += octaves[i].weight;
     }
 
-    return (value + sum) / (2.0 * sum); 
+    return (value + sum) / (2.0 * sum);
 }
 
 Terrain GetTerrain(float height)

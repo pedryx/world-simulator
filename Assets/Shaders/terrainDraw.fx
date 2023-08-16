@@ -1,14 +1,15 @@
 #include "terrain.fx"
 
 extern float2 resolution;
+extern float2 worldSize;
 
 extern float2 resolutionScale;
 extern float2 cameraPos;
 extern float cameraScale;
 
-float4 MainPS(float2 screenPos : SV_Position) : COLOR
+void MainPS(in float4 screenPos : SV_Position, out float4 color : SV_Target)
 {   
-    float2 screenOffset = screenPos - 0.5 * resolution * resolutionScale;
+    float2 screenOffset = screenPos.xy - 0.5 * resolution * resolutionScale;
     float2 scale = cameraScale * resolutionScale;
     // in MonoGame y coordinate is flipped when using default render target
     float2 cameraOffset = float2(cameraPos.x, -cameraPos.y + worldSize.y);
@@ -16,19 +17,18 @@ float4 MainPS(float2 screenPos : SV_Position) : COLOR
 
     if (any(noisePos < float2(0.0, 0.0) || noisePos >= worldSize))
     {
-        return float4(terrains[0].color, 1.0);
+        color = float4(terrains[0].color, 1.0);
+        return;
     }
 
     float value = CalcNoise(noisePos);
-    float3 color = GetTerrain(value).color;
-
-    return float4(color, 1.0);
+    color =  float4(GetTerrain(value).color, 1.0);
 }
 
 technique TerrainDraw
 {
     pass Pass0
     {
-        PixelShader = compile ps_3_0 MainPS();
+        PixelShader = compile ps_5_0 MainPS();
     }
 };

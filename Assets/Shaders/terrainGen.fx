@@ -1,17 +1,43 @@
 #include "terrain.fx"
 
+extern float2 worldSize;
+extern int gridSize;
+
 extern RWStructuredBuffer<int> terrainBuffer;
+extern AppendStructuredBuffer<float2> resourcePositionBuffer;
+extern RWStructuredBuffer<int> sizeBuffer;
 
-[numthreads(32, 32, 1)]
-void MainCS(uint2 id : SV_DispatchThreadID)
+uint random(uint seed, uint exclusive)
 {
-    uint index = id.y * worldSize.x + id.x;
-    float2 pos = float2(id.x, worldSize.y - id.y);
+    seed ^= (seed << 13);
+    seed ^= (seed >> 17);
+    seed ^= (seed << 5);
 
-    float value = CalcNoise(pos);
-    Terrain terrain = GetTerrain(value);
+    return (seed * 1664525 + 1013904223) % exclusive;
+}
 
-    terrainBuffer[index] = terrain.id;
+[numthreads(1, 1, 1)]
+void MainCS(int id : SV_DispatchThreadID)
+{
+    for (int i = 0; i < gridSize; i++)
+    {
+        int index = id * gridSize + i;
+        uint2 pos = float2(index % worldSize.x, index / worldSize.x);
+
+        float value = CalcNoise(pos);
+        Terrain terrain = GetTerrain(value);
+
+        if (random(index, 100000) < terrain.resourceSpawnChance)
+        {
+            resourcePositionBuffer.Append(float2(pos.x, worldSize.y - pos.y));
+            InterlockedAdd(sizeBuffer[0], 1);
+        }
+
+        if (i == 0)
+        {
+            terrainBuffer[id] = terrain.id;
+        }
+    }
 }
 
 technique TerrainGen
