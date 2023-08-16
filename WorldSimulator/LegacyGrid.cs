@@ -13,7 +13,7 @@ namespace WorldSimulator;
 /// <summary>
 /// Utility class for path-finding in grid.
 /// </summary>
-internal class Grid
+internal class LegacyGrid
 {
     /// <summary>
     /// Distance between grid points.
@@ -27,7 +27,7 @@ internal class Grid
 
     private readonly LegacyGameWorld gameWorld;
 
-    public Grid(LegacyGameWorld gameWorld)
+    public LegacyGrid(LegacyGameWorld gameWorld)
     {
         this.gameWorld = gameWorld;
     }

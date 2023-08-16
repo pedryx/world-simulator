@@ -29,7 +29,7 @@ internal class LegacyGameWorld
     /// </summary>
     private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
     private readonly IList<Village> villages;
-    private readonly Grid grid;
+    private readonly LegacyGrid grid;
 
     /// <summary>
     /// Bounding rectangle of the game world.
@@ -54,7 +54,7 @@ internal class LegacyGameWorld
         
         Chunks = chunks;
         Bounds = new Rectangle(Point.Zero, new Point(Size));
-        grid = new Grid(this);
+        grid = new LegacyGrid(this);
     }
 
     public Village GetVillage(int id)
