@@ -35,7 +35,7 @@ internal class LevelFactory
 
         treeBuilder = CreateBasicBuilder("tree", 0.4f);
         rockBuilder = CreateBasicBuilder("boulder", 0.15f);
-        depositeBuilder = CreateBasicBuilder("iron deposite", 0.15f);
+        depositeBuilder = CreateBasicBuilder("iron deposit", 0.15f);
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
 
         mainBuildingBuilder = CreateBasicBuilder("main building", 0.6f);
@@ -140,12 +140,12 @@ internal class LevelFactory
             return CreateTree(position);
         else if (resource == ResourceTypes.Rock)
             return CreateRock(position);
-        else if (resource == ResourceTypes.Deposite)
-            return CreateDeposite(position);
+        else if (resource == ResourceTypes.Deposit)
+            return CreateDeposit(position);
         else if (resource == ResourceTypes.Deer)
             return CreateDeer(position);
 
-        throw new InvalidOperationException("Entity for this resoure not exist!");
+        throw new InvalidOperationException("Entity for this resource not exist!");
     }
 
     public IEntity CreateTree(Vector2 position)
@@ -154,7 +154,7 @@ internal class LevelFactory
     public IEntity CreateRock(Vector2 position)
         => CreateStaticEntity(rockBuilder, position);
 
-    public IEntity CreateDeposite(Vector2 position)
+    public IEntity CreateDeposit(Vector2 position)
         => CreateStaticEntity(depositeBuilder, position);
 
     public IEntity CreateDeer(Vector2 position)

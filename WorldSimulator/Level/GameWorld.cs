@@ -114,11 +114,11 @@ internal class GameWorld
 
     /// <summary>
     /// Ray trace from the start point to the end point. Determine if there is non-walkable terrain which intersect
-    /// with theray.
+    /// with the ray.
     /// </summary>
     /// <param name="start">Start point of ray cast.</param>
-    /// <param name="end">End popint of ray cast.</param>
-    /// <returns>True if there is no non-walkable terrain which intersect with ray cast, ortherwise false.</returns>
+    /// <param name="end">End pop int of ray cast.</param>
+    /// <returns>True if there is no non-walkable terrain which intersect with ray cast, otherwise false.</returns>
     public bool RayCast(Vector2 start, Vector2 end)
     {
         float distance = Vector2.Distance(start, end);

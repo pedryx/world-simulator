@@ -14,7 +14,7 @@ internal struct Movement
     /// </summary>
     public float Speed;
     /// <summary>
-    /// Destination towards which will entitiy move.
+    /// Destination towards which will entity move.
     /// </summary>
     public Vector2 Destination;
 }

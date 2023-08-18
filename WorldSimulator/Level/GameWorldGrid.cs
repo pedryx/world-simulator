@@ -39,12 +39,12 @@ internal class GameWorldGrid
     }
 
     /// <summary>
-    /// Mamximum number of nodes which can be in priority queue at one time.
+    /// Maximum number of nodes which can be in priority queue at one time.
     /// </summary>
     private static readonly int maxPriorityQueueSize = GameWorld.TotalSize / Distance;
 
     /// <summary>
-    /// Calculate manhattan distance between two positions.
+    /// Calculate Manhattan distance between two positions.
     /// </summary>
     private static float ManhattanDistance(Vector2 a, Vector2 b)
         => (MathF.Abs(a.X - b.X) + MathF.Abs(a.Y - b.Y)) / Distance;
@@ -57,7 +57,7 @@ internal class GameWorldGrid
     }
 
     /// <summary>
-    /// Find path from start to end using A* alghoritm.
+    /// Find path from start to end using A* algorithm.
     /// </summary>
     public Vector2[] FindPath(Vector2 start, Vector2 end)
     {

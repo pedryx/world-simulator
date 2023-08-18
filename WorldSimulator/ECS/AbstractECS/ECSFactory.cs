@@ -49,7 +49,7 @@ public abstract class ECSFactory
     public abstract IECSWorld CreateWorld();
 
     /// <summary>
-    /// Create new ecs system which wrappes around entity processor.
+    /// Create new ecs system which wrappers around entity processor.
     /// </summary>
     public IECSSystem CreateSystem<TEntityProcessor>(TEntityProcessor entityProcessor)
         where TEntityProcessor : struct, IEntityProcessor

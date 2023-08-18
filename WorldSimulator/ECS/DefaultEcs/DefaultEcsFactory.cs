@@ -1,4 +1,7 @@
 ﻿
+
+// Ignore Spelling: Ecs
+
 using DefaultEcs;
 
 using WorldSimulator.ECS.AbstractECS;

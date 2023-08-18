@@ -26,7 +26,7 @@ internal class Village
         behaviorTrees.Add(entity, CreateBehaviorTree(ResourceTypes.Deer));
     }
 
-    public IBehaviour<VillagerContext> GetbehaviorTree(IEntity entity)
+    public IBehaviour<VillagerContext> GetBehaviorTree(IEntity entity)
         => behaviorTrees[entity];
 
     private IBehaviour<VillagerContext> CreateBehaviorTree(ResourceType resourceType)
@@ -58,11 +58,11 @@ internal class Village
         {
             ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
 
-            behavior.ellapsedWait += context.DeltaTime * game.Speed;
+            behavior.elapsedWait += context.DeltaTime * game.Speed;
 
-            if (behavior.ellapsedWait >= waitTime)
+            if (behavior.elapsedWait >= waitTime)
             {
-                behavior.ellapsedWait = 0.0f;
+                behavior.elapsedWait = 0.0f;
                 return BehaviourStatus.Succeeded;
             }
 

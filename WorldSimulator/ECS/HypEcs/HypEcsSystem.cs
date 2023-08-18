@@ -1,4 +1,6 @@
-﻿using HypEcs;
+﻿// Ignore Spelling: Ecs Hyp
+
+using HypEcs;
 
 using WorldSimulator.ECS.AbstractECS;
 

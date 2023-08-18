@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Interface for entity-component-system system. It is usually wrapper around <see cref="IEntityProcessor"/>. Each
-/// ecs system has different way to itterate entities. It is responsibility of derived systems to call
+/// ecs system has different way to iterate entities. It is responsibility of derived systems to call
 /// <see cref="IEntityProcessor.PreUpdate(float)"/>, <see cref="IEntityProcessor.PostUpdate(float)"/> and
 /// corresponding process methods. Derived systems has to have constructor which accept entity processor as single
 /// argument.

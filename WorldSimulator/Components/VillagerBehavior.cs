@@ -16,7 +16,7 @@ internal struct VillagerBehavior
     /// </summary>
     public IEntity HarvestedResource;
     /// <summary>
-    /// Time ellapsed from waiting begins. Used by wait villager behavior node.
+    /// Time elapsed from waiting begins. Used by wait villager behavior node.
     /// </summary>
-    public float ellapsedWait;
+    public float elapsedWait;
 }

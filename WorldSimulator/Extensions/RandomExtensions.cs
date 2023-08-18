@@ -32,7 +32,7 @@ internal static class RandomExtensions
         => (exclusive - inclusive) * random.NextSingle() + inclusive;
 
     /// <summary>
-    /// Generate random runber in range [0, exclusive).
+    /// Generate random number in range [0, exclusive).
     /// </summary>
     public static float NextSingle(this Random random, float exclusive)
         => random.NextSingle(0.0f, exclusive);

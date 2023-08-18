@@ -1,16 +1,16 @@
 ﻿namespace WorldSimulator.ECS.AbstractECS;
 
 /// <summary>
-/// Base interface for entity processors. Entity processor is ussually wrpped in some system which ussually implements
+/// Base interface for entity processors. Entity processor is usually wrapped in some system which usually implements
 /// interface <see cref="IECSSystem"/>. The system will call Process method of entity processor on each entity. In
-/// other places than <see cref="AbstractECS"/> namespace it is refered to entity processors as "systems".
+/// other places than <see cref="AbstractECS"/> namespace it is referred to entity processors as "systems".
 /// </summary>
 public interface IEntityProcessor
 {
     /// <summary>
     /// Occur before processing of entities begins.
     /// </summary>
-    /// <param name="deltaTime">Time ellapsed between frames.</param>
+    /// <param name="deltaTime">Time elapsed between frames.</param>
     virtual void PreUpdate(float deltaTime) { }
     /// <summary>
     /// 

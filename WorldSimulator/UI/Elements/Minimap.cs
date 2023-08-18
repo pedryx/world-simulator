@@ -20,14 +20,14 @@ internal class Minimap : UIElement
 
     private readonly Camera camera;
     /// <summary>
-    /// Scale factor for chunks which ensures that they fit the minimap.
+    /// Scale factor for chunks which ensures that they fit the mini map.
     /// </summary>
     private readonly Vector2 scale;
     private readonly Texture2D borderTexture;
     private readonly Game game;
 
     /// <summary>
-    /// Custom spritebatch instance, which does not affect rendering of other UI elements.
+    /// Custom sprite batch instance, which does not affect rendering of other UI elements.
     /// </summary>
     private SpriteBatch spriteBatch;
     private Effect terrainDrawShader;

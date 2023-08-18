@@ -9,7 +9,7 @@ namespace WorldSimulator.UI;
 /// </summary>
 internal abstract class UIElement
 {
-    private readonly List<UIElement> childs = new();
+    private readonly List<UIElement> children = new();
 
     /// <summary>
     /// Offset from parent element or position of element if element is directly in UI layer.
@@ -19,7 +19,7 @@ internal abstract class UIElement
     public Game Game { get; private set; }
     public GameState GameState { get; private set; }
     /// <summary>
-    /// UI layer to which this element balong.
+    /// UI layer to which this element belong.
     /// </summary>
     public UILayer UILayer { get; private set; }
 
@@ -39,15 +39,15 @@ internal abstract class UIElement
     protected void AddChild(UIElement element)
     {
         element.Initialize(UILayer);
-        childs.Add(element);
+        children.Add(element);
     }
 
     protected void RemoveChild(UIElement element)
-        => childs.Remove(element);
+        => children.Remove(element);
 
     public virtual void Update(Vector2 position, float deltaTime)
     {
-        foreach (var child in childs)
+        foreach (var child in children)
         {
             child.Update(position + child.Offset, deltaTime);
         }
@@ -55,7 +55,7 @@ internal abstract class UIElement
 
     public virtual void Draw(Vector2 position, float deltaTime)
     {
-        foreach (var child in childs)
+        foreach (var child in children)
         {
             child.Draw(position + child.Offset, deltaTime);
         }

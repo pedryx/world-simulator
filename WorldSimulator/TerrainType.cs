@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿// Ignore Spelling: Buildable
+
+using Microsoft.Xna.Framework;
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,7 @@ namespace WorldSimulator;
 internal class TerrainType
 {
     /// <summary>
-    /// Determine if structures can be builded on this terrain.
+    /// Determine if structures can be build on this terrain.
     /// </summary>
     public bool Buildable { get; init; }
     /// <summary>
@@ -59,7 +61,7 @@ internal static class TerrainTypes
     {
         Buildable = false,
         Walkable = true,
-        ResourceType = ResourceTypes.Deposite,
+        ResourceType = ResourceTypes.Deposit,
     };
 
     public static TerrainType GetTerrainType(int id)

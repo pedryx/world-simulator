@@ -19,7 +19,7 @@ internal readonly struct VillagerBehaviorSystem : IEntityProcessor<VillagerBehav
     public void Process(ref VillagerBehavior behavior, ref Owner owner, float deltaTime)
     {
         gameWorld.GetVillage(behavior.VillageID)
-            .GetbehaviorTree(owner.Entity)
+            .GetBehaviorTree(owner.Entity)
             .Tick(new VillagerContext(owner.Entity, gameWorld, deltaTime));
     }
 }

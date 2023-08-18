@@ -110,7 +110,7 @@ internal class GameWorldGenerator
             ResourceType resourceType = terrainType.ResourceType;
 
             /* 
-             * because [psitions were calculated on graphics card, on biome transitions they could result onto
+             * because position were calculated on graphics card, on biome transitions they could result onto
              * neighbor biome
              */
             if (resourceType == null)

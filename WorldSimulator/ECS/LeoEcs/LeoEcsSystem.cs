@@ -1,4 +1,6 @@
-﻿using Leopotam.Ecs;
+﻿// Ignore Spelling: Ecs
+
+using Leopotam.Ecs;
 
 using WorldSimulator.ECS.AbstractECS;
 

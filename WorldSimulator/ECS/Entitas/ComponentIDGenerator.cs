@@ -6,12 +6,12 @@ using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.Entitas;
 /// <summary>
-/// Utility class for generting IDs for components.
+/// Utility class for generating IDs for components.
 /// </summary>
 internal static class ComponentIDGenerator
 {
     /// <summary>
-    /// ID which will be asigned to next component.
+    /// ID which will be assigned to next component.
     /// </summary>
     private static int id = 0;
     /// <summary>

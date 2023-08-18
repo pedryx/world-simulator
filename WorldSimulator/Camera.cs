@@ -13,7 +13,7 @@ internal class Camera
     public float Scale = 1.0f;
 
     /// <summary>
-    /// Bounding rectangle of camera's viev.
+    /// Bounding rectangle of camera's view.
     /// </summary>
     public Rectangle ViewBounds
     {
@@ -25,7 +25,7 @@ internal class Camera
     }
 
     /// <summary>
-    /// Get the transofmation matrix representing the camera's view.
+    /// Get the transformation matrix representing the camera's view.
     /// </summary>
     /// <returns>The 2D transformation matrix.</returns>
     public Matrix GetTransformMatrix()

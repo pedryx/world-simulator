@@ -26,7 +26,7 @@ internal static class ResourceTypes
         HarvestQuantity = 1,
         HarvestTime = 5.0f,
     };
-    public readonly static ResourceType Deposite = new()
+    public readonly static ResourceType Deposit = new()
     {
         HarvestItem = ItemTypes.Iron,
         HarvestQuantity = 1,
