@@ -22,19 +22,19 @@ internal class Village
 
     public void AddVillager(IEntity entity)
     {
-        behaviorTrees.Add(entity, CreateBehaviorTree());
+        behaviorTrees.Add(entity, CreateBehaviorTree(ResourceTypes.Tree));
     }
 
     public IBehaviour<VillagerContext> GetbehaviorTree(IEntity entity)
         => behaviorTrees[entity];
 
-    private IBehaviour<VillagerContext> CreateBehaviorTree()
+    private IBehaviour<VillagerContext> CreateBehaviorTree(ResourceType resourceType)
     {
         return FluentBuilder.Create<VillagerContext>()
             .Sequence("villager job sequence")
-                .Do("find nearest resource", FindNearestResource)
+                .Do("find nearest resource", FindNearestResource(resourceType))
                 .Do("move to nearest resource", MoveTo)
-                .Do("wait", Wait(3.0f))
+                .Do("wait", Wait(resourceType.HarvestTime))
                 .Do("harvest resource", HarvestResource)
             .End()
             .Build();
@@ -69,28 +69,31 @@ internal class Village
         };
     }
 
-    private static BehaviourStatus FindNearestResource(VillagerContext context)
+    private static Func<VillagerContext, BehaviourStatus> FindNearestResource(ResourceType resourceType)
     {
-        Position position = context.Entity.GetComponent<Position>();
-        ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
-        ref PathFollow pathFollow = ref context.Entity.GetComponent<PathFollow>();
+        return (context) =>
+        {
+            Position position = context.Entity.GetComponent<Position>();
+            ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
+            ref PathFollow pathFollow = ref context.Entity.GetComponent<PathFollow>();
 
-        IEntity resource = context.GameWorld.GetAndRemoveNearestResource(ResourceTypes.Tree, position.Coordinates);
-        Position resourcePosition = resource.GetComponent<Position>();
+            IEntity resource = context.GameWorld.GetAndRemoveNearestResource(resourceType, position.Coordinates);
+            Position resourcePosition = resource.GetComponent<Position>();
 
-        if (resource == null)
-            return BehaviourStatus.Failed;
+            if (resource == null)
+                return BehaviourStatus.Failed;
 
-        behavior.HarvestedResource = resource;
-        pathFollow.Path = context.GameWorld.FindPath
-        (
-            position.Coordinates,
-            // when two entities are at same position, depth layer fighting occur
-            resourcePosition.Coordinates + Vector2.UnitY
-        );
-        pathFollow.PathIndex = 0;
+            behavior.HarvestedResource = resource;
+            pathFollow.Path = context.GameWorld.FindPath
+            (
+                position.Coordinates,
+                // when two entities are at same position, depth layer fighting occur
+                resourcePosition.Coordinates + Vector2.UnitY
+            );
+            pathFollow.PathIndex = 0;
 
-        return BehaviourStatus.Succeeded;
+            return BehaviourStatus.Succeeded;
+        };
     }
 
     private static BehaviourStatus HarvestResource(VillagerContext context)
