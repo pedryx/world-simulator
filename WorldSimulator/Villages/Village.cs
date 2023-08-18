@@ -1,6 +1,9 @@
 ﻿using BehaviourTree;
 using BehaviourTree.FluentBuilder;
 
+using Microsoft.Xna.Framework;
+
+using System;
 using System.Collections.Generic;
 
 using WorldSimulator.Components;
@@ -10,6 +13,12 @@ namespace WorldSimulator.Villages;
 internal class Village
 {
     private readonly Dictionary<IEntity, IBehaviour<VillagerContext>> behaviorTrees = new();
+    private readonly Game game;
+
+    public Village(Game game)
+    {
+        this.game = game;
+    }
 
     public void AddVillager(IEntity entity)
     {
@@ -19,18 +28,47 @@ internal class Village
     public IBehaviour<VillagerContext> GetbehaviorTree(IEntity entity)
         => behaviorTrees[entity];
 
-    private static IBehaviour<VillagerContext> CreateBehaviorTree()
+    private IBehaviour<VillagerContext> CreateBehaviorTree()
     {
         return FluentBuilder.Create<VillagerContext>()
             .Sequence("villager job sequence")
                 .Do("find nearest resource", FindNearestResource)
                 .Do("move to nearest resource", MoveTo)
+                .Do("wait", Wait(3.0f))
                 .Do("harvest resource", HarvestResource)
             .End()
             .Build();
     }
 
     #region behavior tree actions and conditions
+    private static BehaviourStatus MoveTo(VillagerContext context)
+    {
+        PathFollow pathFollow = context.Entity.GetComponent<PathFollow>();
+
+        if (pathFollow.PathIndex == pathFollow.Path.Length)
+            return BehaviourStatus.Succeeded;
+
+        return BehaviourStatus.Running;
+    }
+
+    private Func<VillagerContext, BehaviourStatus> Wait(float waitTime)
+    {
+        return (context) =>
+        {
+            ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
+
+            behavior.ellapsedWait += context.DeltaTime * game.Speed;
+
+            if (behavior.ellapsedWait >= waitTime)
+            {
+                behavior.ellapsedWait = 0.0f;
+                return BehaviourStatus.Succeeded;
+            }
+
+            return BehaviourStatus.Running;
+        };
+    }
+
     private static BehaviourStatus FindNearestResource(VillagerContext context)
     {
         Position position = context.Entity.GetComponent<Position>();
@@ -44,20 +82,15 @@ internal class Village
             return BehaviourStatus.Failed;
 
         behavior.HarvestedResource = resource;
-        pathFollow.Path = context.GameWorld.FindPath(position.Coordinates, resourcePosition.Coordinates);
+        pathFollow.Path = context.GameWorld.FindPath
+        (
+            position.Coordinates,
+            // when two entities are at same position, depth layer fighting occur
+            resourcePosition.Coordinates + Vector2.UnitY
+        );
         pathFollow.PathIndex = 0;
 
         return BehaviourStatus.Succeeded;
-    }
-
-    private static BehaviourStatus MoveTo(VillagerContext context)
-    {
-        PathFollow pathFollow = context.Entity.GetComponent<PathFollow>();
-
-        if (pathFollow.PathIndex == pathFollow.Path.Length)
-            return BehaviourStatus.Succeeded;
-
-        return BehaviourStatus.Running;
     }
 
     private static BehaviourStatus HarvestResource(VillagerContext context)

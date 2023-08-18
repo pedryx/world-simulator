@@ -9,5 +9,6 @@ internal struct VillagerBehavior
 {
     public int VillageID;
     public IEntity HarvestedResource;
+    public float ellapsedWait;
 }
 // 8162 6050

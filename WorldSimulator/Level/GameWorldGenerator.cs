@@ -157,7 +157,7 @@ internal class GameWorldGenerator
 
     private void SpawnVillage(Vector2 position)
     {
-        villages.Add(new Village());
+        villages.Add(new Village(game));
         levelFactory.CreateMainBuilding(position);
 
         for (int i = 0; i < 3; i++)
