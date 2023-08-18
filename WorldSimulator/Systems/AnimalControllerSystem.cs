@@ -15,8 +15,8 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
 {
     private const float maxRadius = 80.0f;
     private const float minRadius = 20.0f;
-    private const float maxTimeToUpdate = 1.0f;
-    private const float minTimeToUpdate = 0.5f;
+    private const float maxTimeToUpdate = 2.0f;
+    private const float minTimeToUpdate = 1.0f;
 
     private readonly Random destinationRandom;
     private readonly Random timeToUpdateRandom = new();
