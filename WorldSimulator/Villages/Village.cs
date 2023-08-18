@@ -80,14 +80,14 @@ internal class Village
                 .Do("find nearest resource", FindNearestResource(resourceType))
                 .Do("move to nearest resource", MoveTo(null))
                 .Do("wait until resource is harvested", Wait(resourceType.HarvestTime))
-                .Do("harvest resource", HarvestResource)
+                .Do("harvest resource", HarvestResource(resourceType))
                 .Do("move to stockpile", MoveTo(stockpile))
+                .Do("store items", StoreItems(resourceType))
             .End()
             .Build();
     }
 
-    #region behavior tree actions and conditions
-    // 3828  6972
+    #region behavior tree leaf nodes
     private static Func<VillagerContext, BehaviourStatus> MoveTo(IEntity target)
     {
         return (context) =>
@@ -153,11 +153,26 @@ internal class Village
         };
     }
 
-    private static BehaviourStatus HarvestResource(VillagerContext context)
+    private static Func<VillagerContext, BehaviourStatus> HarvestResource(ResourceType resourceType)
     {
-        context.Entity.GetComponent<VillagerBehavior>().Target.Destroy();
+        return (context) =>
+        {
+            context.Entity.GetComponent<VillagerBehavior>().Target.Destroy();
+            context.Entity.GetComponent<Inventory>().Slots[(int)resourceType.HarvestItem]++;
 
-        return BehaviourStatus.Succeeded;
+            return BehaviourStatus.Succeeded;
+        };
+    }
+
+    private Func<VillagerContext, BehaviourStatus> StoreItems(ResourceType resourceType)
+    {
+        return (context) =>
+        {
+            context.Entity.GetComponent<Inventory>().Slots[(int)resourceType.HarvestItem]--;
+            stockpile.GetComponent<Inventory>().Slots[(int)resourceType.HarvestItem]++;
+
+            return BehaviourStatus.Succeeded;
+        };
     }
     #endregion
 }

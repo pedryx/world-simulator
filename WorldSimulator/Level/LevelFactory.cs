@@ -40,7 +40,7 @@ internal class LevelFactory
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
 
         mainBuildingBuilder = CreateBasicBuilder("main building", 0.8f);
-        stockpileBuilder = CreateBasicBuilder("stockpile", 0.3f);
+        stockpileBuilder = CreateStorageBuilder("stockpile", 0.3f);
     }
 
     #region builders
@@ -66,6 +66,15 @@ internal class LevelFactory
             Scale = scale,
         });
         builder.AddComponent<Owner>();
+
+        return builder;
+    }
+
+    private IEntityBuilder CreateStorageBuilder(string textureName, float scale)
+    {
+        IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
+
+        builder.AddComponent<Inventory>();
 
         return builder;
     }
@@ -96,6 +105,7 @@ internal class LevelFactory
         });
         builder.AddComponent<VillagerBehavior>();
         builder.AddComponent<PathFollow>();
+        builder.AddComponent<Inventory>();
 
         return builder;
     }

@@ -16,25 +16,25 @@ internal static class ResourceTypes
 {
     public readonly static ResourceType Tree = new()
     {
-        HarvestItem = ItemTypes.Wood,
+        HarvestItem = ItemType.Wood,
         HarvestQuantity = 1,
         HarvestTime = 3.0f,
     };
     public readonly static ResourceType Rock = new()
     {
-        HarvestItem = ItemTypes.Stone,
+        HarvestItem = ItemType.Stone,
         HarvestQuantity = 1,
         HarvestTime = 5.0f,
     };
     public readonly static ResourceType Deposit = new()
     {
-        HarvestItem = ItemTypes.Ore,
+        HarvestItem = ItemType.Ore,
         HarvestQuantity = 1,
         HarvestTime = 7.0f,
     };
     public readonly static ResourceType Deer = new()
     {
-        HarvestItem = ItemTypes.Meat,
+        HarvestItem = ItemType.Meat,
         HarvestQuantity = 1,
         HarvestTime = 9.0f,
     };
