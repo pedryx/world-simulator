@@ -127,6 +127,8 @@ internal class GameWorldGenerator
         villages = new List<Village>();
         Random random = new(game.GenerateSeed());
 
+        //SpawnVillage(GameWorld.Size.ToVector2() / 2.0f); return;
+
         for (int y = 0; y < GameWorld.Size.Y; y += villageJitterSize)
         {
             for (int x = 0; x < GameWorld.Size.X; x += villageJitterSize)
@@ -156,10 +158,17 @@ internal class GameWorldGenerator
 
     private void SpawnVillage(Vector2 position)
     {
-        villages.Add(new Village(game));
-        levelFactory.CreateMainBuilding(position);
+        Village village = new(game);
 
-        IEntity villager = levelFactory.CreateVillager(position, villages.Count - 1);
-        villages.Last().AddVillager(villager);
+        IEntity mainBuilding = levelFactory.CreateMainBuilding(position);
+        village.AddBuilding(mainBuilding);
+
+        IEntity stockpile = levelFactory.CreateStockpile(village.GetNextBuildingPosition());
+        village.AddStockpile(stockpile);
+
+        IEntity villager = levelFactory.CreateVillager(position, villages.Count);
+        village.AddVillager(villager);
+
+        villages.Add(village);
     }
 }

@@ -12,11 +12,8 @@ internal struct VillagerBehavior
     /// </summary>
     public int VillageID;
     /// <summary>
-    /// Resource which is currently harvested by the villager.
-    /// </summary>
-    public IEntity HarvestedResource;
-    /// <summary>
     /// Time elapsed from waiting begins. Used by wait villager behavior node.
     /// </summary>
     public float elapsedWait;
+    public IEntity Target;
 }

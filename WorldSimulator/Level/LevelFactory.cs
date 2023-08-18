@@ -24,6 +24,7 @@ internal class LevelFactory
     private readonly IEntityBuilder deerBuilder;
 
     private readonly IEntityBuilder mainBuildingBuilder;
+    private readonly IEntityBuilder stockpileBuilder;
 
     public LevelFactory(Game game, LevelState gameState)
     {
@@ -38,7 +39,8 @@ internal class LevelFactory
         depositeBuilder = CreateBasicBuilder("iron deposit", 0.15f);
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
 
-        mainBuildingBuilder = CreateBasicBuilder("main building", 0.6f);
+        mainBuildingBuilder = CreateBasicBuilder("main building", 0.8f);
+        stockpileBuilder = CreateBasicBuilder("stockpile", 0.3f);
     }
 
     #region builders
@@ -133,6 +135,9 @@ internal class LevelFactory
 
     public IEntity CreateMainBuilding(Vector2 position)
         => CreateStaticEntity(mainBuildingBuilder, position);
+
+    public IEntity CreateStockpile(Vector2 position)
+        => CreateStaticEntity(stockpileBuilder, position);
 
     public IEntity CreateResource(ResourceType resource, Vector2 position)
     {
