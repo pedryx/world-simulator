@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using System;
+
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 
@@ -14,7 +16,7 @@ internal readonly struct OrientationUpdateSystem : IEntityProcessor<Position, Mo
     {
         Vector2 direction = movement.Destination - position.Coordinates;
 
-        if (direction.X < movement.Speed * deltaTime)
+        if (MathF.Abs(direction.X) < movement.Speed * deltaTime)
             return;
 
         appearance.Effects = direction.X > 0.0f ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
