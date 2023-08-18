@@ -148,7 +148,6 @@ internal class GameWorldGenerator
                     if (terrainType.Buildable)
                         break;
                 }
-       
 
                 SpawnVillage(position);
             }
