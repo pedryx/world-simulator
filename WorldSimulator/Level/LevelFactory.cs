@@ -89,7 +89,7 @@ internal class LevelFactory
         });
         builder.AddComponent(new AnimalController()
         {
-            ResourceType = ResourceTypes.Deer,
+            ResourceType = Resource.Deer,
         });
 
         return builder;
@@ -149,15 +149,15 @@ internal class LevelFactory
     public IEntity CreateStockpile(Vector2 position)
         => CreateStaticEntity(stockpileBuilder, position);
 
-    public IEntity CreateResource(ResourceType resource, Vector2 position)
+    public IEntity CreateResource(Resource resource, Vector2 position)
     {
-        if (resource == ResourceTypes.Tree)
+        if (resource == Resource.Tree)
             return CreateTree(position);
-        else if (resource == ResourceTypes.Rock)
+        else if (resource == Resource.Rock)
             return CreateRock(position);
-        else if (resource == ResourceTypes.Deposit)
+        else if (resource == Resource.Deposit)
             return CreateDeposit(position);
-        else if (resource == ResourceTypes.Deer)
+        else if (resource == Resource.Deer)
             return CreateDeer(position);
 
         throw new InvalidOperationException("Entity for this resource not exist!");

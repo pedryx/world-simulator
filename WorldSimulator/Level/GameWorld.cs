@@ -32,14 +32,14 @@ internal class GameWorld
     public static readonly int TotalSize = Size.X * Size.Y;
 
     private readonly int[] terrains;
-    private readonly IDictionary<ResourceType, KdTree<float, IEntity>> resources;
+    private readonly IDictionary<Resource, KdTree<float, IEntity>> resources;
     private readonly IList<Village> villages;
     private readonly GameWorldGrid grid;
 
     public GameWorld
     (
         int[] terrains,
-        IDictionary<ResourceType, KdTree<float, IEntity>> resources,
+        IDictionary<Resource, KdTree<float, IEntity>> resources,
         IList<Village> villages
     )
     {
@@ -57,7 +57,7 @@ internal class GameWorld
     /// Get resource nearest to specific position and remove it from kd-tree.
     /// </summary>
     /// <param name="type">Type of resource to get.</param>
-    public IEntity GetAndRemoveNearestResource(ResourceType type, Vector2 position)
+    public IEntity GetAndRemoveNearestResource(Resource type, Vector2 position)
     {
         var node = resources[type].GetNearestNeighbours(position.ToFloat(), 1).FirstOrDefault();
 
@@ -76,7 +76,7 @@ internal class GameWorld
     /// <param name="entity">Entity representing resource to update.</param>
     /// <param name="oldPosition">Old position of entity to update.</param>
     /// <param name="newPosition">New position of entity to update.</param>
-    public void UpdateResourcePosition(ResourceType type, IEntity entity, Vector2 oldPosition, Vector2 newPosition)
+    public void UpdateResourcePosition(Resource type, IEntity entity, Vector2 oldPosition, Vector2 newPosition)
     {
         var resourceTree = resources[type];
 
@@ -102,7 +102,7 @@ internal class GameWorld
     /// Determine if specific position is walkable for animals. Animals can walk only on plains.
     /// </summary>
     public bool IsWalkableForAnimals(Vector2 position)
-        => IsWalkable(position) && GetTerrainType(position) == TerrainTypes.Plain;
+        => IsWalkable(position) && GetTerrainType(position) == Terrain.Plain;
 
     public Vector2[] FindPath(Vector2 start, Vector2 end)
     {
@@ -144,11 +144,11 @@ internal class GameWorld
     /// <summary>
     /// Get terrain type at specific position.
     /// </summary>
-    private TerrainType GetTerrainType(Vector2 position)
+    private Terrain GetTerrainType(Vector2 position)
     {
         Vector2 point = GameWorldGrid.GetClosestPoint(position);
-        int index = ((int)point.Y * GameWorld.Size.X + (int)point.X) / GameWorldGrid.Distance;
+        int index = ((int)point.Y * Size.X + (int)point.X) / GameWorldGrid.Distance;
 
-        return TerrainTypes.GetTerrainType(terrains[index]);
+        return Terrain.Get(terrains[index]);
     }
 }

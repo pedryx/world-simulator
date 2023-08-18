@@ -26,7 +26,7 @@ internal class GameWorldGenerator
     private Vector2[] resourcePositions;
         
     private int[] terrains;
-    private IDictionary<ResourceType, KdTree<float, IEntity>> resources;
+    private IDictionary<Resource, KdTree<float, IEntity>> resources;
     private List<Village> villages;
 
     public GameWorldGenerator(Game game, LevelFactory levelFactory)
@@ -95,7 +95,7 @@ internal class GameWorldGenerator
 
     private void SpawnResources()
     {
-        resources = ResourceTypes.GetAllTypes().ToDictionary
+        resources = Resource.GetAll().ToDictionary
         (
             type => type,
             type => new KdTree<float, IEntity>(2, new FloatMath())
@@ -106,8 +106,8 @@ internal class GameWorldGenerator
             Vector2 point = GameWorldGrid.GetClosestPoint(position);
             int index = ((int)point.Y * GameWorld.Size.X + (int)point.X) / GameWorldGrid.Distance;
 
-            TerrainType terrainType = TerrainTypes.GetTerrainType(terrains[index]);
-            ResourceType resourceType = terrainType.ResourceType;
+            Terrain terrainType = Terrain.Get(terrains[index]);
+            Resource resourceType = terrainType.ResourceType;
 
             /* 
              * because position were calculated on graphics card, on biome transitions they could result onto
@@ -145,7 +145,7 @@ internal class GameWorldGenerator
 
                     Vector2 point = GameWorldGrid.GetClosestPoint(position);
                     int index = ((int)point.Y * GameWorld.Size.X + (int)point.X) / GameWorldGrid.Distance;
-                    TerrainType terrainType = TerrainTypes.GetTerrainType(terrains[index]);
+                    Terrain terrainType = Terrain.Get(terrains[index]);
 
                     if (terrainType.Buildable)
                         break;

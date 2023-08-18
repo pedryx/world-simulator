@@ -67,22 +67,22 @@ internal class Village
 
     public void AddVillager(IEntity entity)
     {
-        behaviorTrees.Add(entity, CreateBehaviorTree(ResourceTypes.Tree));
+        behaviorTrees.Add(entity, CreateBehaviorTree(Resource.Tree));
     }
 
     public IBehaviour<VillagerContext> GetBehaviorTree(IEntity entity)
         => behaviorTrees[entity];
 
-    private IBehaviour<VillagerContext> CreateBehaviorTree(ResourceType resourceType)
+    private IBehaviour<VillagerContext> CreateBehaviorTree(Resource resource)
     {
         return FluentBuilder.Create<VillagerContext>()
             .Sequence("villager job sequence")
-                .Do("find nearest resource", FindNearestResource(resourceType))
+                .Do("find nearest resource", FindNearestResource(resource))
                 .Do("move to nearest resource", MoveTo(null))
-                .Do("wait until resource is harvested", Wait(resourceType.HarvestTime))
-                .Do("harvest resource", HarvestResource(resourceType))
+                .Do("wait until resource is harvested", Wait(resource.HarvestTime))
+                .Do("harvest resource", HarvestResource(resource))
                 .Do("move to stockpile", MoveTo(stockpile))
-                .Do("store items", StoreItems(resourceType))
+                .Do("store items", StoreItems(resource))
             .End()
             .Build();
     }
@@ -131,7 +131,7 @@ internal class Village
         };
     }
 
-    private static Func<VillagerContext, BehaviourStatus> FindNearestResource(ResourceType resourceType)
+    private static Func<VillagerContext, BehaviourStatus> FindNearestResource(Resource resourceType)
     {
         return (context) =>
         {
@@ -153,23 +153,23 @@ internal class Village
         };
     }
 
-    private static Func<VillagerContext, BehaviourStatus> HarvestResource(ResourceType resourceType)
+    private static Func<VillagerContext, BehaviourStatus> HarvestResource(Resource resourceType)
     {
         return (context) =>
         {
             context.Entity.GetComponent<VillagerBehavior>().Target.Destroy();
-            context.Entity.GetComponent<Inventory>().Slots[(int)resourceType.HarvestItem]++;
+            context.Entity.GetComponent<Inventory>().Slots[resourceType.HarvestItem.ID]++;
 
             return BehaviourStatus.Succeeded;
         };
     }
 
-    private Func<VillagerContext, BehaviourStatus> StoreItems(ResourceType resourceType)
+    private Func<VillagerContext, BehaviourStatus> StoreItems(Resource resourceType)
     {
         return (context) =>
         {
-            context.Entity.GetComponent<Inventory>().Slots[(int)resourceType.HarvestItem]--;
-            stockpile.GetComponent<Inventory>().Slots[(int)resourceType.HarvestItem]++;
+            context.Entity.GetComponent<Inventory>().Slots[resourceType.HarvestItem.ID]--;
+            stockpile.GetComponent<Inventory>().Slots[resourceType.HarvestItem.ID]++;
 
             return BehaviourStatus.Succeeded;
         };

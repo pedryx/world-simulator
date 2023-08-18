@@ -8,6 +8,6 @@ internal struct Inventory
 
     public Inventory()
     {
-        Slots = new int[Items.Count];
+        Slots = new int[Item.Count];
     }
 }

@@ -17,7 +17,7 @@ internal struct AnimalController
     /// <summary>
     /// Resource type of animal.
     /// </summary>
-    public ResourceType ResourceType;
+    public Resource ResourceType;
 
     /// <summary>
     /// Position of entity during last kd-tree position update.
