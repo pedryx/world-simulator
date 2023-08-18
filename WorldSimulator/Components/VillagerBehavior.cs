@@ -7,8 +7,16 @@ namespace WorldSimulator.Components;
 [Component]
 internal struct VillagerBehavior
 {
+    /// <summary>
+    /// ID of village the villager belongs to.
+    /// </summary>
     public int VillageID;
+    /// <summary>
+    /// Resource which is currently harvested by the villager.
+    /// </summary>
     public IEntity HarvestedResource;
+    /// <summary>
+    /// Time ellapsed from waiting begins. Used by wait villager behavior node.
+    /// </summary>
     public float ellapsedWait;
 }
-// 8162 6050
