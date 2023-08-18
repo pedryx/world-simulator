@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Level;
 
 namespace WorldSimulator.Villages;
 internal class Village
@@ -22,7 +23,7 @@ internal class Village
 
     public void AddVillager(IEntity entity)
     {
-        behaviorTrees.Add(entity, CreateBehaviorTree(ResourceTypes.Tree));
+        behaviorTrees.Add(entity, CreateBehaviorTree(ResourceTypes.Deer));
     }
 
     public IBehaviour<VillagerContext> GetbehaviorTree(IEntity entity)
@@ -92,11 +93,17 @@ internal class Village
             );
             pathFollow.PathIndex = 0;
 
+            if (resource.HasComponent<AnimalController>())
+            {
+                resource.GetComponent<AnimalController>().UpdateEnabled = false;
+                resource.GetComponent<Movement>().Speed = 0.0f;
+            }
+
             return BehaviourStatus.Succeeded;
         };
     }
 
-    private static BehaviourStatus HarvestResource(VillagerContext context)
+    private BehaviourStatus HarvestResource(VillagerContext context)
     {
         ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
 

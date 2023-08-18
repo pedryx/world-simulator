@@ -160,10 +160,7 @@ internal class GameWorldGenerator
         villages.Add(new Village(game));
         levelFactory.CreateMainBuilding(position);
 
-        for (int i = 0; i < 3; i++)
-        {
-            IEntity villager = levelFactory.CreateVillager(position, villages.Count - 1);
-            villages.Last().AddVillager(villager);
-        }
+        IEntity villager = levelFactory.CreateVillager(position, villages.Count - 1);
+        villages.Last().AddVillager(villager);
     }
 }
