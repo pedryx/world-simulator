@@ -18,18 +18,19 @@ internal class Minimap : UIElement
     private readonly Color viewFrameColor = Color.White;
     private readonly Color borderColor = Color.Black;
 
-    private readonly LegacyGameWorld gameWorld;
     private readonly Camera camera;
     /// <summary>
     /// Scale factor for chunks which ensures that they fit the minimap.
     /// </summary>
     private readonly Vector2 scale;
     private readonly Texture2D borderTexture;
+    private readonly Game game;
 
     /// <summary>
     /// Custom spritebatch instance, which does not affect rendering of other UI elements.
     /// </summary>
     private SpriteBatch spriteBatch;
+    private Effect terrainDrawShader;
 
     public override Rectangle Bounds => new(Offset.ToPoint(), Size.ToPoint());
 
@@ -37,24 +38,59 @@ internal class Minimap : UIElement
 
     public Minimap(LevelState levelState, Vector2 size, Texture2D borderTexture)
     {
-        //gameWorld = levelState.LegacyGameWorld;
         camera = levelState.Camera;
-        Size = size;
-        this.borderTexture = borderTexture;
-        scale = (Size - new Vector2(borderSize * 2.0f)) / new Vector2(LegacyGameWorld.Size);
+        game = levelState.Game;
 
+        Size = size;
+        scale = (Size - new Vector2(borderSize * 2.0f)) / GameWorld.Size.ToVector2();
+
+        this.borderTexture = borderTexture;
     }
 
     protected override void Initialize()
     {
         spriteBatch = new SpriteBatch(Game.GraphicsDevice);
+        terrainDrawShader = Game.GetResourceManager<Effect>()[GameWorld.TerrainDrawShader];
 
         base.Initialize();
     }
 
     public override void Draw(Vector2 position, float deltaTime)
     {
-        // set scissor
+        DrawTerrain(position);
+        DrawViewFrame(position);
+        DrawBorder(position);
+
+        base.Draw(position, deltaTime);
+    }
+
+    private void DrawTerrain(Vector2 position)
+    {
+        terrainDrawShader.Parameters["resolutionScale"].SetValue(game.ResolutionScale);
+        terrainDrawShader.Parameters["resolution"].SetValue(game.Resolution);
+
+        Vector2 textureOffset = (position + new Vector2(borderSize)) * game.ResolutionScale;
+        Vector2 size = Size - new Vector2(2 * borderSize);
+        Vector2 origin = Vector2.Zero;
+
+        terrainDrawShader.Parameters["texOffset"].SetValue(textureOffset);
+        terrainDrawShader.Parameters["texOrigin"].SetValue(origin);
+
+        terrainDrawShader.Parameters["scale"].SetValue(size.X / GameWorld.Size.X);
+        terrainDrawShader.Parameters["offset"].SetValue(Vector2.Zero);
+
+        size *= game.ResolutionScale;
+
+        spriteBatch.Begin
+        (
+            effect: terrainDrawShader
+        );
+        spriteBatch.Draw(game.BlankTexture, new Rectangle(textureOffset.ToPoint(), size.ToPoint()), Color.White);
+        spriteBatch.End();
+    }
+
+    private void DrawViewFrame(Vector2 position)
+    {
         var original = Game.GraphicsDevice.ScissorRectangle;
         Game.GraphicsDevice.ScissorRectangle = new Rectangle
         (
@@ -67,43 +103,6 @@ internal class Minimap : UIElement
             transformMatrix: Matrix.CreateScale(Game.ResolutionScale.X, Game.ResolutionScale.Y, 1.0f)
         );
 
-        // render chunks
-        foreach (var chunk in gameWorld.Chunks)
-        {
-            spriteBatch.Draw
-            (
-                chunk.GetComponent<Appearance>().Texture,
-                chunk.GetComponent<Position>().Coordinates * scale + position + new Vector2(borderSize),
-                null,
-                Color.White,
-                0.0f,
-                Vector2.Zero,
-                scale,
-                SpriteEffects.None,
-                0.0f
-            );
-        }
-
-        // render view frame
-        DrawViewFrame(position);
-
-        spriteBatch.End();
-        // restore original scissor
-        Game.GraphicsDevice.ScissorRectangle = original;
-
-        // render border
-        spriteBatch.Begin
-        (
-            transformMatrix: Matrix.CreateScale(Game.ResolutionScale.X, Game.ResolutionScale.Y, 1.0f)
-        );
-        spriteBatch.Draw(borderTexture, new Rectangle(position.ToPoint(), Size.ToPoint()), borderColor);
-        spriteBatch.End();
-
-        base.Draw(position, deltaTime);
-    }
-
-    private void DrawViewFrame(Vector2 position)
-    {
         Vector2 size = (Game.DefaultResolution * scale) / camera.Scale;
         Vector2 offset = position + camera.Position * scale - size / 2.0f + new Vector2(borderSize);
 
@@ -151,5 +150,18 @@ internal class Minimap : UIElement
             ),
             viewFrameColor
         );
+
+        spriteBatch.End();
+        Game.GraphicsDevice.ScissorRectangle = original;
+    }
+
+    private void DrawBorder(Vector2 position)
+    {
+        spriteBatch.Begin
+        (
+            transformMatrix: Matrix.CreateScale(Game.ResolutionScale.X, Game.ResolutionScale.Y, 1.0f)
+        );
+        spriteBatch.Draw(borderTexture, new Rectangle(position.ToPoint(), Size.ToPoint()), borderColor);
+        spriteBatch.End();
     }
 }

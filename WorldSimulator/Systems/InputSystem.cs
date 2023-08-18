@@ -88,9 +88,9 @@ internal readonly struct InputSystem : IECSSystem
         camera.Scale *= 1.0f + zoomDirection * cameraZoomAmount;
 
         // clamp values
-        camera.Position.X = MathHelper.Clamp(camera.Position.X, GameWorld.Bounds.Left, GameWorld.Bounds.Right);
+        /*camera.Position.X = MathHelper.Clamp(camera.Position.X, GameWorld.Bounds.Left, GameWorld.Bounds.Right);
         camera.Position.Y = MathHelper.Clamp(camera.Position.Y, GameWorld.Bounds.Top, GameWorld.Bounds.Bottom);
-        camera.Scale = MathHelper.Clamp(camera.Scale, cameraMinZoom, cameraMaxZoom);
+        camera.Scale = MathHelper.Clamp(camera.Scale, cameraMinZoom, cameraMaxZoom);*/
     }
 
     private void ToggleFullscreen()

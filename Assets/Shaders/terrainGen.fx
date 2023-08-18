@@ -22,7 +22,7 @@ void MainCS(int id : SV_DispatchThreadID)
     for (int i = 0; i < gridDistance; i++)
     {
         int index = id * gridDistance + i;
-        uint2 pos = float2(index % worldSize.x, worldSize.y - (index / worldSize.x + 1));
+        uint2 pos = float2(index % worldSize.x, index / worldSize.x);
 
         float height = CalcNoise(pos);
         Terrain terrain = GetTerrain(height);
@@ -31,7 +31,7 @@ void MainCS(int id : SV_DispatchThreadID)
         {
             int bufferIndex;
             InterlockedAdd(sizeBuffer[0], 1, bufferIndex);
-            resourceBuffer[bufferIndex] = float2(pos.x, worldSize.y - (pos.y + 1));
+            resourceBuffer[bufferIndex] = pos;
         }
 
         if (i == 0)

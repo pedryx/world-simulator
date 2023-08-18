@@ -10,7 +10,7 @@ namespace WorldSimulator.Systems;
 /// </summary>
 internal readonly struct TerrainRenderSystem : IECSSystem
 {
-    private readonly Effect terrainShader;
+    private readonly Effect terrainDrawShader;
     private readonly SpriteBatch spriteBatch;
     private readonly Texture2D blankTexture;
     private readonly Game game;
@@ -18,26 +18,33 @@ internal readonly struct TerrainRenderSystem : IECSSystem
 
     public TerrainRenderSystem(Game game, Camera camera)
     {
-        terrainShader = game.GetResourceManager<Effect>()[GameWorld.TerrainDrawShader];
+        terrainDrawShader = game.GetResourceManager<Effect>()[GameWorld.TerrainDrawShader];
         spriteBatch = game.SpriteBatch;
         blankTexture = game.BlankTexture;
 
         this.game = game;
         this.camera = camera;
 
-        terrainShader.Parameters["worldSize"].SetValue(GameWorld.Size.ToVector2());
-        terrainShader.Parameters["resolution"].SetValue(Game.DefaultResolution);
+        terrainDrawShader.Parameters["worldSize"].SetValue(GameWorld.Size.ToVector2());
     }
 
     public void Initialize(IECSWorld world) { }
 
     public void Update(float deltaTime)
     {
-        terrainShader.Parameters["resolutionScale"].SetValue(game.ResolutionScale);
-        terrainShader.Parameters["cameraPos"].SetValue(camera.Position);
-        terrainShader.Parameters["cameraScale"].SetValue(camera.Scale);
+        terrainDrawShader.Parameters["resolutionScale"].SetValue(game.ResolutionScale);
+        terrainDrawShader.Parameters["resolution"].SetValue(game.Resolution);
 
-        spriteBatch.Begin(effect: terrainShader);
+        terrainDrawShader.Parameters["texOffset"].SetValue(Vector2.Zero);
+        terrainDrawShader.Parameters["texOrigin"].SetValue(Game.DefaultResolution / 2.0f);
+
+        terrainDrawShader.Parameters["scale"].SetValue(camera.Scale);
+        terrainDrawShader.Parameters["offset"].SetValue(camera.Position);
+
+        spriteBatch.Begin
+        (
+            effect: terrainDrawShader
+        );
         spriteBatch.Draw(blankTexture, game.GraphicsDevice.Viewport.Bounds, Color.White);
         spriteBatch.End();
     }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Level;
 using WorldSimulator.ResourceManagers;
 
 using MonoGameBaseGame = Microsoft.Xna.Framework.Game;
@@ -122,9 +123,11 @@ public class Game : MonoGameBaseGame
         base.Update(gameTime);
     }
 
+
     protected override void Draw(GameTime gameTime)
     {
         float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
 
         GraphicsDevice.Clear(clearColor);
         ActiveState.Draw(deltaTime);
