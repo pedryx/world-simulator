@@ -18,7 +18,7 @@ internal enum ItemType
     Plank,
     Brick,
     Iron,
-    Food
+    Food,
 }
 
 internal static class Items
