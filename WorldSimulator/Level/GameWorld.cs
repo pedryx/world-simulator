@@ -1,4 +1,5 @@
 ﻿using KdTree;
+using KdTree.Math;
 
 using Microsoft.Xna.Framework;
 
@@ -32,26 +33,35 @@ internal class GameWorld
     public static readonly int TotalSize = Size.X * Size.Y;
 
     private readonly int[] terrains;
-    private readonly IDictionary<Resource, KdTree<float, IEntity>> resources;
-    private readonly IList<Village> villages;
+    private readonly Dictionary<Resource, KdTree<float, IEntity>> resources;
+    private readonly List<Village> villages = new();
     private readonly GameWorldGrid grid;
 
-    public GameWorld
-    (
-        int[] terrains,
-        IDictionary<Resource, KdTree<float, IEntity>> resources,
-        IList<Village> villages
-    )
+    public GameWorld(int[] terrains)
     {
         this.terrains = terrains;
-        this.resources = resources;
-        this.villages = villages;
 
         grid = new GameWorldGrid(this);
+        resources = Resource.GetAll().ToDictionary
+        (
+            type => type,
+            type => new KdTree<float, IEntity>(2, new FloatMath())
+        );
+    }
+
+    public int AddVillage(Village village)
+    {
+        villages.Add(village);
+        return villages.Count - 1;
     }
 
     public Village GetVillage(int id)
         => villages[id];
+
+    public void AddResource(Resource resource, IEntity entity, Vector2 position)
+    {
+        resources[resource].Add(position.ToFloat(), entity);
+    }
 
     /// <summary>
     /// Get resource nearest to specific position and remove it from kd-tree.
@@ -95,14 +105,25 @@ internal class GameWorld
         if (!Bounds.Contains(position))
             return false;
 
-        return GetTerrainType(position).Walkable;
+        return GetTerrain(position).Walkable;
+    }
+
+    /// <summary>
+    /// Determine if specific position is buildable.
+    /// </summary>
+    public bool IsBuildable(Vector2 position)
+    {
+        if (!Bounds.Contains(position))
+            return false;
+
+        return GetTerrain(position).Buildable;
     }
 
     /// <summary>
     /// Determine if specific position is walkable for animals. Animals can walk only on plains.
     /// </summary>
     public bool IsWalkableForAnimals(Vector2 position)
-        => IsWalkable(position) && GetTerrainType(position) == Terrain.Plain;
+        => IsWalkable(position) && GetTerrain(position) == Terrain.Plain;
 
     public Vector2[] FindPath(Vector2 start, Vector2 end)
     {
@@ -140,11 +161,10 @@ internal class GameWorld
         return true;
     }
 
-
     /// <summary>
     /// Get terrain type at specific position.
     /// </summary>
-    private Terrain GetTerrainType(Vector2 position)
+    public Terrain GetTerrain(Vector2 position)
     {
         Vector2 point = GameWorldGrid.GetClosestPoint(position);
         int index = ((int)point.Y * Size.X + (int)point.X) / GameWorldGrid.Distance;

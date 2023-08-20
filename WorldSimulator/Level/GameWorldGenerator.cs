@@ -25,9 +25,7 @@ internal class GameWorldGenerator
 
     private Vector2[] resourcePositions;
         
-    private int[] terrains;
-    private IDictionary<Resource, KdTree<float, IEntity>> resources;
-    private List<Village> villages;
+    private GameWorld gameWorld;
 
     public GameWorldGenerator(Game game, LevelFactory levelFactory)
     {
@@ -44,7 +42,10 @@ internal class GameWorldGenerator
         SpawnResources();
         SpawnVillages();
 
-        return new GameWorld(terrains, resources, villages);
+        GameWorld gameWorld = this.gameWorld;
+        this.gameWorld = null;
+
+        return gameWorld;
     }
 
     private void GenerateTerrain()
@@ -83,8 +84,9 @@ internal class GameWorldGenerator
         terrainGenShader.CurrentTechnique.Passes[0].ApplyCompute();
         graphicsDevice.DispatchCompute((GameWorld.TotalSize / GameWorldGrid.Distance) / shaderThreadGroupSize, 1, 1);
 
-        terrains = new int[terrainBuffer.ElementCount];
+        int[] terrains = new int[terrainBuffer.ElementCount];
         terrainBuffer.GetData(terrains);
+        gameWorld = new GameWorld(terrains);
 
         int[] size = new int[sizeBuffer.ElementCount];
         sizeBuffer.GetData(size);
@@ -95,18 +97,9 @@ internal class GameWorldGenerator
 
     private void SpawnResources()
     {
-        resources = Resource.GetAll().ToDictionary
-        (
-            type => type,
-            type => new KdTree<float, IEntity>(2, new FloatMath())
-        );
-
         foreach (var position in resourcePositions)
         {
-            Vector2 point = GameWorldGrid.GetClosestPoint(position);
-            int index = ((int)point.Y * GameWorld.Size.X + (int)point.X) / GameWorldGrid.Distance;
-
-            Terrain terrainType = Terrain.Get(terrains[index]);
+            Terrain terrainType = gameWorld.GetTerrain(position);
             Resource resourceType = terrainType.ResourceType;
 
             /* 
@@ -117,17 +110,16 @@ internal class GameWorldGenerator
                 continue;
 
             IEntity entity = levelFactory.CreateResource(resourceType, position);
-            resources[resourceType].Add(position.ToFloat(), entity);
+            gameWorld.AddResource(resourceType, entity, position);
         }
         resourcePositions = null;
     }
 
     private void SpawnVillages()
     {
-        villages = new List<Village>();
         Random random = new(game.GenerateSeed());
 
-        //SpawnVillage(GameWorld.Size.ToVector2() / 2.0f); return;
+        // SpawnVillage(GameWorld.Size.ToVector2() / 2.0f); return;
 
         for (int y = 0; y < GameWorld.Size.Y; y += villageJitterSize)
         {
@@ -143,11 +135,7 @@ internal class GameWorldGenerator
                         random.NextSingle(y, y + villageJitterSize)
                     );
 
-                    Vector2 point = GameWorldGrid.GetClosestPoint(position);
-                    int index = ((int)point.Y * GameWorld.Size.X + (int)point.X) / GameWorldGrid.Distance;
-                    Terrain terrainType = Terrain.Get(terrains[index]);
-
-                    if (terrainType.Buildable)
+                    if (gameWorld.GetTerrain(position).Buildable)
                         break;
                 }
 
@@ -158,7 +146,8 @@ internal class GameWorldGenerator
 
     private void SpawnVillage(Vector2 position)
     {
-        Village village = new(game);
+        Village village = new(game, gameWorld);
+        int id = gameWorld.AddVillage(village);
 
         IEntity mainBuilding = levelFactory.CreateMainBuilding(position);
         village.AddBuilding(mainBuilding);
@@ -166,9 +155,10 @@ internal class GameWorldGenerator
         IEntity stockpile = levelFactory.CreateStockpile(village.GetNextBuildingPosition());
         village.AddStockpile(stockpile);
 
-        IEntity villager = levelFactory.CreateVillager(position, villages.Count);
-        village.AddVillager(villager);
+        IEntity woodcutterHut = levelFactory.CreateWoodcutterHut(village.GetNextBuildingPosition());
+        village.AddResourceProcessingBuilding(Resource.Tree, woodcutterHut);
 
-        villages.Add(village);
+        IEntity villager = levelFactory.CreateVillager(position, id);
+        village.AddVillager(villager);
     }
 }

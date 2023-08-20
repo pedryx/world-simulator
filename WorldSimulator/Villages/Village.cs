@@ -5,11 +5,14 @@ using Microsoft.Xna.Framework;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.AccessControl;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
+using WorldSimulator.Level;
 
 namespace WorldSimulator.Villages;
 internal class Village
@@ -27,14 +30,17 @@ internal class Village
     private readonly Dictionary<IEntity, IBehaviour<VillagerContext>> behaviorTrees = new();
     private readonly Game game;
     private readonly List<IEntity> buildings = new();
+    private readonly Dictionary<Resource, IEntity> resourceProcessingBuildings = new();
     private readonly Random random;
+    private readonly GameWorld gameWorld;
 
     // TODO: resolve issue with stockpile position, when stockpile gets destroyed
     private IEntity stockpile;
 
-    public Village(Game game)
+    public Village(Game game, GameWorld gameWorld)
     {
         this.game = game;
+        this.gameWorld = gameWorld;
 
         random = new Random(game.GenerateSeed());
     }
@@ -49,7 +55,7 @@ internal class Village
             var query = buildings
                 .Select(b => b.GetComponent<Position>().Coordinates)
                 .Where(p => Vector2.DistanceSquared(p, buildingPosition) < minDistanceSquared);
-            if (!query.Any())
+            if (!query.Any() && gameWorld.IsBuildable(buildingPosition))
                 return buildingPosition;
         }
     }
@@ -65,15 +71,20 @@ internal class Village
         AddBuilding(entity);
     }
 
+    public void AddResourceProcessingBuilding(Resource resource, IEntity entity)
+    {
+        resourceProcessingBuildings.Add(resource, entity);
+    }
+
     public void AddVillager(IEntity entity)
     {
-        behaviorTrees.Add(entity, CreateBehaviorTree(Resource.Tree));
+        behaviorTrees.Add(entity, CreateBehaviorTree(Resource.Tree, resourceProcessingBuildings[Resource.Tree]));
     }
 
     public IBehaviour<VillagerContext> GetBehaviorTree(IEntity entity)
         => behaviorTrees[entity];
 
-    private IBehaviour<VillagerContext> CreateBehaviorTree(Resource resource)
+    private IBehaviour<VillagerContext> CreateBehaviorTree(Resource resource, IEntity workplace)
     {
         return FluentBuilder.Create<VillagerContext>()
             .Sequence("villager job sequence")
@@ -81,6 +92,8 @@ internal class Village
                 .Do("move to nearest resource", MoveTo(null))
                 .Do("wait until resource is harvested", Wait(resource.HarvestTime))
                 .Do("harvest resource", HarvestResource(resource))
+                .Do("move to workplace", MoveTo(workplace))
+                .Do("wait until resource is processed", Wait(resource.HarvestItem.TimeToProcess))
                 .Do("move to stockpile", MoveTo(stockpile))
                 .Do("store items", StoreItems(resource))
             .End()

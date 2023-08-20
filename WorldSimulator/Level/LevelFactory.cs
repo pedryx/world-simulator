@@ -25,6 +25,7 @@ internal class LevelFactory
 
     private readonly IEntityBuilder mainBuildingBuilder;
     private readonly IEntityBuilder stockpileBuilder;
+    private readonly IEntityBuilder woodcutterHutBuilder;
 
     public LevelFactory(Game game, LevelState gameState)
     {
@@ -39,8 +40,9 @@ internal class LevelFactory
         depositeBuilder = CreateBasicBuilder("iron deposit", 0.15f);
         deerBuilder = CreateAnimalBuilder("deer", 0.2f);
 
-        mainBuildingBuilder = CreateBasicBuilder("main building", 0.8f);
+        mainBuildingBuilder = CreateBasicBuilder("main building", 0.9f);
         stockpileBuilder = CreateStorageBuilder("stockpile", 0.3f);
+        woodcutterHutBuilder = CreateBasicBuilder("woodcutter hut", 0.6f);
     }
 
     #region builders
@@ -148,6 +150,9 @@ internal class LevelFactory
 
     public IEntity CreateStockpile(Vector2 position)
         => CreateStaticEntity(stockpileBuilder, position);
+
+    public IEntity CreateWoodcutterHut(Vector2 position)
+        => CreateStaticEntity(woodcutterHutBuilder, position);
 
     public IEntity CreateResource(Resource resource, Vector2 position)
     {
