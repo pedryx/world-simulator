@@ -87,7 +87,8 @@ internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movem
                 radiusOffset += 1.0f;
                 terrain = gameWorld.GetTerrain(destination);
             }
-            while (terrain != null && terrain.Walkable);
+            // Deer can live only in plain biome.
+            while (!(terrain != null && terrain.Walkable && terrain == Terrain.Plain));
 
             movement.Destination = destination;
         }
