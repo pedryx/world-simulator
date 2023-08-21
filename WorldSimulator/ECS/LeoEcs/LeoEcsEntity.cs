@@ -35,5 +35,5 @@ internal class LeoEcsEntity : IEntity
         => Entity.Del<TComponent>();
 
     public bool IsDestroyed()
-        => Entity.IsAlive();
+        => !Entity.IsAlive();
 }

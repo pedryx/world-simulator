@@ -31,7 +31,7 @@ internal class ArchEntity : IEntity
         => entity.Has<TComponent>();
 
     public bool IsDestroyed()
-        => entity.IsAlive();
+        => !entity.IsAlive();
 
     public void RemoveComponent<TComponent>()
         where TComponent : struct

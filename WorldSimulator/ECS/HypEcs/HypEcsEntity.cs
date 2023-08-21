@@ -30,7 +30,7 @@ internal class HypEcsEntity : IEntity
         => world.HasComponent<TComponent>(entity);
 
     public bool IsDestroyed()
-        => world.IsAlive(entity);
+        => !world.IsAlive(entity);
 
     public void RemoveComponent<TComponent>()
         where TComponent : struct 

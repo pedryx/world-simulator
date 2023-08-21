@@ -34,5 +34,5 @@ internal class DefaultEcsEntity : IEntity
         => Entity.Remove<TComponent>();
 
     public bool IsDestroyed()
-        => Entity.IsAlive;
+        => !Entity.IsAlive;
 }
