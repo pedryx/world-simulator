@@ -3,55 +3,54 @@ using System.Linq;
 
 namespace WorldSimulator.ECS.AbstractECS;
 /// <summary>
-/// Factory for creation of ECS related classes.
+/// The factory for creating ECS-related classes.
 /// </summary>
 public abstract class ECSFactory
 {
     /// <summary>
-    /// Type for systems for component tuples of size one.
+    /// The type for systems handling component tuples of size one.
     /// </summary>
     private readonly Type oneTypeSystem;
     /// <summary>
-    /// Type for systems for component tuples of size two.
+    /// The type for systems handling component tuples of size two.
     /// </summary>
     private readonly Type twoTypeSystem;
     /// <summary>
-    /// Type for systems for component tuples of size three.
+    /// The type for systems handling component tuples of size three.
     /// </summary>
     private readonly Type threeTypeSystem;
     /// <summary>
-    /// Type for systems for component tuples of size four.
+    /// The type for systems handling component tuples of size four.
     /// </summary>
     private readonly Type fourTypeSystem;
 
-    /// <param name="oneTypeSystem">Type for systems for component tuples of size one.</param>
-    /// <param name="twoTypeSystem">Type for systems for component tuples of size two.</param>
-    /// <param name="threeTypeSystem">Type for systems for component tuples of size three.</param>
-    /// <param name="fourTypeSystem">Type for systems for component tuples of size four.</param>
+    /// <param name="oneTypeSystem">The type for systems handling component tuples of size one.</param>
+    /// <param name="twoTypeSystem">The type for systems handling component tuples of size two.</param>
+    /// <param name="threeTypeSystem">The type for systems handling component tuples of size three.</param>
+    /// <param name="fourTypeSystem">The type for systems handling component tuples of size four.</param>
     public ECSFactory(Type oneTypeSystem, Type twoTypeSystem, Type threeTypeSystem, Type fourTypeSystem)
     {
-        this.oneTypeSystem = oneTypeSystem;
-        this.twoTypeSystem = twoTypeSystem;
-        this.threeTypeSystem = threeTypeSystem;
-        this.fourTypeSystem = fourTypeSystem;
+        this.oneTypeSystem = oneTypeSystem ?? throw new ArgumentNullException(nameof(oneTypeSystem));
+        this.twoTypeSystem = twoTypeSystem ?? throw new ArgumentNullException(nameof(twoTypeSystem));
+        this.threeTypeSystem = threeTypeSystem ?? throw new ArgumentNullException(nameof(threeTypeSystem));
+        this.fourTypeSystem = fourTypeSystem ?? throw new ArgumentNullException(nameof(fourTypeSystem));
     }
 
     /// <summary>
-    /// Create builder for entities.
+    /// Create a builder for entities.
     /// </summary>
-    /// <param name="world">World in which will be builder placing created entities.</param>
-    /// <returns></returns>
+    /// <param name="world">The world in which the builder will place created entities.</param>
     public abstract IEntityBuilder CreateEntityBuilder(IECSWorld world);
 
     /// <summary>
-    /// Create new ECS world.
+    /// Create a new ECS world.
     /// </summary>
     public abstract IECSWorld CreateWorld();
 
     /// <summary>
-    /// Create new ecs system which wrappers around entity processor.
+    /// Create an ECS system from an entity processor.
     /// </summary>
-    public IECSSystem CreateSystem<TEntityProcessor>(TEntityProcessor entityProcessor)
+    internal  IECSSystem CreateSystem<TEntityProcessor>(TEntityProcessor entityProcessor)
         where TEntityProcessor : struct, IEntityProcessor
     {
         Type[] processorArguments = typeof(TEntityProcessor)

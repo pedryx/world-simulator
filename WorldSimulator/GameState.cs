@@ -5,8 +5,7 @@ using WorldSimulator.UI;
 
 namespace WorldSimulator;
 /// <summary>
-/// Represent state of the game ("game screen"). Can be used to represent menu, settings,
-/// credits, level, etc.
+/// Represent a state of the game ("game screen"). Can be used to represent a menu, settings, credits, level, etc.
 /// </summary>
 public abstract class GameState
 {

@@ -9,20 +9,38 @@ using WorldSimulator.Level;
 
 namespace WorldSimulator.Systems;
 /// <summary>
-/// System responsible for controlling movement of animals.
+/// System responsible for controlling the logic behind the behavior of animals.
 /// </summary>
-internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Movement, AnimalController, Owner>
+internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movement, AnimalBehavior, Owner>
 {
+    /// <summary>
+    /// The maximum radius for random point generation. Used for simulating the random walk of an animal.
+    /// </summary>
     private const float maxRadius = 80.0f;
+    /// <summary>
+    /// The minimum radius for random point generation. Used for simulating the random walk of an animal.
+    /// </summary>
     private const float minRadius = 20.0f;
+    /// <summary>
+    /// The maximum time interval for a position of an animal to be updated in the corresponding KD-tree.
+    /// </summary>
     private const float maxTimeToUpdate = 2.0f;
+    /// <summary>
+    /// The minimal time interval for a position of an animal to be updated in the corresponding KD-tree.
+    /// </summary>
     private const float minTimeToUpdate = 1.0f;
 
+    /// <summary>
+    /// Random number generator used for generating destinations for random walks.
+    /// </summary>
     private readonly Random destinationRandom;
+    /// <summary>
+    /// Random number generator used for generating intervals for updating animal position in corresponding KD-tree.
+    /// </summary>
     private readonly Random timeToUpdateRandom = new();
     private readonly GameWorld gameWorld;
 
-    public AnimalControllerSystem(Game game, GameWorld gameWorld)
+    public AnimalBehaviorSystem(Game game, GameWorld gameWorld)
     {
         this.gameWorld = gameWorld;
 
@@ -31,9 +49,9 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
 
     public void Process
     (
-        ref Position position,
+        ref Location location,
         ref Movement movement,
-        ref AnimalController controller,
+        ref AnimalBehavior controller,
         ref Owner owner,
         float deltaTime
     )
@@ -41,39 +59,35 @@ internal readonly struct AnimalControllerSystem : IEntityProcessor<Position, Mov
         if (controller.UpdateEnabled)
         {
             controller.TimeToUpdate -= deltaTime;
-            // check if entity position in corresponding kd-tree should be updated
             if (controller.TimeToUpdate <= 0.0f)
             {
                 controller.TimeToUpdate = timeToUpdateRandom.NextSingle(minTimeToUpdate, maxTimeToUpdate);
-                if (controller.PreviousPosition != position.Coordinates)
+                if (controller.PreviousPosition != location.Position)
                 {
                     gameWorld.UpdateResourcePosition
                     (
                         controller.ResourceType,
                         owner.Entity,
                         controller.PreviousPosition,
-                        position.Coordinates
+                        location.Position
                     );
-                    controller.PreviousPosition = position.Coordinates;
+                    controller.PreviousPosition = location.Position;
                 }
             }
         }
 
-        // Check if the animal has reached its destination.
-        if (position.Coordinates.IsCloseEnough(movement.Destination, movement.Speed * deltaTime))
+        if (location.Position.IsCloseEnough(movement.Destination, movement.Speed * deltaTime))
         {
-            /*
-             * Keep generating random destination around entity's position until valid location is found. The search
-             * radius will keep increasing until valid location is found.
-             */
             float radiusOffset = 0.0f;
             Vector2 destination;
+            Terrain terrain;
             do
             {
-                destination = destinationRandom.NextPointInRing(position.Coordinates, minRadius, maxRadius + radiusOffset);
+                destination = destinationRandom.NextPointInRing(location.Position, minRadius, maxRadius + radiusOffset);
                 radiusOffset += 1.0f;
+                terrain = gameWorld.GetTerrain(destination);
             }
-            while (!gameWorld.IsWalkableForAnimals(destination));
+            while (terrain != null && terrain.Walkable);
 
             movement.Destination = destination;
         }

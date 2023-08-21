@@ -12,17 +12,20 @@ internal abstract class UIElement
     private readonly List<UIElement> children = new();
 
     /// <summary>
-    /// Offset from parent element or position of element if element is directly in UI layer.
+    /// The offset from the parent element or position of the element if element is directly in a UI layer.
     /// </summary>
     public Vector2 Offset;
 
     public Game Game { get; private set; }
     public GameState GameState { get; private set; }
     /// <summary>
-    /// UI layer to which this element belong.
+    /// The UI layer which owns the element.
     /// </summary>
     public UILayer UILayer { get; private set; }
 
+    /// <summary>
+    /// The bounding rectangle of the element.
+    /// </summary>
     public abstract Rectangle Bounds { get; }
 
     protected virtual void Initialize() { }

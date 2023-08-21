@@ -7,9 +7,6 @@ using WorldSimulator.Components;
 using WorldSimulator.Level;
 
 namespace WorldSimulator.UI.Elements;
-/// <summary>
-/// Represent a minimap of game world.
-/// </summary>
 internal class Minimap : UIElement
 {
     private const int viewFrameThickness = 3;
@@ -20,14 +17,14 @@ internal class Minimap : UIElement
 
     private readonly Camera camera;
     /// <summary>
-    /// Scale factor for chunks which ensures that they fit the mini map.
+    /// Scale factor for the terrain to ensure that it fits into minimap.
     /// </summary>
     private readonly Vector2 scale;
     private readonly Texture2D borderTexture;
     private readonly Game game;
 
     /// <summary>
-    /// Custom sprite batch instance, which does not affect rendering of other UI elements.
+    /// Custom sprite batch instance, which does not affect the rendering of other UI elements.
     /// </summary>
     private SpriteBatch spriteBatch;
     private Effect terrainDrawShader;

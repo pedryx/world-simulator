@@ -3,6 +3,9 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems;
+/// <summary>
+/// System which provides the user with debugging information.
+/// </summary>
 internal readonly struct DebugSystem : IECSSystem
 {
     private const int sampleCount = 60;

@@ -6,14 +6,17 @@ using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components;
 /// <summary>
-/// Entities with this component will follow specific path.
+/// Enables an entity to follow a specified path.
 /// </summary>
 [Component]
 internal struct PathFollow
 {
+    /// <summary>
+    /// The specified path which will be followed by the entity.
+    /// </summary>
     public Vector2[] Path = Array.Empty<Vector2>();
     /// <summary>
-    /// Index of current path node (element of <see cref="Path"/> array).
+    /// The index of current path node (element of the <see cref="Path"/> array).
     /// </summary>
     public int PathIndex;
 

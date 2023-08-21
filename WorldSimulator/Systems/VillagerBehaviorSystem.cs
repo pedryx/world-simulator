@@ -5,7 +5,7 @@ using WorldSimulator.Villages;
 
 namespace WorldSimulator.Systems;
 /// <summary>
-/// Handles AI behavior of villagers.
+/// A system that handles the behavior of villagers.
 /// </summary>
 internal readonly struct VillagerBehaviorSystem : IEntityProcessor<VillagerBehavior, Owner>
 {

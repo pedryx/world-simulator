@@ -12,15 +12,15 @@ internal readonly struct InputSystem : IECSSystem
 {
     private const float cameraMoveSpeed = 2250.0f;
     /// <summary>
-    /// Speed of camera zooming in/out.
+    /// The speed of the camera zooming in/out.
     /// </summary>
     private const float cameraZoomAmount = 0.2f;
     /// <summary>
-    /// Minimum camera zoomed value.
+    /// The minimum camera zoomed value.
     /// </summary>
     private const float cameraMinZoom = 0.08f;
     /// <summary>
-    /// Maximum camera zoomed value.
+    /// The maximum camera zoomed value.
     /// </summary>
     private const float cameraMaxZoom = 4.0f;
 
@@ -59,7 +59,6 @@ internal readonly struct InputSystem : IECSSystem
 
     private void HandleCameraControl(float deltaTime)
     {
-        // get movement direction
         Vector2 movementDirection = new();
         if (IsDown(Keys.W))
             movementDirection += -Vector2.UnitY;
@@ -73,7 +72,6 @@ internal readonly struct InputSystem : IECSSystem
         if (movementDirection != Vector2.Zero)
             movementDirection.Normalize();
 
-        // get zoom direction
         float zoomDirection = 0.0f;
         if (!gameState.UILayer.MouseHover)
         {
@@ -83,11 +81,9 @@ internal readonly struct InputSystem : IECSSystem
                 zoomDirection = -1.0f;
         }
 
-        // compute changes
         camera.Position += movementDirection * cameraMoveSpeed * deltaTime * (1 / camera.Scale);
         camera.Scale *= 1.0f + zoomDirection * cameraZoomAmount;
 
-        // clamp values
         camera.Position.X = MathHelper.Clamp(camera.Position.X, GameWorld.Bounds.Left, GameWorld.Bounds.Right);
         camera.Position.Y = MathHelper.Clamp(camera.Position.Y, GameWorld.Bounds.Top, GameWorld.Bounds.Bottom);
         camera.Scale = MathHelper.Clamp(camera.Scale, cameraMinZoom, cameraMaxZoom);

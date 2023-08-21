@@ -18,14 +18,14 @@ public class Game : MonoGameBaseGame
 {
     private const int defaultResolutionWidth = 1920;
     private const int defaultResolutionHeight = 1080;
-    private const int resolutionWidth = 1280;
-    private const int resolutionHeight = 720;
+    private const int initialResolutionWidth = 1280;
+    private const int initialResolutionHeight = 720;
+
     private readonly Color clearColor = Color.Black;
 
     /// <summary>
-    /// RNG used for generating seeds. Each RNG in the game is based on seed
-    /// from this generator. <see cref="GenerateSeed"/> is used for obtaining
-    /// seeds.
+    /// Random number generator used for generating seeds. Each random number generator in the game is based on a seed
+    /// from this generator. Use <see cref="GenerateSeed"/> is used for obtaining seeds.
     /// </summary>
     private readonly Random seedGenerator;
     private IDictionary<Type, IResourceManager> resourceManagers;
@@ -38,23 +38,27 @@ public class Game : MonoGameBaseGame
     internal Texture2D BlankTexture { get; private set; }
 
     /// <summary>
-    /// Width and height of game window.
+    /// The actual width and height of the game window in pixels.
     /// </summary>
     internal Vector2 Resolution => new(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
 
     /// <summary>
-    /// Default width and height of game window.
+    /// The default width and height of the game window. This resolution remains the same as all other resolutions if the
+    /// game uses any other resolution everything gets rescaled by resolution scale.
     /// </summary>
     internal static Vector2 DefaultResolution => new(defaultResolutionWidth, defaultResolutionHeight);
 
+    /// <summary>
+    /// Scaling factor for the actual resolution.
+    /// </summary>
     internal Vector2 ResolutionScale => Resolution / DefaultResolution;
 
     public Game(ECSFactory factory, int seed)
     {
         Graphics = new GraphicsDeviceManager(this)
         {
-            PreferredBackBufferWidth = resolutionWidth,
-            PreferredBackBufferHeight = resolutionHeight,
+            PreferredBackBufferWidth = initialResolutionWidth,
+            PreferredBackBufferHeight = initialResolutionHeight,
             SynchronizeWithVerticalRetrace = false,
         };
         seedGenerator = new Random(seed);
@@ -66,7 +70,7 @@ public class Game : MonoGameBaseGame
     }
 
     /// <summary>
-    /// Generate seed for RNG.
+    /// Generate seed for random number generation.
     /// </summary>
     internal int GenerateSeed()
         => seedGenerator.Next();
@@ -75,9 +79,9 @@ public class Game : MonoGameBaseGame
         => (ResourceManager<TResource>)resourceManagers[typeof(TResource)];
 
     /// <summary>
-    /// Create and switch to a new state of specific type. Created state will also be initialized.
+    /// Create and switch to a new state of a specified type. The created state will also be initialized.
     /// </summary>
-    /// <typeparam name="TGameState">Type of state to create and to switch to.</typeparam>
+    /// <typeparam name="TGameState">The type of state to create and to switch to.</typeparam>
     internal void SwitchState<TGameState>()
         where TGameState : GameState, new()
     {
@@ -87,14 +91,17 @@ public class Game : MonoGameBaseGame
     }
 
     /// <summary>
-    /// Switch to an existing state. State will not be initialized.
+    /// Switch to an existing state. The state will not be initialized.
     /// </summary>
-    /// <param name="newState">New state to switch to.</param>
+    /// <param name="newState">The new state to switch to.</param>
     public void SwitchState(GameState newState)
         => ActiveState = newState;
 
     protected override void LoadContent()
     {
+        if (ActiveState == null)
+            throw new InvalidOperationException("Active state is is not set.");
+
         SpriteBatch = new SpriteBatch(GraphicsDevice);
 
         BlankTexture = new Texture2D(GraphicsDevice, 1, 1);
@@ -128,7 +135,6 @@ public class Game : MonoGameBaseGame
     {
         float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-
         GraphicsDevice.Clear(clearColor);
         ActiveState.Draw(deltaTime);
 
@@ -136,7 +142,7 @@ public class Game : MonoGameBaseGame
     }
 
     /// <summary>
-    /// Call <see cref="Update(GameTime)"/> method only once. Caller is responsible for
+    /// Call <see cref="Update(GameTime)"/> method only once. A caller is responsible for
     /// managing gameTime.
     /// </summary>
     public void UpdateOnce(GameTime gameTime)

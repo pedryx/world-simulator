@@ -11,7 +11,7 @@ namespace WorldSimulator.UI;
 internal class UILayer
 {
     /// <summary>
-    /// Contains elements which belongs to this layer.
+    /// Contains elements that belong to this layer.
     /// </summary>
     private readonly List<UIElement> elements = new();
     private readonly SpriteBatch spriteBatch;
@@ -21,7 +21,7 @@ internal class UILayer
     public Game Game { get; private set; }
     public GameState GameState { get; private set; }
     /// <summary>
-    /// Determine if mouse is hovering over some element of this UI layer.
+    /// Determine if the mouse is hovering over some element of this UI layer.
     /// </summary>
     public bool MouseHover { get; private set; }
 

@@ -10,6 +10,17 @@ namespace WorldSimulator.Level;
 internal class GameWorldGrid
 {
     /// <summary>
+    /// Maximum number of nodes that can be in a priority queue at one time.
+    /// </summary>
+    private static readonly int maxPriorityQueueSize = GameWorld.TotalSize / Distance;
+
+    /// <summary>
+    /// Calculate the Manhattan distance between two positions.
+    /// </summary>
+    private static float ManhattanDistance(Vector2 a, Vector2 b)
+        => (MathF.Abs(a.X - b.X) + MathF.Abs(a.Y - b.Y)) / Distance;
+
+    /// <summary>
     /// Distance between neighbor grid nodes.
     /// </summary>
     public const int Distance = 16;
@@ -38,17 +49,6 @@ internal class GameWorldGrid
             .Point;
     }
 
-    /// <summary>
-    /// Maximum number of nodes which can be in priority queue at one time.
-    /// </summary>
-    private static readonly int maxPriorityQueueSize = GameWorld.TotalSize / Distance;
-
-    /// <summary>
-    /// Calculate Manhattan distance between two positions.
-    /// </summary>
-    private static float ManhattanDistance(Vector2 a, Vector2 b)
-        => (MathF.Abs(a.X - b.X) + MathF.Abs(a.Y - b.Y)) / Distance;
-
     private readonly GameWorld gameWorld;
 
     public GameWorldGrid(GameWorld gameWorld)
@@ -57,7 +57,7 @@ internal class GameWorldGrid
     }
 
     /// <summary>
-    /// Find path from start to end using A* algorithm.
+    /// Find a path from start to end using A* algorithm.
     /// </summary>
     public Vector2[] FindPath(Vector2 start, Vector2 end)
     {
@@ -105,9 +105,9 @@ internal class GameWorldGrid
             currentPoint = cameFrom[currentPoint.Value];
         }
 
-        // we connect actual start and end because the used ones were only nearest grid points to them
         return SimplifyPath
         (
+            //Actual start and end don't have to be points of the grid.
             new Vector2[] { start }
                 .Concat(((IEnumerable<Vector2>)path).Reverse())
                 .Concat(new Vector2[] { end })
@@ -150,10 +150,10 @@ internal class GameWorldGrid
         Vector2 top = position + Vector2.UnitY * -Distance;
         Vector2 down = position + Vector2.UnitY * Distance;
 
-        if (gameWorld.IsWalkable(left)) neighbors.Add(left);
-        if (gameWorld.IsWalkable(right)) neighbors.Add(right);
-        if (gameWorld.IsWalkable(top)) neighbors.Add(top);
-        if (gameWorld.IsWalkable(down)) neighbors.Add(down);
+        if (gameWorld.GetTerrain(left).Walkable) neighbors.Add(left);
+        if (gameWorld.GetTerrain(right).Walkable) neighbors.Add(right);
+        if (gameWorld.GetTerrain(top).Walkable) neighbors.Add(top);
+        if (gameWorld.GetTerrain(down).Walkable) neighbors.Add(down);
 
         return neighbors;
     }

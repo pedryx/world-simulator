@@ -2,18 +2,18 @@
 
 namespace WorldSimulator;
 /// <summary>
-/// Simple 2D camera.
+/// A simple 2D camera.
 /// </summary>
 internal class Camera
 {
     /// <summary>
-    /// Position of the center of the camera.
+    /// The position of the center of the camera.
     /// </summary>
     public Vector2 Position;
     public float Scale = 1.0f;
 
     /// <summary>
-    /// Bounding rectangle of camera's view.
+    /// The bounding rectangle of camera's view.
     /// </summary>
     public Rectangle ViewBounds
     {

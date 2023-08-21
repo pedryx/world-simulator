@@ -23,9 +23,9 @@ internal abstract class GlobalInstances
 }
 
 /// <summary>
-/// Represent base class for classes which will have inly limited amount of instances with global access to them.
+/// Represent base class for classes that will have only a limited amount of instances with global access to them.
 /// </summary>
-/// <typeparam name="TDerived">Type derived from <see cref="GlobalInstances{TDerived}"/>.</typeparam>
+/// <typeparam name="TDerived">The type derived from <see cref="GlobalInstances{TDerived}"/>.</typeparam>
 internal abstract class GlobalInstances<TDerived> : GlobalInstances
     where TDerived : GlobalInstances<TDerived>
 {
@@ -35,19 +35,19 @@ internal abstract class GlobalInstances<TDerived> : GlobalInstances
     private static readonly List<TDerived> items = new();
 
     /// <summary>
-    /// Get number of instances.
+    /// Get the number of instances.
     /// </summary>
     public static int Count => items.Count;
 
     /// <summary>
-    /// Get instance with specific id.
+    /// Get an instance with a specific id.
     /// </summary>
     /// <param name="id">ID of instance to get.</param>
     public static TDerived Get(int id)
         => items[id];
 
     /// <summary>
-    /// Instance id.
+    /// The instance id.
     /// </summary>
     public int ID { get; private init; } = items.Count;
 

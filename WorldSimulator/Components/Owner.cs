@@ -2,13 +2,13 @@
 
 namespace WorldSimulator.Components;
 /// <summary>
-/// Contains information about owner of this component.
+/// Provides owner information to an entity.
 /// </summary>
 [Component]
 internal struct Owner
 {
     /// <summary>
-    /// Entity which owns this component.
+    /// The entity which owns this component.
     /// </summary>
     public IEntity Entity;
 }

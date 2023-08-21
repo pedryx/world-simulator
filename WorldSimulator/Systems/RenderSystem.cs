@@ -6,14 +6,14 @@ using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Systems;
-internal readonly struct RenderSystem : IEntityProcessor<Position, Appearance>
+internal readonly struct RenderSystem : IEntityProcessor<Location, Appearance>
 {
     /// <summary>
-    /// If entity is smaller than this threshold than entity is considered not visible.
+    /// The squared size threshold for considering entities not visible.
     /// </summary>
     private const float sizeThresholdSquared = 100.0f;
     /// <summary>
-    /// Camera view bounds offset for layer computation.
+    /// The camera view bounds offset, used for layer computation.
     /// </summary>
     private const float layerViewOffset = 512.0f;
 
@@ -21,11 +21,11 @@ internal readonly struct RenderSystem : IEntityProcessor<Position, Appearance>
     private readonly SpriteBatch spriteBatch;
     private readonly Camera camera;
     /// <summary>
-    /// Camera view transform matrix.
+    /// The camera view transform matrix.
     /// </summary>
     private readonly RefWrapper<Matrix> transform = new();
     /// <summary>
-    /// Camera view bounds size for layer computation.
+    /// The camera view bounds size used for layer computation.
     /// </summary>
     private readonly RefWrapper<Vector2> layerViewSize = new();
 
@@ -49,26 +49,26 @@ internal readonly struct RenderSystem : IEntityProcessor<Position, Appearance>
         );
     }
 
-    public void Process(ref Position position, ref Appearance appearance, float deltaTime)
+    public void Process(ref Location location, ref Appearance appearance, float deltaTime)
     {
         // Calculate bounds for camera view and entity.
         Rectangle viewBounds = camera.ViewBounds;
         Vector2 entitySize = appearance.Texture.GetSize() * appearance.Scale;
         Rectangle entityBounds = new
         (
-            (position.Coordinates - entitySize * appearance.Origin).ToPoint(),
+            (location.Position - entitySize * appearance.Origin).ToPoint(),
             entitySize.ToPoint()
         );
 
-        // Discard entities which are outside came view.
-        if (!(viewBounds.Contains(position.Coordinates) || viewBounds.Intersects(entityBounds)))
+        // Discard entities that are outside the camera view.
+        if (!(viewBounds.Contains(location.Position) || viewBounds.Intersects(entityBounds)))
             return;
-        // Discard entities which are too small.
+        // Discard entities that are too small.
         if ((entitySize * camera.Scale).LengthSquared() < sizeThresholdSquared)
             return;
         
-        // Calculate layer for the entity.
-        Vector2 screenPosition = Vector2.Transform(position.Coordinates, transform) 
+        // Calculate the layer for the entity.
+        Vector2 screenPosition = Vector2.Transform(location.Position, transform) 
             + new Vector2(layerViewOffset * camera.Scale);
         float layer = (screenPosition.Y * layerViewSize.Value.X + screenPosition.X) 
             / (layerViewSize.Value.X * layerViewSize.Value.Y);
@@ -76,7 +76,7 @@ internal readonly struct RenderSystem : IEntityProcessor<Position, Appearance>
         spriteBatch.Draw
         (
             appearance.Texture,
-            position.Coordinates,
+            location.Position,
             null,
             Color.White,
             0.0f,

@@ -1,23 +1,23 @@
 ﻿namespace WorldSimulator.ECS.AbstractECS;
 
 /// <summary>
-/// Represent an ECS entity.
+/// Interface for a wrapper around an entity.
 /// </summary>
 public interface IEntity
 {
     /// <summary>
-    /// Determine if entity has been destroyed by calling <see cref="Destroy"/>.
+    /// Determine if the entity has been destroyed.
     /// </summary>
-    /// <returns>True, if entity has been destroyed, otherwise false.</returns>
+    /// <returns>True, if the entity has been destroyed, otherwise false.</returns>
     bool IsDestroyed();
 
     void AddComponent<TComponent>(TComponent component)
         where TComponent : struct;
 
     /// <summary>
-    /// Create instance of specific component type and add it to entity.
+    /// Create an instance of the specified component type and add it to the entity.
     /// </summary>
-    /// <typeparam name="TComponent">Type of component to create and add.</typeparam>
+    /// <typeparam name="TComponent">The type of component to create and add.</typeparam>
     public void AddComponent<TComponent>()
         where TComponent : struct
         => AddComponent(new TComponent());
@@ -32,7 +32,9 @@ public interface IEntity
         where TComponent : struct;
 
     /// <summary>
-    /// Destroy entity. (Entity will no longer be managed by its ecs world and all components will no longer be valid.)
+    /// Destroys the entity. The instance will still exist, but using it in any operation may lead to undefined
+    /// behavior.
     /// </summary>
     void Destroy();
+
 }

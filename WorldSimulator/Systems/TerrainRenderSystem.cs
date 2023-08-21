@@ -6,7 +6,7 @@ using WorldSimulator.Level;
 
 namespace WorldSimulator.Systems;
 /// <summary>
-/// System responsible for rendering terrain.
+/// A system responsible for rendering terrain.
 /// </summary>
 internal readonly struct TerrainRenderSystem : IECSSystem
 {

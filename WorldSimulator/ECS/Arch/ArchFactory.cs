@@ -17,10 +17,7 @@ public class ArchFactory : ECSFactory
     {
         return new OnPlaceBuildEntityBuilder(world, (types, values, world) =>
         {
-            /*
-             * We need to create entity with Empty component because World.Create throws exception when creating entity
-             * with no components.
-             */
+            // World.Create throws exception when creating entity without component.
             Entity entity = ((BasicECSWorld<World>)world).World.Create<Empty>();
             entity.AddRange(values.ToArray());
             entity.Remove<Empty>();

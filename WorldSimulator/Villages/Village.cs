@@ -18,23 +18,30 @@ namespace WorldSimulator.Villages;
 internal class Village
 {
     /// <summary>
-    /// Minimal distance of building to all other buildings.
+    /// Minimal distance of a building to all other buildings.
     /// </summary>
     private const float minDistance = 150.0f;
     /// <summary>
-    /// Maximal distance of building to any other building.
+    /// Maximal distance of a building to any other building.
     /// </summary>
     private const float maxDistance = 200.0f;
+    /// <summary>
+    /// Second power of maximal distance.
+    /// </summary>
     private const float minDistanceSquared = minDistance * minDistance;
 
+    /// <summary>
+    /// Map villagers to their behavior trees
+    /// </summary>
+    /// <returns></returns>
     private readonly Dictionary<IEntity, IBehaviour<VillagerContext>> behaviorTrees = new();
     private readonly Game game;
     private readonly List<IEntity> buildings = new();
-    private readonly Dictionary<Resource, IEntity> resourceProcessingBuildings = new();
+    private readonly Dictionary<ResourceType, IEntity> resourceProcessingBuildings = new();
     private readonly Random random;
     private readonly GameWorld gameWorld;
 
-    // TODO: resolve issue with stockpile position, when stockpile gets destroyed
+    // TODO: Resolve the issue with stockpile position, when the stockpile gets destroyed.
     private IEntity stockpile;
 
     public Village(Game game, GameWorld gameWorld)
@@ -45,17 +52,20 @@ internal class Village
         random = new Random(game.GenerateSeed());
     }
 
+    /// <summary>
+    /// Get next valid position where a building could be placed.
+    /// </summary>
     public Vector2 GetNextBuildingPosition()
     {
         while (true)
         {
-            Vector2 center = buildings[random.Next(buildings.Count)].GetComponent<Position>().Coordinates;
+            Vector2 center = buildings[random.Next(buildings.Count)].GetComponent<Location>().Position;
             Vector2 buildingPosition = random.NextPointInRing(center, minDistance, maxDistance);
 
             var query = buildings
-                .Select(b => b.GetComponent<Position>().Coordinates)
+                .Select(b => b.GetComponent<Location>().Position)
                 .Where(p => Vector2.DistanceSquared(p, buildingPosition) < minDistanceSquared);
-            if (!query.Any() && gameWorld.IsBuildable(buildingPosition))
+            if (!query.Any() && gameWorld.GetTerrain(buildingPosition).Buildable)
                 return buildingPosition;
         }
     }
@@ -71,20 +81,20 @@ internal class Village
         AddBuilding(entity);
     }
 
-    public void AddResourceProcessingBuilding(Resource resource, IEntity entity)
+    public void AddResourceProcessingBuilding(ResourceType resource, IEntity entity)
     {
         resourceProcessingBuildings.Add(resource, entity);
     }
 
     public void AddVillager(IEntity entity)
     {
-        behaviorTrees.Add(entity, CreateBehaviorTree(Resource.Tree, resourceProcessingBuildings[Resource.Tree]));
+        behaviorTrees.Add(entity, CreateBehaviorTree(ResourceType.Tree, resourceProcessingBuildings[ResourceType.Tree]));
     }
 
     public IBehaviour<VillagerContext> GetBehaviorTree(IEntity entity)
         => behaviorTrees[entity];
 
-    private IBehaviour<VillagerContext> CreateBehaviorTree(Resource resource, IEntity workplace)
+    private IBehaviour<VillagerContext> CreateBehaviorTree(ResourceType resource, IEntity workplace)
     {
         return FluentBuilder.Create<VillagerContext>()
             .Sequence("villager job sequence")
@@ -111,8 +121,8 @@ internal class Village
             {
                 // when two entities are at same position, depth layer fighting occur
                 Vector2 targetPosition = (target ?? context.Entity.GetComponent<VillagerBehavior>().Target)
-                    .GetComponent<Position>().Coordinates + Vector2.UnitY;
-                Vector2 position = context.Entity.GetComponent<Position>().Coordinates;
+                    .GetComponent<Location>().Position + Vector2.UnitY;
+                Vector2 position = context.Entity.GetComponent<Location>().Position;
                 float speed = context.Entity.GetComponent<Movement>().Speed;
 
                 if (position.IsCloseEnough(targetPosition, speed * context.DeltaTime))
@@ -144,11 +154,11 @@ internal class Village
         };
     }
 
-    private static Func<VillagerContext, BehaviourStatus> FindNearestResource(Resource resourceType)
+    private static Func<VillagerContext, BehaviourStatus> FindNearestResource(ResourceType resourceType)
     {
         return (context) =>
         {
-            Vector2 position = context.Entity.GetComponent<Position>().Coordinates;
+            Vector2 position = context.Entity.GetComponent<Location>().Position;
             IEntity resource = context.GameWorld.GetAndRemoveNearestResource(resourceType, position);
 
             if (resource == null)
@@ -156,9 +166,9 @@ internal class Village
 
             context.Entity.GetComponent<VillagerBehavior>().Target = resource;
 
-            if (resource.HasComponent<AnimalController>())
+            if (resource.HasComponent<AnimalBehavior>())
             {
-                resource.GetComponent<AnimalController>().UpdateEnabled = false;
+                resource.GetComponent<AnimalBehavior>().UpdateEnabled = false;
                 resource.GetComponent<Movement>().Speed = 0.0f;
             }
 
@@ -166,7 +176,7 @@ internal class Village
         };
     }
 
-    private static Func<VillagerContext, BehaviourStatus> HarvestResource(Resource resourceType)
+    private static Func<VillagerContext, BehaviourStatus> HarvestResource(ResourceType resourceType)
     {
         return (context) =>
         {
@@ -177,7 +187,7 @@ internal class Village
         };
     }
 
-    private Func<VillagerContext, BehaviourStatus> StoreItems(Resource resourceType)
+    private Func<VillagerContext, BehaviourStatus> StoreItems(ResourceType resourceType)
     {
         return (context) =>
         {

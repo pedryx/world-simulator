@@ -50,7 +50,7 @@ internal class LevelFactory
     {
         IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
 
-        builder.AddComponent<Position>();
+        builder.AddComponent<Location>();
         builder.AddComponent<Appearance>();
 
         return builder;
@@ -60,7 +60,7 @@ internal class LevelFactory
     {
         IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
 
-        builder.AddComponent<Position>();
+        builder.AddComponent<Location>();
         builder.AddComponent(new Appearance()
         {
             Texture = game.GetResourceManager<Texture2D>()[textureName],
@@ -89,9 +89,9 @@ internal class LevelFactory
         {
             Speed = 30.0f,
         });
-        builder.AddComponent(new AnimalController()
+        builder.AddComponent(new AnimalBehavior()
         {
-            ResourceType = Resource.Deer,
+            ResourceType = ResourceType.Deer,
         });
 
         return builder;
@@ -118,7 +118,7 @@ internal class LevelFactory
     {
         IEntity entity = builder.Build();
 
-        entity.GetComponent<Position>().Coordinates = position;
+        entity.GetComponent<Location>().Position = position;
         entity.GetComponent<Owner>().Entity = entity;
 
         return entity;
@@ -128,7 +128,7 @@ internal class LevelFactory
     {
         IEntity entity = builder.Build();
 
-        entity.GetComponent<Position>().Coordinates = position;
+        entity.GetComponent<Location>().Position = position;
         entity.GetComponent<Owner>().Entity = entity;
         entity.GetComponent<Movement>().Destination = position;
 
@@ -154,15 +154,15 @@ internal class LevelFactory
     public IEntity CreateWoodcutterHut(Vector2 position)
         => CreateStaticEntity(woodcutterHutBuilder, position);
 
-    public IEntity CreateResource(Resource resource, Vector2 position)
+    public IEntity CreateResource(ResourceType resource, Vector2 position)
     {
-        if (resource == Resource.Tree)
+        if (resource == ResourceType.Tree)
             return CreateTree(position);
-        else if (resource == Resource.Rock)
+        else if (resource == ResourceType.Rock)
             return CreateRock(position);
-        else if (resource == Resource.Deposit)
+        else if (resource == ResourceType.Deposit)
             return CreateDeposit(position);
-        else if (resource == Resource.Deer)
+        else if (resource == ResourceType.Deer)
             return CreateDeer(position);
 
         throw new InvalidOperationException("Entity for this resource not exist!");
@@ -184,7 +184,7 @@ internal class LevelFactory
     {
         IEntity entity = terrainBuilder.Build();
 
-        entity.GetComponent<Position>().Coordinates = position;
+        entity.GetComponent<Location>().Position = position;
         entity.GetComponent<Appearance>().Texture = texture;
 
         return entity;

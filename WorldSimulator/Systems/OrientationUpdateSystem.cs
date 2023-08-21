@@ -8,13 +8,13 @@ using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems;
 /// <summary>
-/// System which dynamically changes orientation of entities based on their moving direction.
+/// A system that dynamically changes the orientation of entities based on their moving direction.
 /// </summary>
-internal readonly struct OrientationUpdateSystem : IEntityProcessor<Position, Movement, Appearance>
+internal readonly struct OrientationUpdateSystem : IEntityProcessor<Location, Movement, Appearance>
 {
-    public void Process(ref Position position, ref Movement movement, ref Appearance appearance, float deltaTime)
+    public void Process(ref Location location, ref Movement movement, ref Appearance appearance, float deltaTime)
     {
-        Vector2 direction = movement.Destination - position.Coordinates;
+        Vector2 direction = movement.Destination - location.Position;
 
         if (MathF.Abs(direction.X) < movement.Speed * deltaTime)
             return;

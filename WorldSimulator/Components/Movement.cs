@@ -4,17 +4,17 @@ using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components;
 /// <summary>
-/// Entities with this component moves towards <see cref="Destination"/>.
+/// Enables entities to move toward a specified destination.
 /// </summary>
 [Component]
 internal struct Movement
 {
     /// <summary>
-    /// Movement speed in pixels per second.
+    /// The movement speed in pixels per second.
     /// </summary>
     public float Speed;
     /// <summary>
-    /// Destination towards which will entity move.
+    /// Destination towards which the entity will move.
     /// </summary>
     public Vector2 Destination;
 }

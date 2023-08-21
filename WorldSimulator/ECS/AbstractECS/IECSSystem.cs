@@ -1,22 +1,22 @@
 ﻿namespace WorldSimulator.ECS.AbstractECS;
 
-/// <summary>
-/// Interface for entity-component-system system. It is usually wrapper around <see cref="IEntityProcessor"/>. Each
-/// ecs system has different way to iterate entities. It is responsibility of derived systems to call
-/// <see cref="IEntityProcessor.PreUpdate(float)"/>, <see cref="IEntityProcessor.PostUpdate(float)"/> and
-/// corresponding process methods. Derived systems has to have constructor which accept entity processor as single
+/// <summary> 
+/// An interface for an ECS system. Typically, it wraps around <see cref="IEntityProcessor"/>. Each ECS system has a
+/// distinct method to iterate through entities. Derived systems are responsible for invoking
+/// <see cref="IEntityProcessor.PreUpdate(float)"/>, <see cref="IEntityProcessor.PostUpdate(float)"/> methods and the
+/// relevant Process methods. Derived systems must have a constructor that accepts an entity processor as its sole
 /// argument.
 /// </summary>
 public interface IECSSystem
 {
     /// <summary>
-    /// Initialize ecs system.
+    /// Initialize the ECS system.
     /// </summary>
-    /// <param name="world">ECS world associated with the system.</param>
+    /// <param name="world">An ECS world associated with the system.</param>
     void Initialize(IECSWorld world); 
 
     /// <summary>
-    /// Update system's state.
+    /// Update the state of the system.
     /// </summary>
     /// <param name="deltaTime">Time elapsed between frames.</param>
     void Update(float deltaTime);

@@ -2,44 +2,44 @@
 /// <summary>
 /// Represent a natural resource, which can be harvested to obtain resources.
 /// </summary>
-internal sealed class Resource : GlobalInstances<Resource>
+internal sealed class ResourceType : GlobalInstances<ResourceType>
 {
     /// <summary>
-    /// Item obtained upon harvesting resource.
+    /// The item obtained upon harvesting resource.
     /// </summary>
-    public Item HarvestItem { get; init; }
+    public ItemType HarvestItem { get; init; }
     /// <summary>
-    /// Number of items obtained upon harvesting resource.
+    /// The number of items obtained upon harvesting the resource.
     /// </summary>
     public int HarvestQuantity { get; init; }
     /// <summary>
-    /// How long it takes to harvest resource in seconds.
+    /// Time it takes to harvest the resource in seconds.
     /// </summary>
     public float HarvestTime { get; init; }
 
-    private Resource() : base() { }
+    private ResourceType() : base() { }
 
-    public readonly static Resource Tree = new()
+    public readonly static ResourceType Tree = new()
     {
-        HarvestItem = Item.Wood,
+        HarvestItem = ItemType.Wood,
         HarvestQuantity = 1,
         HarvestTime = 3.0f,
     };
-    public readonly static Resource Rock = new()
+    public readonly static ResourceType Rock = new()
     {
-        HarvestItem = Item.Stone,
+        HarvestItem = ItemType.Stone,
         HarvestQuantity = 1,
         HarvestTime = 5.0f,
     };
-    public readonly static Resource Deposit = new()
+    public readonly static ResourceType Deposit = new()
     {
-        HarvestItem = Item.Ore,
+        HarvestItem = ItemType.Ore,
         HarvestQuantity = 1,
         HarvestTime = 7.0f,
     };
-    public readonly static Resource Deer = new()
+    public readonly static ResourceType Deer = new()
     {
-        HarvestItem = Item.Meat,
+        HarvestItem = ItemType.Meat,
         HarvestQuantity = 1,
         HarvestTime = 9.0f,
     };

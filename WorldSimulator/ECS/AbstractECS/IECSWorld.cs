@@ -1,11 +1,11 @@
 ﻿namespace WorldSimulator.ECS.AbstractECS;
 /// <summary>
-/// Represent interface for wrapper of ECS world.
+/// An interface for wrappers around an ECS world.
 /// </summary>
 public interface IECSWorld
 {
     /// <summary>
-    /// Update world's logic.
+    /// Update the state of the ECS world.
     /// </summary>
     void Update();
 }

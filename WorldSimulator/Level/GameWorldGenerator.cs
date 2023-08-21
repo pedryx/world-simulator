@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using WorldSimulator.ECS.AbstractECS;
@@ -15,6 +16,9 @@ using WorldSimulator.Villages;
 namespace WorldSimulator.Level;
 internal class GameWorldGenerator
 {
+    /// <summary>
+    /// Number of threads in one thread group from compute shader.
+    /// </summary>
     private const int shaderThreadGroupSize = 1024;
     private const int villageJitterSize = 2048;
 
@@ -23,6 +27,9 @@ internal class GameWorldGenerator
     private readonly LevelFactory levelFactory;
     private readonly Game game;
 
+    /// <summary>
+    /// Positions where resources will be spawned.
+    /// </summary>
     private Vector2[] resourcePositions;
         
     private GameWorld gameWorld;
@@ -100,12 +107,9 @@ internal class GameWorldGenerator
         foreach (var position in resourcePositions)
         {
             Terrain terrainType = gameWorld.GetTerrain(position);
-            Resource resourceType = terrainType.ResourceType;
+            ResourceType resourceType = terrainType.ResourceType;
 
-            /* 
-             * because position were calculated on graphics card, on biome transitions they could result onto
-             * neighbor biome
-             */
+            // Because positions were calculated on the GPU, resources at the edges can end up in a different biome.
             if (resourceType == null)
                 continue;
 
@@ -117,9 +121,9 @@ internal class GameWorldGenerator
 
     private void SpawnVillages()
     {
-        Random random = new(game.GenerateSeed());
-
         // SpawnVillage(GameWorld.Size.ToVector2() / 2.0f); return;
+
+        Random random = new(game.GenerateSeed());
 
         for (int y = 0; y < GameWorld.Size.Y; y += villageJitterSize)
         {
@@ -146,6 +150,8 @@ internal class GameWorldGenerator
 
     private void SpawnVillage(Vector2 position)
     {
+        Debug.Assert(GameWorld.Bounds.Contains(position));
+
         Village village = new(game, gameWorld);
         int id = gameWorld.AddVillage(village);
 
@@ -156,7 +162,7 @@ internal class GameWorldGenerator
         village.AddStockpile(stockpile);
 
         IEntity woodcutterHut = levelFactory.CreateWoodcutterHut(village.GetNextBuildingPosition());
-        village.AddResourceProcessingBuilding(Resource.Tree, woodcutterHut);
+        village.AddResourceProcessingBuilding(ResourceType.Tree, woodcutterHut);
 
         IEntity villager = levelFactory.CreateVillager(position, id);
         village.AddVillager(villager);

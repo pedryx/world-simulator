@@ -4,30 +4,30 @@ using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components;
 /// <summary>
-/// Entities with this component will move randomly around the map.
+/// Adds animal behavior to an entity.
 /// </summary>
 [Component]
-internal struct AnimalController 
+internal struct AnimalBehavior 
 {
     /// <summary>
-    /// Time until animal position inside corresponding kd-tree got updated.
+    /// The time reaming until the animal's position within its corresponding KD-tree got updated.
     /// </summary>
     public float TimeToUpdate;
 
     /// <summary>
-    /// Resource type of animal.
+    /// The resource type of the animal.
     /// </summary>
-    public Resource ResourceType;
+    public ResourceType ResourceType;
 
     /// <summary>
-    /// Position of entity during last kd-tree position update.
+    /// The position of the entity during the last KD-tree position update.
     /// </summary>
     public Vector2 PreviousPosition;
 
     /// <summary>
-    /// Determine if animal position will be updated in its corresponding kd-tree.
+    /// Determine if the animal position will be updated in its corresponding KD-tree.
     /// </summary>
     public bool UpdateEnabled = true;
 
-    public AnimalController() { }
+    public AnimalBehavior() { }
 }

@@ -1,8 +1,7 @@
 ﻿namespace WorldSimulator.ECS.AbstractECS;
 
 /// <summary>
-/// Builder which can be used to build ECS entities (<see cref="IEntity"/>) from
-/// ECS components.
+/// An interface for a builder which can be used to construct entities (<see cref="IEntity"/>) from components.
 /// </summary>
 public interface IEntityBuilder
 {
@@ -10,15 +9,15 @@ public interface IEntityBuilder
         where TComponent : struct;
 
     /// <summary>
-    /// Create new instance of specific component type and add it to entity builder.
+    /// Create a new instance of the specified component type and add it to the entity builder.
     /// </summary>
-    /// <typeparam name="TComponent">Type of component to create and add.</typeparam>
+    /// <typeparam name="TComponent">The type of component to create and add.</typeparam>
     public void AddComponent<TComponent>()
         where TComponent : struct
         => AddComponent(new TComponent());
 
     /// <summary>
-    /// Build ECS entity (<see cref="IEntity"/>) with all added ECS components.
+    /// Constructs an entity (<see cref="IEntity"/>) from all added components.
     /// </summary>
     IEntity Build();
 }
