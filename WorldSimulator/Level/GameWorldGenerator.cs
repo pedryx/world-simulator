@@ -164,7 +164,22 @@ internal class GameWorldGenerator
         IEntity woodcutterHut = levelFactory.CreateWoodcutterHut(village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Tree, woodcutterHut);
 
-        IEntity villager = levelFactory.CreateVillager(position, id);
-        village.AddVillager(villager);
+        IEntity minerHut = levelFactory.CreateMinerHut(village.GetNextBuildingPosition());
+        village.AddResourceProcessingBuilding(ResourceType.Rock, minerHut);
+        
+        IEntity smithy = levelFactory.CreateSmithy(village.GetNextBuildingPosition());
+        village.AddResourceProcessingBuilding(ResourceType.Deposit, smithy);
+
+        IEntity hunterHut = levelFactory.CreateHunterHut(village.GetNextBuildingPosition());
+        village.AddResourceProcessingBuilding(ResourceType.Deer, hunterHut);
+
+        IEntity villager1 = levelFactory.CreateVillager(position, id);
+        IEntity villager2 = levelFactory.CreateVillager(position, id);
+        IEntity villager3 = levelFactory.CreateVillager(position, id);
+        IEntity villager4 = levelFactory.CreateVillager(position, id);
+        village.AddVillager(villager1);
+        village.AddVillager(villager2);
+        village.AddVillager(villager3);
+        village.AddVillager(villager4);
     }
 }

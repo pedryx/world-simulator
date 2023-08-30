@@ -88,7 +88,8 @@ internal class Village
 
     public void AddVillager(IEntity entity)
     {
-        behaviorTrees.Add(entity, CreateBehaviorTree(ResourceType.Tree, resourceProcessingBuildings[ResourceType.Tree]));
+        ResourceType resourceType = ResourceType.Get(behaviorTrees.Count);
+        behaviorTrees.Add(entity, CreateBehaviorTree(resourceType, resourceProcessingBuildings[resourceType]));
     }
 
     public IBehaviour<VillagerContext> GetBehaviorTree(IEntity entity)
