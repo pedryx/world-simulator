@@ -143,11 +143,11 @@ internal class Village
         {
             ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
 
-            behavior.elapsedWait += context.DeltaTime * game.Speed;
+            behavior.ElapsedWait += context.DeltaTime * game.Speed;
 
-            if (behavior.elapsedWait >= waitTime)
+            if (behavior.ElapsedWait >= waitTime)
             {
-                behavior.elapsedWait = 0.0f;
+                behavior.ElapsedWait = 0.0f;
                 return BehaviourStatus.Succeeded;
             }
 

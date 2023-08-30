@@ -14,7 +14,7 @@ internal struct VillagerBehavior
     /// <summary>
     /// The time elapsed from waiting begins. Used by a wait villager behavior node.
     /// </summary>
-    public float elapsedWait;
+    public float ElapsedWait;
     /// <summary>
     /// The current target that the villager is focusing on. This target can be utilized for various purposes such as
     /// interaction, attack, harvest, and more.
