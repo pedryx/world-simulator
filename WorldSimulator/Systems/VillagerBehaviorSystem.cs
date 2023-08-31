@@ -1,4 +1,6 @@
-﻿using WorldSimulator.Components;
+﻿using BehaviourTree;
+
+using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Level;
 using WorldSimulator.Villages;
@@ -18,8 +20,14 @@ internal readonly struct VillagerBehaviorSystem : IEntityProcessor<VillagerBehav
 
     public void Process(ref VillagerBehavior behavior, ref Owner owner, float deltaTime)
     {
-        gameWorld.GetVillage(behavior.VillageID)
-            .GetBehaviorTree(owner.Entity)
-            .Tick(new VillagerContext(owner.Entity, gameWorld, deltaTime));
+        BehaviourStatus result;
+
+        do
+        {
+            result = gameWorld.GetVillage(behavior.VillageID)
+                .GetBehaviorTree(owner.Entity)
+                .Tick(new VillagerContext(owner.Entity, gameWorld, deltaTime));
+        }
+        while (result == BehaviourStatus.Succeeded);
     }
 }
