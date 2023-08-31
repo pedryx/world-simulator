@@ -1,6 +1,6 @@
 ﻿namespace WorldSimulator;
 /// <summary>
-/// Represent an item.
+/// Represent a type of item.
 /// </summary>
 /// <param name="ProcessedType">The type of item into which this item can be processed.</param>
 internal sealed class ItemType : GlobalInstances<ItemType>

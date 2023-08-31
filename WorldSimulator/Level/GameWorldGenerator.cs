@@ -106,7 +106,7 @@ internal class GameWorldGenerator
     {
         foreach (var position in resourcePositions)
         {
-            Terrain terrainType = gameWorld.GetTerrain(position);
+            TerrainType terrainType = gameWorld.GetTerrain(position);
             ResourceType resourceType = terrainType.ResourceType;
 
             // Because positions were calculated on the GPU, resources at the edges can end up in a different biome.

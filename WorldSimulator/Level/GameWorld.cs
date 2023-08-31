@@ -181,7 +181,7 @@ internal class GameWorld
     /// The terrain type at the specified position or null if the specified position is outside of the game world
     /// bounds.
     /// </returns>
-    public Terrain GetTerrain(Vector2 position)
+    public TerrainType GetTerrain(Vector2 position)
     {
         if (!Bounds.Contains(position))
             return null;
@@ -189,6 +189,6 @@ internal class GameWorld
         Vector2 point = GameWorldGrid.GetClosestPoint(position);
         int index = ((int)point.Y * Size.X + (int)point.X) / GameWorldGrid.Distance;
 
-        return Terrain.Get(terrains[index]);
+        return TerrainType.Get(terrains[index]);
     }
 }

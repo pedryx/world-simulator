@@ -81,9 +81,9 @@ internal class Village
         AddBuilding(entity);
     }
 
-    public void AddResourceProcessingBuilding(ResourceType resource, IEntity entity)
+    public void AddResourceProcessingBuilding(ResourceType resourceType, IEntity entity)
     {
-        resourceProcessingBuildings.Add(resource, entity);
+        resourceProcessingBuildings.Add(resourceType, entity);
     }
 
     public void AddVillager(IEntity entity)
@@ -95,16 +95,16 @@ internal class Village
     public IBehaviour<VillagerContext> GetBehaviorTree(IEntity entity)
         => behaviorTrees[entity];
 
-    private IBehaviour<VillagerContext> CreateBehaviorTree(ResourceType resource, IEntity workplace)
+    private IBehaviour<VillagerContext> CreateBehaviorTree(ResourceType resourceType, IEntity workplace)
     {
         return FluentBuilder.Create<VillagerContext>()
             .Sequence("villager job sequence")
-                .Do("find nearest resource", FindNearestResource(resource))
+                .Do("find nearest resource", FindNearestResource(resourceType))
                 .Do("move to nearest resource", MoveTo(null))
-                .Do("harvest resource", HarvestResource(resource))
+                .Do("harvest resource", HarvestResource(resourceType))
                 .Do("move to workplace", MoveTo(workplace))
-                .Do("wait until resource is processed", Wait(resource.HarvestItem.TimeToProcess))
-                .Do("process the resource", ProcessResource(resource))
+                .Do("wait until resource is processed", Wait(resourceType.HarvestItem.TimeToProcess))
+                .Do("process the resource", ProcessResource(resourceType))
                 .Do("move to stockpile", MoveTo(stockpile))
                 .Do("store items", StoreItems())
             .End()
@@ -155,13 +155,13 @@ internal class Village
         };
     }
 
-    private static Func<VillagerContext, BehaviourStatus> ProcessResource(ResourceType resource)
+    private static Func<VillagerContext, BehaviourStatus> ProcessResource(ResourceType resourceType)
     {
         return (context) =>
         {
             ref Inventory inventory = ref context.Entity.GetComponent<Inventory>();
 
-            inventory.Items.Transform(resource.HarvestItem, resource.HarvestItem.ProcessedItem);
+            inventory.Items.Transform(resourceType.HarvestItem, resourceType.HarvestItem.ProcessedItem);
             return BehaviourStatus.Succeeded;
         };
     }

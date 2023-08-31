@@ -1,6 +1,6 @@
 ﻿namespace WorldSimulator;
 /// <summary>
-/// Represent a natural resource, which can be harvested to obtain resources.
+/// Represent a type of natural resource, which can be harvested to obtain resources.
 /// </summary>
 internal sealed class ResourceType : GlobalInstances<ResourceType>
 {

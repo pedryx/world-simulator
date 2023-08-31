@@ -11,9 +11,9 @@ internal readonly struct ItemCollection
 
     public ItemCollection() { }
 
-    public ItemCollection(ItemType item, int quantity)
+    public ItemCollection(ItemType itemType, int quantity)
     {
-        quantities[item.ID] = quantity;
+        quantities[itemType.ID] = quantity;
     }
 
     /// <summary>

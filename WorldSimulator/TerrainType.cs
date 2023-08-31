@@ -1,12 +1,10 @@
 ﻿// Ignore Spelling: Buildable
 
-using System.Runtime.CompilerServices;
-
 namespace WorldSimulator;
 /// <summary>
-/// Represent a terrain.
+/// Represent a terrain type.
 /// </summary>
-internal sealed class Terrain : GlobalInstances<Terrain>
+internal sealed class TerrainType : GlobalInstances<TerrainType>
 {
     /// <summary>
     /// Determine if structures can be built on this terrain.
@@ -21,35 +19,35 @@ internal sealed class Terrain : GlobalInstances<Terrain>
     /// </summary>
     public ResourceType ResourceType { get; init; }
 
-    private Terrain() : base() { }
+    private TerrainType() : base() { }
 
     // The order of declaration of terrains must correspond to IDs in terrain.fx shader file.
 
-    public readonly static Terrain Water = new();
-    public readonly static Terrain Beach = new()
+    public readonly static TerrainType Water = new();
+    public readonly static TerrainType Beach = new()
     {
         Buildable = true,
         Walkable = true,
     };
-    public readonly static Terrain Plain = new()
+    public readonly static TerrainType Plain = new()
     {
         Buildable = true,
         Walkable = true,
         ResourceType = ResourceType.Deer,
     };
-    public readonly static Terrain Forest = new()
+    public readonly static TerrainType Forest = new()
     {
         Buildable = true,
         Walkable = true,
         ResourceType = ResourceType.Tree,
     };
-    public readonly static Terrain Mountain = new()
+    public readonly static TerrainType Mountain = new()
     {
         Buildable = true,
         Walkable = true,
         ResourceType = ResourceType.Rock,
     };
-    public readonly static Terrain HighMountain = new()
+    public readonly static TerrainType HighMountain = new()
     {
         Buildable = false,
         Walkable = true,
