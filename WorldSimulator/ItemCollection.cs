@@ -24,7 +24,7 @@ internal readonly struct ItemCollection
     {
         for (int i = 0; i < ItemType.Count; i++)
         {
-            quantities[i] += other.quantities[i];
+            other.quantities[i] += quantities[i];
             quantities[i] = 0;
         }
     }
