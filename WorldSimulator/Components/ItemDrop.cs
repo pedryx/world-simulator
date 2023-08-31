@@ -2,12 +2,12 @@
 
 namespace WorldSimulator.Components;
 /// <summary>
-/// Adds capability to own items to an entity.
+/// Entities with this component will drop items on dead.
 /// </summary>
 [Component]
-internal struct Inventory
+internal struct ItemDrop
 {
     public ItemCollection Items = new();
 
-    public Inventory() { }
+    public ItemDrop() { }
 }

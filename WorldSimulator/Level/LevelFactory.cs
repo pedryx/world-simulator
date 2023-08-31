@@ -38,10 +38,10 @@ internal class LevelFactory
         terrainBuilder = CreateTerrainBuilder();
         villagerBuilder = CreateVillagerBuilder();
 
-        treeBuilder = CreateBasicBuilder("tree", 0.4f);
-        rockBuilder = CreateBasicBuilder("boulder", 0.15f);
-        depositeBuilder = CreateBasicBuilder("iron deposit", 0.15f);
-        deerBuilder = CreateAnimalBuilder("deer", 0.2f);
+        treeBuilder = CreateResourceBuilder("tree", 0.4f, ResourceType.Tree);
+        rockBuilder = CreateResourceBuilder("boulder", 0.15f, ResourceType.Rock);
+        depositeBuilder = CreateResourceBuilder("iron deposit", 0.15f, ResourceType.Deposit);
+        deerBuilder = CreateAnimalBuilder("deer", 0.2f, ResourceType.Deer);
 
         mainBuildingBuilder = CreateBasicBuilder("main building", 0.9f);
         stockpileBuilder = CreateStorageBuilder("stockpile", 0.3f);
@@ -78,6 +78,22 @@ internal class LevelFactory
         return builder;
     }
 
+    private IEntityBuilder CreateResourceBuilder(string textureName, float scale, ResourceType resource) 
+    {
+        IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
+
+        builder.AddComponent(new Health()
+        {
+            Amount = resource.HarvestTime
+        });
+        builder.AddComponent(new ItemDrop()
+        {
+            Items = new ItemCollection(resource.HarvestItem, resource.HarvestQuantity),
+        });
+
+        return builder;
+    }
+
     private IEntityBuilder CreateStorageBuilder(string textureName, float scale)
     {
         IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
@@ -87,9 +103,9 @@ internal class LevelFactory
         return builder;
     }
 
-    private IEntityBuilder CreateAnimalBuilder(string textureName, float scale)
+    private IEntityBuilder CreateAnimalBuilder(string textureName, float scale, ResourceType resource)
     {
-        IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
+        IEntityBuilder builder = CreateResourceBuilder(textureName, scale, resource);
 
         builder.AddComponent(new Movement()
         {
@@ -114,6 +130,10 @@ internal class LevelFactory
         builder.AddComponent<VillagerBehavior>();
         builder.AddComponent<PathFollow>();
         builder.AddComponent<Inventory>();
+        builder.AddComponent(new DamageDealer()
+        {
+            DamagePerSecond = 1.0f,
+        });
 
         return builder;
     }

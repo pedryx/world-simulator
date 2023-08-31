@@ -32,7 +32,9 @@ public class LevelState : GameState
             Game.Factory.CreateSystem(new AnimalBehaviorSystem(Game, GameWorld)),
             Game.Factory.CreateSystem(new MovementSystem()),
             Game.Factory.CreateSystem(new VillagerBehaviorSystem(GameWorld)),
-            Game.Factory.CreateSystem(new PathFollowSystem())
+            Game.Factory.CreateSystem(new PathFollowSystem()),
+            Game.Factory.CreateSystem(new DamageSystem()),
+            Game.Factory.CreateSystem(new DeathSystem()),
         };
     }
 
