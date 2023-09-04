@@ -191,4 +191,14 @@ internal class GameWorld
 
         return TerrainType.Get(terrains[index]);
     }
+
+    /// <summary>
+    /// Determine if a terrain is walkable at a specified position.
+    /// </summary>
+    public bool IsWalkable(Vector2 position)
+    {
+        TerrainType terrain = GetTerrain(position);
+
+        return terrain != null && terrain.Walkable;
+    }
 }

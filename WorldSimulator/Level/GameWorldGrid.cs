@@ -150,10 +150,10 @@ internal class GameWorldGrid
         Vector2 top = position + Vector2.UnitY * -Distance;
         Vector2 down = position + Vector2.UnitY * Distance;
 
-        if (gameWorld.GetTerrain(left).Walkable) neighbors.Add(left);
-        if (gameWorld.GetTerrain(right).Walkable) neighbors.Add(right);
-        if (gameWorld.GetTerrain(top).Walkable) neighbors.Add(top);
-        if (gameWorld.GetTerrain(down).Walkable) neighbors.Add(down);
+        if (gameWorld.IsWalkable(left)) neighbors.Add(left);
+        if (gameWorld.IsWalkable(right)) neighbors.Add(right);
+        if (gameWorld.IsWalkable(top)) neighbors.Add(top);
+        if (gameWorld.IsWalkable(down)) neighbors.Add(down);
 
         return neighbors;
     }
