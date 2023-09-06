@@ -44,6 +44,14 @@ internal readonly struct ItemCollection
         => quantities[itemType.ID] += quantity;
 
     /// <summary>
+    /// Removes item from the collection.
+    /// </summary>
+    /// <param name="itemType">The type of item to remove.</param>
+    /// <param name="quantity">How many items of the specified type to remove.</param>
+    public void Remove(ItemType itemType, int quantity)
+        => quantities[itemType.ID] -= quantity;
+
+    /// <summary>
     /// Transform items of a specified type to an another specified type.
     /// </summary>
     /// <param name="itemType1">The type of item to transform.</param>
