@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 using WorldSimulator.Villages;
@@ -24,8 +25,8 @@ internal class GameWorldGenerator
 
     private readonly Effect terrainGenShader;
     private readonly GraphicsDevice graphicsDevice;
-    private readonly LevelFactory levelFactory;
     private readonly Game game;
+    private readonly LevelFactory factory;
 
     /// <summary>
     /// Positions where resources will be spawned.
@@ -36,7 +37,7 @@ internal class GameWorldGenerator
 
     public GameWorldGenerator(Game game, LevelFactory levelFactory)
     {
-        this.levelFactory = levelFactory;
+        this.factory = levelFactory;
         this.game = game;
 
         terrainGenShader = game.GetResourceManager<Effect>()[GameWorld.TerrainGenShader];
@@ -113,7 +114,7 @@ internal class GameWorldGenerator
             if (resourceType == null)
                 continue;
 
-            IEntity entity = levelFactory.CreateResource(resourceType, position);
+            IEntity entity = factory.CreateResource(resourceType, position);
             gameWorld.AddResource(resourceType, entity, position);
         }
         resourcePositions = null;
@@ -155,31 +156,29 @@ internal class GameWorldGenerator
         Village village = new(game, gameWorld);
         int id = gameWorld.AddVillage(village);
 
-        IEntity mainBuilding = levelFactory.CreateMainBuilding(position);
+        IEntity mainBuilding = LevelFactory.CreateStatic(factory.MainBuildingBuilder, position);
         village.AddBuilding(mainBuilding);
 
-        IEntity stockpile = levelFactory.CreateStockpile(village.GetNextBuildingPosition());
+        IEntity stockpile = LevelFactory.CreateStatic(factory.StockpileBuilder, village.GetNextBuildingPosition());
         village.AddStockpile(stockpile);
 
-        IEntity woodcutterHut = levelFactory.CreateWoodcutterHut(village.GetNextBuildingPosition());
+        IEntity woodcutterHut = LevelFactory.CreateStatic(factory.WoodcutterHutBuilder, village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Tree, woodcutterHut);
 
-        IEntity minerHut = levelFactory.CreateMinerHut(village.GetNextBuildingPosition());
+        IEntity minerHut = LevelFactory.CreateStatic(factory.MinerHutBuilder, village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Rock, minerHut);
         
-        IEntity smithy = levelFactory.CreateSmithy(village.GetNextBuildingPosition());
+        IEntity smithy = LevelFactory.CreateStatic(factory.SmithyBuilder, village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Deposit, smithy);
 
-        IEntity hunterHut = levelFactory.CreateHunterHut(village.GetNextBuildingPosition());
+        IEntity hunterHut = LevelFactory.CreateStatic(factory.HunterHutBuilder, village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Deer, hunterHut);
 
-        IEntity villager1 = levelFactory.CreateVillager(position, id);
-        IEntity villager2 = levelFactory.CreateVillager(position, id);
-        IEntity villager3 = levelFactory.CreateVillager(position, id);
-        IEntity villager4 = levelFactory.CreateVillager(position, id);
-        village.AddVillager(villager1);
-        village.AddVillager(villager2);
-        village.AddVillager(villager3);
-        village.AddVillager(villager4);
+        for (int i = 0; i < 4; i++)
+        {
+            IEntity villager = LevelFactory.CreateDynamic(factory.VillagerBuilder, position);
+            villager.GetComponent<VillagerBehavior>().VillageID = id;
+            village.AddVillager(villager);
+        }
     }
 }

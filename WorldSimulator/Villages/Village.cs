@@ -101,7 +101,7 @@ internal class Village
             .Sequence("villager job sequence")
                 .Do("find nearest resource", FindNearestResource(resourceType))
                 .Do("move to nearest resource", MoveTo(null))
-                .Do("harvest resource", HarvestResource(resourceType))
+                .Do("harvest resource", HarvestResource())
                 .Do("move to workplace", MoveTo(workplace))
                 .Do("wait until resource is processed", Wait(resourceType.HarvestItem.TimeToProcess))
                 .Do("process the resource", ProcessResource(resourceType))
@@ -188,7 +188,7 @@ internal class Village
         };
     }
 
-    private static Func<VillagerContext, BehaviourStatus> HarvestResource(ResourceType resourceType)
+    private static Func<VillagerContext, BehaviourStatus> HarvestResource()
     {
         return (context) =>
         {
@@ -206,7 +206,7 @@ internal class Village
         return (context) =>
         {
             ref Inventory stockpileInventory = ref context.Entity.GetComponent<Inventory>();
-            // TODO: dont transfer all items
+            // TODO: don't transfer all items
             context.Entity.GetComponent<Inventory>().Items.TransferTo(ref stockpileInventory.Items);
 
             return BehaviourStatus.Succeeded;

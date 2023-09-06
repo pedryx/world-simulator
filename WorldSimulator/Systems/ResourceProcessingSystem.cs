@@ -2,7 +2,7 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems;
-internal struct ResourceProcessingSystem : IEntityProcessor<Inventory, ResourceProcessor>
+internal readonly struct ResourceProcessingSystem : IEntityProcessor<Inventory, ResourceProcessor>
 {
     private readonly Game game;
 

@@ -2,66 +2,127 @@
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
+using System.Diagnostics;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.Villages;
 
 namespace WorldSimulator.Level;
 /// <summary>
-/// Factory for level state entities.
+/// Factory for creating entities within the game's level state.
 /// </summary>
 internal class LevelFactory
 {
     private readonly Game game;
     private readonly LevelState levelState;
 
-    private readonly IEntityBuilder terrainBuilder;
-    private readonly IEntityBuilder villagerBuilder;
+    public IEntityBuilder TerrainBuilder { get; private init; }
+    public IEntityBuilder VillagerBuilder { get; private init; }
 
-    private readonly IEntityBuilder treeBuilder;
-    private readonly IEntityBuilder rockBuilder;
-    private readonly IEntityBuilder depositeBuilder;
-    private readonly IEntityBuilder deerBuilder;
+    public IEntityBuilder TreeBuilder { get; private init; }
+    public IEntityBuilder RockBuilder { get; private init; }
+    public IEntityBuilder DepositBuilder { get; private init; }
+    public IEntityBuilder DeerBuilder { get; private init; }
 
-    private readonly IEntityBuilder mainBuildingBuilder;
-    private readonly IEntityBuilder stockpileBuilder;
-    private readonly IEntityBuilder woodcutterHutBuilder;
-    private readonly IEntityBuilder minerHutBuilder;
-    private readonly IEntityBuilder smithyBuilder;
-    private readonly IEntityBuilder hunterHutBuilder;
+    public IEntityBuilder MainBuildingBuilder { get; private init; }
+    public IEntityBuilder StockpileBuilder { get; private init; }
 
-    public LevelFactory(Game game, LevelState gameState)
+    public IEntityBuilder WoodcutterHutBuilder { get; private init; }
+    public IEntityBuilder MinerHutBuilder { get; private init; }
+    public IEntityBuilder SmithyBuilder { get; private init; }
+    public IEntityBuilder HunterHutBuilder { get; private init; }
+
+    public LevelFactory(Game game, LevelState levelState)
     {
         this.game = game;
-        levelState = gameState;
+        this.levelState = levelState;
 
-        terrainBuilder = CreateTerrainBuilder();
-        villagerBuilder = CreateVillagerBuilder();
+        TerrainBuilder = CreateTerrainBuilder();
+        VillagerBuilder = CreateVillagerBuilder();
+        TreeBuilder = CreateResourceBuilder("tree", 0.4f, ResourceType.Tree);
+        RockBuilder = CreateResourceBuilder("boulder", 0.15f, ResourceType.Rock);
+        DepositBuilder = CreateResourceBuilder("iron deposit", 0.15f, ResourceType.Deposit);
+        DeerBuilder = CreateAnimalBuilder("deer", 0.2f, ResourceType.Deer);
 
-        treeBuilder = CreateResourceBuilder("tree", 0.4f, ResourceType.Tree);
-        rockBuilder = CreateResourceBuilder("boulder", 0.15f, ResourceType.Rock);
-        depositeBuilder = CreateResourceBuilder("iron deposit", 0.15f, ResourceType.Deposit);
-        deerBuilder = CreateAnimalBuilder("deer", 0.2f, ResourceType.Deer);
-
-        mainBuildingBuilder = CreateBasicBuilder("main building", 0.9f);
-        stockpileBuilder = CreateStorageBuilder("stockpile", 0.3f);
-        woodcutterHutBuilder = CreateBasicBuilder("woodcutter hut", 0.6f);
-        minerHutBuilder = CreateBasicBuilder("miner hut", 0.6f);
-        smithyBuilder = CreateBasicBuilder("smithy", 0.6f);
-        hunterHutBuilder = CreateBasicBuilder("hunter hut", 0.6f);
+        MainBuildingBuilder = CreateBasicBuilder("main building", 0.9f);
+        StockpileBuilder = CreateStorageBuilder("stockpile", 0.3f);
+        WoodcutterHutBuilder = CreateBasicBuilder("woodcutter hut", 0.6f);
+        MinerHutBuilder = CreateBasicBuilder("miner hut", 0.6f);
+        SmithyBuilder = CreateBasicBuilder("smithy", 0.6f);
+        HunterHutBuilder = CreateBasicBuilder("hunter hut", 0.6f);
     }
 
-    #region builders
-    private IEntityBuilder CreateTerrainBuilder()
+    /// <summary>
+    /// Creates a non-moving entity using the specified entity builder and spawn position.
+    /// </summary>
+    /// <param name="builder">The entity builder used to create the entity.</param>
+    /// <param name="spawnPosition">The position at which the entity will spawn.</param>
+    /// <returns>The created entity.</returns>
+    public static IEntity CreateStatic(IEntityBuilder builder, Vector2 spawnPosition)
     {
-        IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
+        IEntity entity = builder.Build();
 
-        builder.AddComponent<Location>();
-        builder.AddComponent<Appearance>();
+        Debug.Assert(!entity.HasComponent<Movement>());
 
-        return builder;
+        entity.GetComponent<Location>().Position = spawnPosition;
+        entity.GetComponent<Owner>().Entity = entity;
+
+        return entity;
     }
 
+    /// <summary>
+    /// Creates a moving entity using the specified entity builder and spawn position.
+    /// </summary>
+    /// <param name="builder">The entity builder used to create the entity.</param>
+    /// <param name="spawnPosition">The position at which the entity will spawn.</param>
+    /// <returns>The created entity.</returns>
+    public static IEntity CreateDynamic(IEntityBuilder builder, Vector2 spawnPosition)
+    {
+        IEntity entity = builder.Build();
+
+        Debug.Assert(entity.HasComponent<Movement>());
+
+        entity.GetComponent<Location>().Position = spawnPosition;
+        entity.GetComponent<Owner>().Entity = entity;
+        entity.GetComponent<Movement>().Destination = spawnPosition;
+
+        return entity;
+    }
+
+    /// <summary>
+    /// Creates an entity representing a specified resource type at the given spawn position.
+    /// </summary>
+    /// <param name="resourceType">
+    /// The type of resource to create (e.g., Tree, Rock, Deposit, Deer).
+    /// </param>
+    /// <param name="spawnPosition">The position at which the resource entity will spawn.</param>
+    /// <returns>The created resource entity.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when attempting to create an entity for an unsupported resource type.
+    /// </exception>
+
+    public IEntity CreateResource(ResourceType resourceType, Vector2 spawnPosition)
+    {
+        if (resourceType == ResourceType.Tree)
+            return CreateStatic(TreeBuilder, spawnPosition);
+        else if (resourceType == ResourceType.Rock)
+            return CreateStatic(RockBuilder, spawnPosition);
+        else if (resourceType == ResourceType.Deposit)
+            return CreateStatic(DepositBuilder, spawnPosition);
+        else if (resourceType == ResourceType.Deer)
+            return CreateDynamic(DeerBuilder, spawnPosition);
+
+        throw new InvalidOperationException("Entity for this resource not exist!");
+    }
+
+    /// <summary>
+    /// Creates a basic entity builder with essential components: Location, Appearance, and Owner.
+    /// The Appearance component's texture is set to the specified texture, its origin is set to the
+    /// middle-bottom point, and its scale is adjusted to the specified value.
+    /// </summary>
+    /// <param name="textureName">The name of the texture for the Appearance component.</param>
+    /// <param name="scale">The scale applied to the Appearance component.</param>
     private IEntityBuilder CreateBasicBuilder(string textureName, float scale)
     {
         IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
@@ -78,7 +139,7 @@ internal class LevelFactory
         return builder;
     }
 
-    private IEntityBuilder CreateResourceBuilder(string textureName, float scale, ResourceType resource) 
+    private IEntityBuilder CreateResourceBuilder(string textureName, float scale, ResourceType resource)
     {
         IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
 
@@ -90,15 +151,6 @@ internal class LevelFactory
         {
             Items = new ItemCollection(resource.HarvestItem, resource.HarvestQuantity),
         });
-
-        return builder;
-    }
-
-    private IEntityBuilder CreateStorageBuilder(string textureName, float scale)
-    {
-        IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
-
-        builder.AddComponent<Inventory>();
 
         return builder;
     }
@@ -115,6 +167,15 @@ internal class LevelFactory
         {
             ResourceType = ResourceType.Deer,
         });
+
+        return builder;
+    }
+
+    private IEntityBuilder CreateStorageBuilder(string textureName, float scale)
+    {
+        IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
+
+        builder.AddComponent<Inventory>();
 
         return builder;
     }
@@ -137,91 +198,14 @@ internal class LevelFactory
 
         return builder;
     }
-    #endregion
 
-    #region shared create methods
-    private static IEntity CreateStaticEntity(IEntityBuilder builder, Vector2 position)
+    private IEntityBuilder CreateTerrainBuilder()
     {
-        IEntity entity = builder.Build();
+        IEntityBuilder builder = game.Factory.CreateEntityBuilder(levelState.ECSWorld);
 
-        entity.GetComponent<Location>().Position = position;
-        entity.GetComponent<Owner>().Entity = entity;
+        builder.AddComponent<Location>();
+        builder.AddComponent<Appearance>();
 
-        return entity;
-    }
-
-    private static IEntity CreateDynamicEntity(IEntityBuilder builder, Vector2 position)
-    {
-        IEntity entity = builder.Build();
-
-        entity.GetComponent<Location>().Position = position;
-        entity.GetComponent<Owner>().Entity = entity;
-        entity.GetComponent<Movement>().Destination = position;
-
-        return entity;
-    }
-    #endregion
-
-    public IEntity CreateVillager(Vector2 position, int villageID)
-    {
-        IEntity villager = CreateDynamicEntity(villagerBuilder, position);
-
-        villager.GetComponent<VillagerBehavior>().VillageID = villageID;
-
-        return villager;
-    }
-
-    public IEntity CreateMainBuilding(Vector2 position)
-        => CreateStaticEntity(mainBuildingBuilder, position);
-
-    public IEntity CreateStockpile(Vector2 position)
-        => CreateStaticEntity(stockpileBuilder, position);
-
-    public IEntity CreateWoodcutterHut(Vector2 position)
-        => CreateStaticEntity(woodcutterHutBuilder, position);
-
-    public IEntity CreateMinerHut(Vector2 position)
-        => CreateStaticEntity(minerHutBuilder, position);
-
-    public IEntity CreateSmithy(Vector2 position)
-        => CreateStaticEntity(smithyBuilder, position);
-
-    public IEntity CreateHunterHut(Vector2 position)
-        => CreateStaticEntity(hunterHutBuilder, position);
-
-    public IEntity CreateResource(ResourceType resource, Vector2 position)
-    {
-        if (resource == ResourceType.Tree)
-            return CreateTree(position);
-        else if (resource == ResourceType.Rock)
-            return CreateRock(position);
-        else if (resource == ResourceType.Deposit)
-            return CreateDeposit(position);
-        else if (resource == ResourceType.Deer)
-            return CreateDeer(position);
-
-        throw new InvalidOperationException("Entity for this resource not exist!");
-    }
-
-    public IEntity CreateTree(Vector2 position)
-        => CreateStaticEntity(treeBuilder, position);
-
-    public IEntity CreateRock(Vector2 position)
-        => CreateStaticEntity(rockBuilder, position);
-
-    public IEntity CreateDeposit(Vector2 position)
-        => CreateStaticEntity(depositeBuilder, position);
-
-    public IEntity CreateDeer(Vector2 position)
-        => CreateDynamicEntity(deerBuilder, position);
-
-    public IEntity CreateTerrain(Texture2D texture, Vector2 position)
-    {
-        IEntity entity = terrainBuilder.Build();
-
-        entity.GetComponent<Location>().Position = position;
-        entity.GetComponent<Appearance>().Texture = texture;
-
-        return entity;
+        return builder;
     }
 }
