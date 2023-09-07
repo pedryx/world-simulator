@@ -47,10 +47,11 @@ internal class LevelFactory
 
         MainBuildingBuilder = CreateBasicBuilder("main building", 0.9f);
         StockpileBuilder = CreateStorageBuilder("stockpile", 0.3f);
-        WoodcutterHutBuilder = CreateBasicBuilder("woodcutter hut", 0.6f);
-        MinerHutBuilder = CreateBasicBuilder("miner hut", 0.6f);
-        SmithyBuilder = CreateBasicBuilder("smithy", 0.6f);
-        HunterHutBuilder = CreateBasicBuilder("hunter hut", 0.6f);
+
+        WoodcutterHutBuilder = CreateResourceProcessorBuilder("woodcutter hut", 0.6f, ResourceType.Tree);
+        MinerHutBuilder = CreateResourceProcessorBuilder("miner hut", 0.6f, ResourceType.Rock);
+        SmithyBuilder = CreateResourceProcessorBuilder("smithy", 0.6f, ResourceType.Deposit);
+        HunterHutBuilder = CreateResourceProcessorBuilder("hunter hut", 0.6f, ResourceType.Deer);
     }
 
     /// <summary>
@@ -101,7 +102,6 @@ internal class LevelFactory
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to create an entity for an unsupported resource type.
     /// </exception>
-
     public IEntity CreateResource(ResourceType resourceType, Vector2 spawnPosition)
     {
         if (resourceType == ResourceType.Tree)
@@ -170,6 +170,24 @@ internal class LevelFactory
 
         return builder;
     }
+
+    private IEntityBuilder CreateResourceProcessorBuilder(string textureName, float scale, ResourceType resource)
+    {
+        IEntityBuilder builder = CreateBasicBuilder(textureName, scale);
+
+        builder.AddComponent<Inventory>();
+        builder.AddComponent(new ResourceProcessor()
+        {
+            InputItem = resource.HarvestItem,
+            InputQuantity = 1,
+            OutputItem = resource.HarvestItem.ProcessedItem,
+            OutputQuantity = 1,
+            ProcessingTime = resource.HarvestItem.TimeToProcess,
+        });
+
+        return builder;
+    }
+
 
     private IEntityBuilder CreateStorageBuilder(string textureName, float scale)
     {

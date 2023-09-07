@@ -103,8 +103,10 @@ internal class Village
                 .Do("move to nearest resource", MoveTo(null))
                 .Do("harvest resource", HarvestResource())
                 .Do("move to workplace", MoveTo(workplace))
+
                 .Do("wait until resource is processed", Wait(resourceType.HarvestItem.TimeToProcess))
                 .Do("process the resource", ProcessResource(resourceType))
+
                 .Do("move to stockpile", MoveTo(stockpile))
                 .Do("store items", StoreItems())
             .End()
