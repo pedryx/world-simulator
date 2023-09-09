@@ -20,4 +20,8 @@ internal struct VillagerBehavior
     /// interaction, attack, harvest, and more.
     /// </summary>
     public IEntity Target;
+    /// <summary>
+    /// The place where the villager works.
+    /// </summary>
+    public IEntity WorkPlace;
 }

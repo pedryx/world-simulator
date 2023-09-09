@@ -1,5 +1,4 @@
 ﻿using Arch.Core;
-using Arch.Core.Extensions;
 
 using WorldSimulator.ECS.AbstractECS;
 
@@ -12,18 +11,15 @@ public class ArchFactory : ECSFactory
     public ArchFactory() 
         : base(typeof(ArchSystem<,>), typeof(ArchSystem<,,>), typeof(ArchSystem<,,,>), typeof(ArchSystem<,,,,>)) { }
 
-
-    public override IEntityBuilder CreateEntityBuilder(IECSWorld world)
+    public override IEntity CreateEntity(IECSWorld worldWrapper)
     {
-        return new OnPlaceBuildEntityBuilder(world, (types, values, world) =>
-        {
-            // World.Create throws exception when creating entity without component.
-            Entity entity = ((BasicECSWorld<World>)world).World.Create<Empty>();
-            entity.AddRange(values.ToArray());
-            entity.Remove<Empty>();
+        World world = ((BasicECSWorld<World>)worldWrapper).World;
 
-            return new ArchEntity(entity, ((BasicECSWorld<World>)world).World);
-        });
+        // World.Create throws exception when creating entity without component.
+        IEntity entity = new ArchEntity(world.Create<Empty>(), world);
+        entity.RemoveComponent<Empty>();
+
+        return entity;
     }
 
     public override IECSWorld CreateWorld()

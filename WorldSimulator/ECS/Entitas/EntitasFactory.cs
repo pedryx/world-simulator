@@ -5,12 +5,6 @@ using WorldSimulator.ECS.AbstractECS;
 namespace WorldSimulator.ECS.Entitas;
 public class EntitasFactory : ECSFactory
 {
-    private readonly Context<Entity> prototypesContext = new
-    (
-        ComponentIDGenerator.ComponentCount,
-        () => new Entity()
-    );
-
     public EntitasFactory()
         : base
         (
@@ -20,22 +14,8 @@ public class EntitasFactory : ECSFactory
             typeof(EntitasSystem<,,,,>)
         ) { }
 
-    public override IEntityBuilder CreateEntityBuilder(IECSWorld world)
-    {
-        return new CloneEntityBuilder
-        (
-            world,
-            new EntitasEntity(prototypesContext.CreateEntity()),
-            (world, prototype) =>
-            {
-                return new EntitasEntity
-                (
-                    ((BasicECSWorld<Context<Entity>>)world).World
-                        .CloneEntity(((EntitasEntity)prototype).Entity)
-                );
-            }
-        );
-    }
+    public override AbstractECS.IEntity CreateEntity(IECSWorld world) 
+        => new EntitasEntity(((BasicECSWorld<Context<Entity>>)world).World.CreateEntity());
 
     public override IECSWorld CreateWorld()
     {

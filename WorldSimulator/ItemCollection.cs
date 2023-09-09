@@ -1,4 +1,7 @@
-﻿namespace WorldSimulator;
+﻿using System.Diagnostics;
+using System.Linq;
+
+namespace WorldSimulator;
 /// <summary>
 /// Represent a collection of items.
 /// </summary>
@@ -17,6 +20,12 @@ internal readonly struct ItemCollection
     }
 
     /// <summary>
+    /// Determine if the item collection contains at least one item of a specified type.
+    /// </summary>
+    public bool Has(ItemType itemType)
+        => quantities[itemType.ID] > 0;
+
+    /// <summary>
     /// Transfer all items to an another item collection.
     /// </summary>
     /// <param name="other">The item collection to which will be items transfered.</param>
@@ -27,6 +36,20 @@ internal readonly struct ItemCollection
             other.quantities[i] += quantities[i];
             quantities[i] = 0;
         }
+    }
+
+    /// <summary>
+    /// Transfer a specified amount of items of a specified item type to an another item collection.
+    /// </summary>
+    /// <param name="other">The item collection to which transfer the items.</param>
+    /// <param name="itemType">The specified type of items to transfer.</param>
+    /// <param name="quantity">The specified amount of items to transfer.</param>
+    public void TransferTo(ref ItemCollection other, ItemType itemType, int quantity)
+    {
+        Debug.Assert(quantities[itemType.ID] >= quantity);
+
+        quantities[itemType.ID] -= quantity;
+        other.quantities[itemType.ID] += quantity;
     }
 
     /// <summary>
@@ -49,7 +72,11 @@ internal readonly struct ItemCollection
     /// <param name="itemType">The type of item to remove.</param>
     /// <param name="quantity">How many items of the specified type to remove.</param>
     public void Remove(ItemType itemType, int quantity)
-        => quantities[itemType.ID] -= quantity;
+    {
+        Debug.Assert(quantities[itemType.ID] >= quantity);
+
+        quantities[itemType.ID] -= quantity;
+    }
 
     /// <summary>
     /// Transform items of a specified type to an another specified type.

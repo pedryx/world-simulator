@@ -40,7 +40,7 @@ public abstract class ECSFactory
     /// Create a builder for entities.
     /// </summary>
     /// <param name="world">The world in which the builder will place created entities.</param>
-    public abstract IEntityBuilder CreateEntityBuilder(IECSWorld world);
+    public abstract IEntity CreateEntity(IECSWorld world);
 
     /// <summary>
     /// Create a new ECS world.
