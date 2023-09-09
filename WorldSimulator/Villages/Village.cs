@@ -5,9 +5,7 @@ using Microsoft.Xna.Framework;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Security.AccessControl;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
@@ -35,7 +33,6 @@ internal class Village
     /// </summary>
     /// <returns></returns>
     private readonly Dictionary<IEntity, IBehaviour<VillagerContext>> behaviorTrees = new();
-    private readonly Game game;
     private readonly List<IEntity> buildings = new();
     private readonly Dictionary<ResourceType, IEntity> resourceProcessingBuildings = new();
     private readonly Random random;
@@ -44,11 +41,13 @@ internal class Village
     // TODO: Resolve the issue with stockpile position, when the stockpile gets destroyed.
     private IEntity stockpile;
 
+    public int ID { get; private init; }
+
     public Village(Game game, GameWorld gameWorld)
     {
-        this.game = game;
         this.gameWorld = gameWorld;
 
+        ID = gameWorld.AddVillage(this);
         random = new Random(game.GenerateSeed());
     }
 
@@ -89,7 +88,14 @@ internal class Village
     public void AddVillager(IEntity entity)
     {
         ResourceType resourceType = ResourceType.Get(behaviorTrees.Count);
-        behaviorTrees.Add(entity, CreateBehaviorTree(resourceType, resourceProcessingBuildings[resourceType]));
+        IEntity workPlace = resourceProcessingBuildings[resourceType];
+
+        ref VillagerBehavior behavior = ref entity.GetComponent<VillagerBehavior>();
+
+        behavior.WorkPlace = workPlace;
+        behavior.VillageID = ID;
+
+        behaviorTrees.Add(entity, CreateBehaviorTree(resourceType, workPlace));
     }
 
     public IBehaviour<VillagerContext> GetBehaviorTree(IEntity entity)
@@ -101,14 +107,12 @@ internal class Village
             .Sequence("villager job sequence")
                 .Do("find nearest resource", FindNearestResource(resourceType))
                 .Do("move to nearest resource", MoveTo(null))
-                .Do("harvest resource", HarvestResource())
+                .Do("harvest resource", HarvestResource)
                 .Do("move to workplace", MoveTo(workplace))
-
-                .Do("wait until resource is processed", Wait(resourceType.HarvestItem.TimeToProcess))
-                .Do("process the resource", ProcessResource(resourceType))
-
+                .Do("start processing resources", StartResourceProcessing)
+                .Do("wait until resources are processed", WaitForResources)
                 .Do("move to stockpile", MoveTo(stockpile))
-                .Do("store items", StoreItems())
+                .Do("store items", StoreItems)
             .End()
             .Build();
     }
@@ -139,35 +143,6 @@ internal class Village
         };
     }
 
-    private Func<VillagerContext, BehaviourStatus> Wait(float waitTime)
-    {
-        return (context) =>
-        {
-            ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
-
-            behavior.ElapsedWait += context.DeltaTime * game.Speed;
-
-            if (behavior.ElapsedWait >= waitTime)
-            {
-                behavior.ElapsedWait = 0.0f;
-                return BehaviourStatus.Succeeded;
-            }
-
-            return BehaviourStatus.Running;
-        };
-    }
-
-    private static Func<VillagerContext, BehaviourStatus> ProcessResource(ResourceType resourceType)
-    {
-        return (context) =>
-        {
-            ref Inventory inventory = ref context.Entity.GetComponent<Inventory>();
-
-            inventory.Items.Transform(resourceType.HarvestItem, resourceType.HarvestItem.ProcessedItem);
-            return BehaviourStatus.Succeeded;
-        };
-    }
-
     private static Func<VillagerContext, BehaviourStatus> FindNearestResource(ResourceType resourceType)
     {
         return (context) =>
@@ -190,29 +165,57 @@ internal class Village
         };
     }
 
-    private static Func<VillagerContext, BehaviourStatus> HarvestResource()
+    private static BehaviourStatus HarvestResource(VillagerContext context)
     {
-        return (context) =>
-        {
-            ref DamageDealer damageDealer = ref context.Entity.GetComponent<DamageDealer>();
-            ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
+        ref DamageDealer damageDealer = ref context.Entity.GetComponent<DamageDealer>();
+        ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
 
-            damageDealer.Target = behavior.Target;
-          
-            return damageDealer.Target.IsDestroyed() ? BehaviourStatus.Succeeded : BehaviourStatus.Running;
-        };
+        damageDealer.Target = behavior.Target;
+
+        return damageDealer.Target.IsDestroyed() ? BehaviourStatus.Succeeded : BehaviourStatus.Running;
     }
 
-    private static Func<VillagerContext, BehaviourStatus> StoreItems()
+    private static BehaviourStatus StartResourceProcessing(VillagerContext context)
     {
-        return (context) =>
-        {
-            ref Inventory stockpileInventory = ref context.Entity.GetComponent<Inventory>();
-            // TODO: don't transfer all items
-            context.Entity.GetComponent<Inventory>().Items.TransferTo(ref stockpileInventory.Items);
+        IEntity workPlace = context.Entity.GetComponent<VillagerBehavior>().WorkPlace;
 
+        ref Inventory villagerInventory = ref context.Entity.GetComponent<Inventory>();
+        ref Inventory workPlaceInventory = ref workPlace.GetComponent<Inventory>();
+        ref ResourceProcessor resourceProcessor = ref workPlace.GetComponent<ResourceProcessor>();
+
+        villagerInventory.Items.TransferTo
+        (
+            ref workPlaceInventory.Items,
+            resourceProcessor.InputItem,
+            resourceProcessor.InputQuantity
+        );
+
+        return BehaviourStatus.Succeeded;
+    }
+
+    private static BehaviourStatus WaitForResources(VillagerContext context)
+    {
+        IEntity workPlace = context.Entity.GetComponent<VillagerBehavior>().WorkPlace;
+
+        ref Inventory villagerInventory = ref context.Entity.GetComponent<Inventory>();
+        ref Inventory workPlaceInventory = ref workPlace.GetComponent<Inventory>();
+        ref ResourceProcessor resourceProcessor = ref workPlace.GetComponent<ResourceProcessor>();
+
+        if (workPlaceInventory.Items.Has(resourceProcessor.OutputItem))
+        {
+            workPlaceInventory.Items.TransferTo(ref villagerInventory.Items);
             return BehaviourStatus.Succeeded;
-        };
+        }
+
+        return BehaviourStatus.Running;
+    }
+
+    private static BehaviourStatus StoreItems(VillagerContext context)
+    {
+        ref Inventory stockpileInventory = ref context.Entity.GetComponent<Inventory>();
+        context.Entity.GetComponent<Inventory>().Items.TransferTo(ref stockpileInventory.Items);
+
+        return BehaviourStatus.Succeeded;
     }
     #endregion
 }

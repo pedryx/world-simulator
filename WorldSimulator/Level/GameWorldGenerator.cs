@@ -154,30 +154,28 @@ internal class GameWorldGenerator
         Debug.Assert(GameWorld.Bounds.Contains(position));
 
         Village village = new(game, gameWorld);
-        int id = gameWorld.AddVillage(village);
 
-        IEntity mainBuilding = LevelFactory.CreateStatic(factory.MainBuildingBuilder, position);
+        IEntity mainBuilding = factory.CreateMainBuilding(position);
         village.AddBuilding(mainBuilding);
 
-        IEntity stockpile = LevelFactory.CreateStatic(factory.StockpileBuilder, village.GetNextBuildingPosition());
+        IEntity stockpile = factory.CreateStockpile(village.GetNextBuildingPosition());
         village.AddStockpile(stockpile);
 
-        IEntity woodcutterHut = LevelFactory.CreateStatic(factory.WoodcutterHutBuilder, village.GetNextBuildingPosition());
+        IEntity woodcutterHut = factory.CreateWoodcutterHut(village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Tree, woodcutterHut);
 
-        IEntity minerHut = LevelFactory.CreateStatic(factory.MinerHutBuilder, village.GetNextBuildingPosition());
+        IEntity minerHut = factory.CreateMinerHut(village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Rock, minerHut);
         
-        IEntity smithy = LevelFactory.CreateStatic(factory.SmithyBuilder, village.GetNextBuildingPosition());
+        IEntity smithy = factory.CreateSmithy(village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Deposit, smithy);
 
-        IEntity hunterHut = LevelFactory.CreateStatic(factory.HunterHutBuilder, village.GetNextBuildingPosition());
+        IEntity hunterHut = factory.CreateHunterHut(village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Deer, hunterHut);
 
         for (int i = 0; i < 4; i++)
         {
-            IEntity villager = LevelFactory.CreateDynamic(factory.VillagerBuilder, position);
-            villager.GetComponent<VillagerBehavior>().VillageID = id;
+            IEntity villager = factory.CreateVillager(position);
             village.AddVillager(villager);
         }
     }

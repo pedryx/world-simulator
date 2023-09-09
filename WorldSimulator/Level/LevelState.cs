@@ -35,6 +35,7 @@ public class LevelState : GameState
             Game.Factory.CreateSystem(new PathFollowSystem()),
             Game.Factory.CreateSystem(new DamageSystem()),
             Game.Factory.CreateSystem(new DeathSystem()),
+            Game.Factory.CreateSystem(new ResourceProcessingSystem(Game)),
         };
     }
 
