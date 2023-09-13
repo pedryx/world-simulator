@@ -122,7 +122,7 @@ internal class GameWorldGenerator
 
     private void SpawnVillages()
     {
-        // SpawnVillage(GameWorld.Size.ToVector2() / 2.0f); return;
+        SpawnVillage(GameWorld.Size.ToVector2() / 2.0f); return;
 
         Random random = new(game.GenerateSeed());
 
@@ -173,7 +173,7 @@ internal class GameWorldGenerator
         IEntity hunterHut = factory.CreateHunterHut(village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Deer, hunterHut);
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 1; i++)
         {
             IEntity villager = factory.CreateVillager(position);
             village.AddVillager(villager);

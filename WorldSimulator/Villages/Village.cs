@@ -210,9 +210,9 @@ internal class Village
         return BehaviourStatus.Running;
     }
 
-    private static BehaviourStatus StoreItems(VillagerContext context)
+    private BehaviourStatus StoreItems(VillagerContext context)
     {
-        ref Inventory stockpileInventory = ref context.Entity.GetComponent<Inventory>();
+        ref Inventory stockpileInventory = ref stockpile.GetComponent<Inventory>();
         context.Entity.GetComponent<Inventory>().Items.TransferTo(ref stockpileInventory.Items);
 
         return BehaviourStatus.Succeeded;
