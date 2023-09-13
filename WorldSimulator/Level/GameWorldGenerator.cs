@@ -173,10 +173,10 @@ internal class GameWorldGenerator
         IEntity hunterHut = factory.CreateHunterHut(village.GetNextBuildingPosition());
         village.AddResourceProcessingBuilding(ResourceType.Deer, hunterHut);
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 4; i++)
         {
-            IEntity villager = factory.CreateVillager(position);
-            village.AddVillager(villager);
+            IEntity house = factory.CreateHouse(village.GetNextBuildingPosition());
+            village.AddHouse(house);
         }
     }
 }

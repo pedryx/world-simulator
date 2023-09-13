@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using WorldSimulator.Components;
@@ -80,6 +81,12 @@ internal class Village
         AddBuilding(entity);
     }
 
+    public void AddHouse(IEntity entity)
+    {
+        entity.GetComponent<VillagerSpawner>().VillageID = ID;
+        AddBuilding(entity);
+    }
+
     public void AddResourceProcessingBuilding(ResourceType resourceType, IEntity entity)
     {
         resourceProcessingBuildings.Add(resourceType, entity);
@@ -87,6 +94,8 @@ internal class Village
 
     public void AddVillager(IEntity entity)
     {
+        Debug.Assert(entity.HasComponent<VillagerBehavior>());
+
         ResourceType resourceType = ResourceType.Get(behaviorTrees.Count);
         IEntity workPlace = resourceProcessingBuildings[resourceType];
 

@@ -98,6 +98,15 @@ internal class LevelFactory
 
         return entity;
     }
+
+    public IEntity CreateHouse(Vector2 position)
+    {
+        IEntity entity = CreateBasicEntity(position, "house", 0.4f);
+
+        entity.AddComponent<VillagerSpawner>();
+
+        return entity;
+    }
     #endregion
     #region Others
     public IEntity CreateTerrain()

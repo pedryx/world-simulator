@@ -36,6 +36,7 @@ public class LevelState : GameState
             Game.Factory.CreateSystem(new DamageSystem()),
             Game.Factory.CreateSystem(new DeathSystem()),
             Game.Factory.CreateSystem(new ResourceProcessingSystem(Game)),
+            Game.Factory.CreateSystem(new VillagerSpawningSystem(LevelFactory, GameWorld)),
         };
     }
 
