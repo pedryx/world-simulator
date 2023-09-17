@@ -201,4 +201,11 @@ internal class GameWorld
 
         return terrain != null && terrain.Walkable;
     }
+
+    public bool IsBuildable(Vector2 position)
+    {
+        TerrainType terrain = GetTerrain(position);
+
+        return terrain != null && terrain.Buildable;
+    }
 }

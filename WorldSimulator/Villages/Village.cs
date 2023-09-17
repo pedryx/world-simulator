@@ -19,11 +19,11 @@ internal class Village
     /// <summary>
     /// Minimal distance of a building to all other buildings.
     /// </summary>
-    private const float minDistance = 150.0f;
+    private const float minDistance = 140.0f;
     /// <summary>
     /// Maximal distance of a building to any other building.
     /// </summary>
-    private const float maxDistance = 200.0f;
+    private const float maxDistance = 220.0f;
     /// <summary>
     /// Second power of maximal distance.
     /// </summary>
@@ -65,7 +65,7 @@ internal class Village
             var query = buildings
                 .Select(b => b.GetComponent<Location>().Position)
                 .Where(p => Vector2.DistanceSquared(p, buildingPosition) < minDistanceSquared);
-            if (!query.Any() && gameWorld.GetTerrain(buildingPosition).Buildable)
+            if (!query.Any() && gameWorld.IsBuildable(buildingPosition))
                 return buildingPosition;
         }
     }
@@ -90,6 +90,7 @@ internal class Village
     public void AddResourceProcessingBuilding(ResourceType resourceType, IEntity entity)
     {
         resourceProcessingBuildings.Add(resourceType, entity);
+        AddBuilding(entity);
     }
 
     public void AddVillager(IEntity entity)
