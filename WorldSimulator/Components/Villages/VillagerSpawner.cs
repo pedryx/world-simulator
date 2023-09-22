@@ -1,6 +1,6 @@
 ﻿using WorldSimulator.ECS.AbstractECS;
 
-namespace WorldSimulator.Components;
+namespace WorldSimulator.Components.Villages;
 /// <summary>
 /// Entities with this component will periodically spawn a villager. Only one villager can be spawned at a time.
 /// </summary>
@@ -17,7 +17,7 @@ internal struct VillagerSpawner
     /// <summary>
     /// The ID of village where the villager will be spawned.
     /// </summary>
-    public int VillageID;
+    public IEntity Village;
 
     public VillagerSpawner() { }
 }

@@ -1,16 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using WorldSimulator.Components;
+using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Level;
 
-namespace WorldSimulator.Systems;
+namespace WorldSimulator.Systems.Villaages;
 /// <summary>
 /// System responsible for spawning villagers.
 /// </summary>
@@ -22,12 +17,10 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
     private const float villagerSpawnTime = 60.0f;
 
     private readonly LevelFactory levelFactory;
-    private readonly GameWorld gameWorld;
 
-    public VillagerSpawningSystem(LevelFactory levelFactory, GameWorld gameWorld)
+    public VillagerSpawningSystem(LevelFactory levelFactory)
     {
         this.levelFactory = levelFactory;
-        this.gameWorld = gameWorld;
     }
 
     public void Process(ref Location location, ref VillagerSpawner villagerSpawner, float deltaTime)
@@ -40,9 +33,16 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
             {
                 villagerSpawner.Elapsed = 0.0f;
 
-                IEntity villager = levelFactory.CreateVillager(location.Position + Vector2.UnitY);
-                gameWorld.GetVillage(villagerSpawner.VillageID).AddVillager(villager);
+                IEntity villager = levelFactory.CreateVillager
+                (
+                    location.Position + Vector2.UnitY,
+                    villagerSpawner.Village
+                );
                 villagerSpawner.Villager = villager;
+
+                ref Village village = ref villagerSpawner.Village.GetComponent<Village>();
+                village.UnemployedVillagers[village.UnemployedVillagerCount] = villager;
+                village.UnemployedVillagerCount++;
             }
         }
     }

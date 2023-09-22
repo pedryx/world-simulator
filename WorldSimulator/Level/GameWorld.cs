@@ -45,7 +45,6 @@ internal class GameWorld
     /// Contains KD-tree for each resource type.
     /// </summary>
     private readonly Dictionary<ResourceType, KdTree<float, IEntity>> resources;
-    private readonly List<Village> villages = new();
     private readonly GameWorldGrid grid;
 
     /// <param name="terrains">Contain the ID of a terrain type for each grid point.</param>
@@ -62,26 +61,6 @@ internal class GameWorld
             type => new KdTree<float, IEntity>(2, new FloatMath())
         );
     }
-
-    /// <summary>
-    /// Adds a village to the game world.
-    /// </summary>
-    /// <param name="village">Village to add.</param>
-    /// <returns>The ID assigned to the village by the game world. This ID can be used to access the village.</returns>
-    public int AddVillage(Village village)
-    {
-        Debug.Assert(village != null);
-
-        villages.Add(village);
-        return villages.Count - 1;
-    }
-
-    /// <summary>
-    /// Get a village with a specified ID.
-    /// </summary>
-    /// <param name="id">The ID of village to get.</param>
-    public Village GetVillage(int id)
-        => villages[id];
 
     /// <summary>
     /// Add a resource to the game world. The resource will be stored in the corresponding KD-tree.

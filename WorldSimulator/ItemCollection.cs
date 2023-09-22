@@ -19,11 +19,49 @@ internal readonly struct ItemCollection
         quantities[itemType.ID] = quantity;
     }
 
+    public ItemCollection(params int[] quantities)
+    {
+        Debug.Assert(quantities.Length <= this.quantities.Length);
+
+        for (int i = 0; i < quantities.Length; i++)
+        {
+            this.quantities[i] = quantities[i];
+        }
+    }
+
+    /// <summary>
+    /// Determine if the item collection contains any items.
+    /// </summary>
+    public bool Empty()
+    {
+        for (int i = 0; i < quantities.Length; i++)
+        {
+            if (quantities[i] > 0)
+                return false;
+        }
+
+        return true;
+    }
+
     /// <summary>
     /// Determine if the item collection contains at least one item of a specified type.
     /// </summary>
     public bool Has(ItemType itemType)
         => quantities[itemType.ID] > 0;
+
+    /// <summary>
+    /// Determine if item collection contains specified amounts of specified items.
+    /// </summary>
+    public bool Contains(ItemCollection  items)
+    {
+        for (int i = 0; i < quantities.Length; i++)
+        {
+            if (quantities[i] < items.quantities[i])
+                return false;
+        }
+
+        return true;
+    }
 
     /// <summary>
     /// Transfer all items to an another item collection.

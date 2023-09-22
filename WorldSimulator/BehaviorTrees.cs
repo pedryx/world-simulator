@@ -6,114 +6,60 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 using WorldSimulator.Components;
+using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
-using WorldSimulator.Level;
+using WorldSimulator.Villages;
 
-namespace WorldSimulator.Villages;
-internal class Village
+namespace WorldSimulator;
+internal class BehaviorTrees
 {
-    /// <summary>
-    /// Minimal distance of a building to all other buildings.
-    /// </summary>
-    private const float minDistance = 140.0f;
-    /// <summary>
-    /// Maximal distance of a building to any other building.
-    /// </summary>
-    private const float maxDistance = 220.0f;
-    /// <summary>
-    /// Second power of maximal distance.
-    /// </summary>
-    private const float minDistanceSquared = minDistance * minDistance;
+    private readonly List<Pair> pairs = new();
 
-    /// <summary>
-    /// Map villagers to their behavior trees
-    /// </summary>
-    /// <returns></returns>
-    private readonly Dictionary<IEntity, IBehaviour<VillagerContext>> behaviorTrees = new();
-    private readonly List<IEntity> buildings = new();
-    private readonly Dictionary<ResourceType, IEntity> resourceProcessingBuildings = new();
-    private readonly Random random;
-    private readonly GameWorld gameWorld;
-
-    // TODO: Resolve the issue with stockpile position, when the stockpile gets destroyed.
-    private IEntity stockpile;
-
-    public int ID { get; private init; }
-
-    public Village(Game game, GameWorld gameWorld)
+    private void SetBehaviorTree(IEntity entity, IBehaviour<VillagerContext> behaviorTree)
     {
-        this.gameWorld = gameWorld;
+        ref VillagerBehavior behavior = ref entity.GetComponent<VillagerBehavior>();
 
-        ID = gameWorld.AddVillage(this);
-        random = new Random(game.GenerateSeed());
-    }
-
-    /// <summary>
-    /// Get next valid position where a building could be placed.
-    /// </summary>
-    public Vector2 GetNextBuildingPosition()
-    {
-        while (true)
+        if (behavior.BehaviorTreeIndex != -1)
         {
-            Vector2 center = buildings[random.Next(buildings.Count)].GetComponent<Location>().Position;
-            Vector2 buildingPosition = random.NextPointInRing(center, minDistance, maxDistance);
-
-            var query = buildings
-                .Select(b => b.GetComponent<Location>().Position)
-                .Where(p => Vector2.DistanceSquared(p, buildingPosition) < minDistanceSquared);
-            if (!query.Any() && gameWorld.IsBuildable(buildingPosition))
-                return buildingPosition;
+            RemoveBehaviorTree(entity);
         }
+
+        entity.GetComponent<VillagerBehavior>().BehaviorTreeIndex = pairs.Count;
+        pairs.Add(new Pair()
+        {
+            Entity = entity,
+            BehaviorTree = behaviorTree
+        });
     }
 
-    public void AddBuilding(IEntity entity)
-    {
-        buildings.Add(entity);
-    }
-
-    public void AddStockpile(IEntity entity)
-    {
-        stockpile = entity;
-        AddBuilding(entity);
-    }
-
-    public void AddHouse(IEntity entity)
-    {
-        entity.GetComponent<VillagerSpawner>().VillageID = ID;
-        AddBuilding(entity);
-    }
-
-    public void AddResourceProcessingBuilding(ResourceType resourceType, IEntity entity)
-    {
-        resourceProcessingBuildings.Add(resourceType, entity);
-        AddBuilding(entity);
-    }
-
-    public void AddVillager(IEntity entity)
+    public void RemoveBehaviorTree(IEntity entity)
     {
         Debug.Assert(entity.HasComponent<VillagerBehavior>());
 
-        ResourceType resourceType = ResourceType.Get(behaviorTrees.Count);
-        IEntity workPlace = resourceProcessingBuildings[resourceType];
-
         ref VillagerBehavior behavior = ref entity.GetComponent<VillagerBehavior>();
+        int index = behavior.BehaviorTreeIndex;
 
-        behavior.WorkPlace = workPlace;
-        behavior.VillageID = ID;
+        pairs[index] = pairs[^1];
+        pairs[index].Entity.GetComponent<VillagerBehavior>().BehaviorTreeIndex = index;
 
-        behaviorTrees.Add(entity, CreateBehaviorTree(resourceType, workPlace));
+        pairs.RemoveAt(pairs.Count - 1);
+        behavior.BehaviorTreeIndex = -1;
     }
 
-    public IBehaviour<VillagerContext> GetBehaviorTree(IEntity entity)
-        => behaviorTrees[entity];
+    public IBehaviour<VillagerContext> GetBehaviorTree(int index)
+        => pairs[index].BehaviorTree;
 
-    private IBehaviour<VillagerContext> CreateBehaviorTree(ResourceType resourceType, IEntity workplace)
+    public void SetHarvesterBehavior(IEntity entity, IEntity workplace, IEntity stockpile, ResourceType resourceType)
     {
-        return FluentBuilder.Create<VillagerContext>()
+        Debug.Assert(workplace.HasComponent<ResourceProcessor>());
+        Debug.Assert(entity.HasComponent<VillagerBehavior>());
+
+        entity.GetComponent<VillagerBehavior>().WorkPlace = workplace;
+
+        IBehaviour<VillagerContext> behaviorTree = FluentBuilder.Create<VillagerContext>()
             .Sequence("villager job sequence")
                 .Do("find nearest resource", FindNearestResource(resourceType))
                 .Do("move to nearest resource", MoveTo(null))
@@ -125,9 +71,13 @@ internal class Village
                 .Do("store items", StoreItems)
             .End()
             .Build();
+
+        SetBehaviorTree(entity, behaviorTree);
     }
 
-    #region behavior tree leaf nodes
+    private record struct Pair(IEntity Entity, IBehaviour<VillagerContext> BehaviorTree);
+
+    #region behavior tree nodes
     private static Func<VillagerContext, BehaviourStatus> MoveTo(IEntity target)
     {
         return (context) =>
@@ -222,6 +172,8 @@ internal class Village
 
     private BehaviourStatus StoreItems(VillagerContext context)
     {
+        IEntity stockpile = context.Entity.GetComponent<VillagerBehavior>().Stockpile;
+
         ref Inventory stockpileInventory = ref stockpile.GetComponent<Inventory>();
         context.Entity.GetComponent<Inventory>().Items.TransferTo(ref stockpileInventory.Items);
 

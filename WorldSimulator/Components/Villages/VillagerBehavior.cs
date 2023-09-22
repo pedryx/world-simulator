@@ -1,6 +1,6 @@
 ﻿using WorldSimulator.ECS.AbstractECS;
 
-namespace WorldSimulator.Components;
+namespace WorldSimulator.Components.Villages;
 /// <summary>
 /// Adds villager behavior to an entity.
 /// </summary>
@@ -8,9 +8,10 @@ namespace WorldSimulator.Components;
 internal struct VillagerBehavior
 {
     /// <summary>
-    /// The ID of the village to which the villager belongs.
+    /// The village to which villager belongs.
     /// </summary>
-    public int VillageID;
+    public IEntity Village;
+    public int BehaviorTreeIndex = -1;
     /// <summary>
     /// The time elapsed from waiting begins. Used by a wait villager behavior node.
     /// </summary>
@@ -24,4 +25,10 @@ internal struct VillagerBehavior
     /// The place where the villager works.
     /// </summary>
     public IEntity WorkPlace;
+    /// <summary>
+    /// Stockpile into which villager should store harvested resources.
+    /// </summary>
+    public IEntity Stockpile;
+
+    public VillagerBehavior() { }
 }

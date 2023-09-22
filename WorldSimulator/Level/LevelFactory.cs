@@ -2,8 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
+using System.Diagnostics;
 
 using WorldSimulator.Components;
+using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Level;
@@ -22,29 +24,20 @@ internal class LevelFactory
     }
 
     #region Resources
-    /// <summary>
-    /// Creates an entity representing a specified resource type at the given spawn position.
-    /// </summary>
-    /// <param name="resourceType">
-    /// The type of resource to create (e.g., Tree, Rock, Deposit, Deer).
-    /// </param>
-    /// <param name="position">The position at which the resource entity will spawn.</param>
-    /// <returns>The created resource entity.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to create an entity for an unsupported resource type.
-    /// </exception>
-    public IEntity CreateResource(ResourceType resourceType, Vector2 position)
+    private IEntity CreateBasicResource(Vector2 position, string textureName, float scale, ResourceType resource)
     {
-        if (resourceType == ResourceType.Tree)
-            return CreateTree(position);
-        else if (resourceType == ResourceType.Rock)
-            return CreateRock(position);
-        else if (resourceType == ResourceType.Deposit)
-            return CreateDeposit(position);
-        else if (resourceType == ResourceType.Deer)
-            return CreateDeer(position);
+        IEntity entity = CreateBasicEntity(position, textureName, scale);
 
-        throw new InvalidOperationException("Entity for this resource not exist!");
+        entity.AddComponent(new Health()
+        {
+            Amount = resource.HarvestTime
+        });
+        entity.AddComponent(new ItemDrop()
+        {
+            Items = new ItemCollection(resource.HarvestItem, resource.HarvestQuantity),
+        });
+
+        return entity;
     }
 
     public IEntity CreateTree(Vector2 position)
@@ -72,38 +65,191 @@ internal class LevelFactory
 
         return entity;
     }
-    #endregion
-    #region Resource Processing Buildings
-    public IEntity CreateWoodcutterHut(Vector2 position)
-        => CreateBasicResourceProcessor(position, "woodcutter hut", 0.6f, ResourceType.Tree);
 
-    public IEntity CreateMinerHut(Vector2 position)
-        => CreateBasicResourceProcessor(position, "miner hut", 0.6f, ResourceType.Rock);
-
-    public IEntity CreateSmithy(Vector2 position)
-        => CreateBasicResourceProcessor(position, "smithy", 0.6f, ResourceType.Deposit);
-
-    public IEntity CreateHunterHut(Vector2 position)
-        => CreateBasicResourceProcessor(position, "hunter hut", 0.6f, ResourceType.Deer);
-    #endregion
-    #region Other Building
-    public IEntity CreateMainBuilding(Vector2 position)
-        => CreateBasicEntity(position, "main building", 0.9f);
-
-    public IEntity CreateStockpile(Vector2 position)
+    /// <summary>
+    /// Creates an entity representing a specified resource type at the given spawn position.
+    /// </summary>
+    /// <param name="resourceType">
+    /// The type of resource to create (e.g., Tree, Rock, Deposit, Deer).
+    /// </param>
+    /// <param name="position">The position at which the resource entity will spawn.</param>
+    /// <returns>The created resource entity.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when attempting to create an entity for an unsupported resource type.
+    /// </exception>
+    /*public IEntity CreateResource(ResourceType resourceType, Vector2 position)
     {
-        IEntity entity = CreateBasicEntity(position, "stockpile", 0.4f);
+        if (resourceType == ResourceType.Tree)
+            return CreateTree(position);
+        else if (resourceType == ResourceType.Rock)
+            return CreateRock(position);
+        else if (resourceType == ResourceType.Deposit)
+            return CreateDeposit(position);
+        else if (resourceType == ResourceType.Deer)
+            return CreateDeer(position);
 
-        entity.AddComponent<Inventory>();
+        throw new InvalidOperationException("Entity for this resource not exist!");
+    }*/
+    #endregion
+    #region Buildings
+    private IEntity CreateBasicBuilding
+    (
+        Vector2 position,
+        string textureName,
+        float scale,
+        IEntity village
+    )
+    {
+        Debug.Assert(village.HasComponent<Village>());
+
+        IEntity entity = CreateBasicEntity(position, textureName, scale);
+
+        entity.AddComponent(new Building()
+        {
+            Village = village,
+        });
 
         return entity;
     }
 
-    public IEntity CreateHouse(Vector2 position)
+    #region Resource Processing Buildings
+    private IEntity CreateBasicResourceProcessingBuilding
+    (
+        Vector2 position,
+        string textureName,
+        float scale,
+        IEntity village,
+        ResourceType resource
+    )
+    {
+        IEntity entity = CreateBasicBuilding(position, textureName, scale, village);
+
+        entity.AddComponent<Inventory>();
+        entity.AddComponent(new ResourceProcessor()
+        {
+            InputItem = resource.HarvestItem,
+            InputQuantity = 1,
+            OutputItem = resource.HarvestItem.ProcessedItem,
+            OutputQuantity = 1,
+            ProcessingTime = resource.HarvestItem.TimeToProcess,
+            
+        });
+
+        return entity;
+    }
+
+    public IEntity CreateWoodcutterHut(Vector2 position, IEntity village)
+    {
+        Debug.Assert(village.GetComponent<Village>().WoodcutterHut == null);
+
+        IEntity entity = CreateBasicResourceProcessingBuilding
+        (
+            position,
+            "woodcutter hut",
+            0.6f,
+            village,
+            ResourceType.Tree
+        );
+
+        village.GetComponent<Village>().WoodcutterHut = entity;
+
+        return entity;
+    }
+
+    public IEntity CreateMinerHut(Vector2 position, IEntity village)
+    {
+        Debug.Assert(village.GetComponent<Village>().MinerHut == null);
+
+        IEntity entity = CreateBasicResourceProcessingBuilding
+        (
+            position,
+            "miner hut",
+            0.6f,
+            village,
+            ResourceType.Rock
+        );
+
+        village.GetComponent<Village>().MinerHut = entity;
+
+        return entity;
+    }
+
+    public IEntity CreateSmithy(Vector2 position, IEntity village)
+    {
+        Debug.Assert(village.GetComponent<Village>().Smithy == null);
+
+        IEntity entity = CreateBasicResourceProcessingBuilding
+        (
+            position,
+            "smithy",
+            0.6f,
+            village,
+            ResourceType.Deposit
+        );
+
+        village.GetComponent<Village>().Smithy = entity;
+
+        return entity;
+    }
+
+    public IEntity CreateHunterHut(Vector2 position, IEntity village)
+    {
+        Debug.Assert(village.GetComponent<Village>().HunterHut == null);
+
+        IEntity entity = CreateBasicResourceProcessingBuilding
+        (
+            position,
+            "hunter hut",
+            0.6f,
+            village,
+            ResourceType.Deer
+        );
+
+        village.GetComponent<Village>().HunterHut = entity;
+
+        return entity;
+    }
+    #endregion
+
+    public IEntity CreateMainBuilding(Vector2 position, IEntity village)
+    {
+        Debug.Assert(village.GetComponent<Village>().MainBuilding == null);
+
+        IEntity entity = CreateBasicBuilding(position, "main building", 0.9f, village);
+
+        village.GetComponent<Village>().MainBuilding = entity;
+
+        return entity;
+    }
+
+    public IEntity CreateStockpile(Vector2 position, IEntity village)
+    {
+        Debug.Assert(village.GetComponent<Village>().StockPile == null);
+
+        IEntity entity = CreateBasicBuilding(position, "stockpile", 0.4f, village);
+
+        entity.AddComponent<Inventory>();
+        village.GetComponent<Village>().StockPile = entity;
+
+        return entity;
+    }
+
+    public IEntity CreateHouse(Vector2 position, IEntity village)
     {
         IEntity entity = CreateBasicEntity(position, "house", 0.4f);
 
-        entity.AddComponent<VillagerSpawner>();
+        entity.AddComponent(new VillagerSpawner()
+        {
+            Village = village
+        });
+
+        ref Village villageComponent = ref village.GetComponent<Village>();
+
+        Debug.Assert(villageComponent.Houses[villageComponent.HouseCount] == null);
+        Debug.Assert(villageComponent.HouseCount < Village.MaxVillagerCount);
+
+        villageComponent.Houses[villageComponent.HouseCount] = entity;
+        villageComponent.HouseCount++;
 
         return entity;
     }
@@ -119,7 +265,7 @@ internal class LevelFactory
         return entity;
     }
 
-    public IEntity CreateVillager(Vector2 position)
+    public IEntity CreateVillager(Vector2 position, IEntity village)
     {
         IEntity entity = CreateBasicEntity(position, "villager", 0.2f);
 
@@ -128,7 +274,10 @@ internal class LevelFactory
             Destination = position,
             Speed = 60.0f,
         });
-        entity.AddComponent<VillagerBehavior>();
+        entity.AddComponent(new VillagerBehavior()
+        {
+            Village = village,
+        });
         entity.AddComponent<PathFollow>();
         entity.AddComponent<Inventory>();
         entity.AddComponent(new DamageDealer()
@@ -138,8 +287,25 @@ internal class LevelFactory
 
         return entity;
     }
+
+    public IEntity CreateVillage(Vector2 position)
+    {
+        IEntity entity = game.Factory.CreateEntity(levelState.ECSWorld);
+
+        entity.AddComponent(new Location()
+        {
+            Position = position,
+        });
+        entity.AddComponent<Village>();
+        entity.AddComponent(new Owner()
+        {
+            Entity = entity,
+        });
+
+        return entity;
+    }
     #endregion
-    #region Shared
+
     /// <summary>
     /// Creates a basic entity with essential components: Location, Appearance, and Owner. The Appearance component's
     /// texture is set to the specified texture, its origin is set to the middle-bottom point, and its scale is
@@ -168,44 +334,4 @@ internal class LevelFactory
 
         return entity;
     }
-
-    private IEntity CreateBasicResource(Vector2 position, string textureName, float scale, ResourceType resource)
-    {
-        IEntity entity = CreateBasicEntity(position, textureName, scale);
-
-        entity.AddComponent(new Health()
-        {
-            Amount = resource.HarvestTime
-        });
-        entity.AddComponent(new ItemDrop()
-        {
-            Items = new ItemCollection(resource.HarvestItem, resource.HarvestQuantity),
-        });
-
-        return entity;
-    }
-
-    private IEntity CreateBasicResourceProcessor
-    (
-        Vector2 position,
-        string textureName,
-        float scale,
-        ResourceType resource
-    )
-    {
-        IEntity entity = CreateBasicEntity(position, textureName, scale);
-
-        entity.AddComponent<Inventory>();
-        entity.AddComponent(new ResourceProcessor()
-        {
-            InputItem = resource.HarvestItem,
-            InputQuantity = 1,
-            OutputItem = resource.HarvestItem.ProcessedItem,
-            OutputQuantity = 1,
-            ProcessingTime = resource.HarvestItem.TimeToProcess,
-        });
-
-        return entity;
-    }
-    #endregion
 }

@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
 using System.Collections.Generic;
 
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Systems;
+using WorldSimulator.Systems.Villaages;
+using WorldSimulator.Systems.Villages;
 using WorldSimulator.UI.Elements;
 
 namespace WorldSimulator.Level;
@@ -13,6 +14,7 @@ public class LevelState : GameState
 {
     internal LevelFactory LevelFactory { get; private set; }
     internal GameWorld GameWorld { get; private set; }
+    internal BehaviorTrees BehaviorTrees { get; private init; } = new();
 
     protected override void CreateEntities()
     {
@@ -31,12 +33,13 @@ public class LevelState : GameState
             new InputSystem(this),
             Game.Factory.CreateSystem(new AnimalBehaviorSystem(Game, GameWorld)),
             Game.Factory.CreateSystem(new MovementSystem()),
-            Game.Factory.CreateSystem(new VillagerBehaviorSystem(GameWorld)),
+            Game.Factory.CreateSystem(new VillagerBehaviorSystem(GameWorld, BehaviorTrees)),
             Game.Factory.CreateSystem(new PathFollowSystem()),
             Game.Factory.CreateSystem(new DamageSystem()),
             Game.Factory.CreateSystem(new DeathSystem()),
             Game.Factory.CreateSystem(new ResourceProcessingSystem(Game)),
-            Game.Factory.CreateSystem(new VillagerSpawningSystem(LevelFactory, GameWorld)),
+            Game.Factory.CreateSystem(new VillagerSpawningSystem(LevelFactory)),
+            Game.Factory.CreateSystem(new VillageAISystem(this)),
         };
     }
 

@@ -1,6 +1,6 @@
 ﻿using WorldSimulator.ECS.AbstractECS;
 
-namespace WorldSimulator.Components;
+namespace WorldSimulator.Components.Villages;
 /// <summary>
 /// Entities with this component check their inventory to see if it contains a certain quantity of a specific item. If
 /// it does, they will craft it into different items.

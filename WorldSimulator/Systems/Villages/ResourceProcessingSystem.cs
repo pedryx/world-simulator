@@ -1,7 +1,8 @@
 ﻿using WorldSimulator.Components;
+using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
 
-namespace WorldSimulator.Systems;
+namespace WorldSimulator.Systems.Villaages;
 internal readonly struct ResourceProcessingSystem : IEntityProcessor<Inventory, ResourceProcessor>
 {
     private readonly Game game;

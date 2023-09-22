@@ -114,7 +114,18 @@ internal class GameWorldGenerator
             if (resourceType == null)
                 continue;
 
-            IEntity entity = factory.CreateResource(resourceType, position);
+            IEntity entity = null;
+            if (resourceType == ResourceType.Tree)
+                entity = factory.CreateTree(position);
+            else if (resourceType == ResourceType.Rock)
+                entity = factory.CreateRock(position);
+            else if (resourceType == ResourceType.Deposit)
+                entity = factory.CreateDeposit(position);
+            else if (resourceType == ResourceType.Deer)
+                entity = factory.CreateDeer(position);
+            else
+                throw new InvalidOperationException("Resource type not supported!");
+
             gameWorld.AddResource(resourceType, entity, position);
         }
         resourcePositions = null;
@@ -122,7 +133,7 @@ internal class GameWorldGenerator
 
     private void SpawnVillages()
     {
-        // SpawnVillage(GameWorld.Size.ToVector2() / 2.0f); return;
+        // factory.CreateVillage(GameWorld.Size.ToVector2() / 2.0f); return;
 
         Random random = new(game.GenerateSeed());
 
@@ -144,39 +155,8 @@ internal class GameWorldGenerator
                         break;
                 }
 
-                SpawnVillage(position);
+                factory.CreateVillage(position);
             }
-        }
-    }
-
-    private void SpawnVillage(Vector2 position)
-    {
-        Debug.Assert(GameWorld.Bounds.Contains(position));
-
-        Village village = new(game, gameWorld);
-
-        IEntity mainBuilding = factory.CreateMainBuilding(position);
-        village.AddBuilding(mainBuilding);
-
-        IEntity stockpile = factory.CreateStockpile(village.GetNextBuildingPosition());
-        village.AddStockpile(stockpile);
-
-        IEntity woodcutterHut = factory.CreateWoodcutterHut(village.GetNextBuildingPosition());
-        village.AddResourceProcessingBuilding(ResourceType.Tree, woodcutterHut);
-
-        IEntity minerHut = factory.CreateMinerHut(village.GetNextBuildingPosition());
-        village.AddResourceProcessingBuilding(ResourceType.Rock, minerHut);
-        
-        IEntity smithy = factory.CreateSmithy(village.GetNextBuildingPosition());
-        village.AddResourceProcessingBuilding(ResourceType.Deposit, smithy);
-
-        IEntity hunterHut = factory.CreateHunterHut(village.GetNextBuildingPosition());
-        village.AddResourceProcessingBuilding(ResourceType.Deer, hunterHut);
-
-        for (int i = 0; i < 4; i++)
-        {
-            IEntity house = factory.CreateHouse(village.GetNextBuildingPosition());
-            village.AddHouse(house);
         }
     }
 }
