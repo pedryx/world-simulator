@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using WorldSimulator.Components;
 using WorldSimulator.Components.Villages;
@@ -13,7 +11,7 @@ using WorldSimulator.Extensions;
 using WorldSimulator.Level;
 
 namespace WorldSimulator.Systems.Villages;
-internal readonly struct VillageAISystem : IEntityProcessor<Location, Village, Owner>
+internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Village, Owner>
 {
     /// <summary>
     /// Minimal distance of a building to all other buildings.
@@ -29,29 +27,48 @@ internal readonly struct VillageAISystem : IEntityProcessor<Location, Village, O
     private const float minDistanceSquared = minBuildDistance * minBuildDistance;
 
     private readonly LevelFactory levelFactory;
-    private readonly List<BuildOrderItem> buildOrder;
     private readonly Random random;
     private readonly GameWorld gameWorld;
-    private readonly LevelState levelState;
 
-    public VillageAISystem(LevelState levelState)
+    /// <summary>
+    /// At first buildings are build according to the build order.
+    /// </summary>
+    private readonly List<BuildOrderItem> buildOrder;
+    /// <summary>
+    /// When all builds from the build order are build, then buildings are build according to the build loop.
+    /// </summary>
+    private readonly List<Func<Vector2, IEntity, IEntity>> buildLoop;
+    /// <summary>
+    /// The initial cost of a building in the build loop.
+    /// </summary>
+    private readonly ItemCollection buildLoopInitialCost;
+    /// <summary>
+    /// The increase in cost of a building in the build loop. Increase is applied with each building build from the
+    /// build loop.
+    /// </summary>
+    private readonly ItemCollection buildLoopIncreaseCost;
+
+    public VillageBuildingSystem(LevelState levelState)
     {
-        this.levelState = levelState;
         levelFactory = levelState.LevelFactory;
         gameWorld = levelState.GameWorld;
 
         random = new Random(levelState.Game.GenerateSeed());
+
         buildOrder = new List<BuildOrderItem>()
         {
             new BuildOrderItem(new ItemCollection(5), levelFactory.CreateHunterHut),
-            new BuildOrderItem(new ItemCollection(5), levelFactory.CreateHouse),
             new BuildOrderItem(new ItemCollection(5), levelFactory.CreateMinerHut),
-            new BuildOrderItem(new ItemCollection(5), levelFactory.CreateHouse),
-            new BuildOrderItem(new ItemCollection(10, 5), levelFactory.CreateHouse),
-            new BuildOrderItem(new ItemCollection(10, 5), levelFactory.CreateHouse),
-            new BuildOrderItem(new ItemCollection(10, 5), levelFactory.CreateHouse),
-            new BuildOrderItem(new ItemCollection(20, 10), levelFactory.CreateSmithy),
-            new BuildOrderItem(new ItemCollection(10, 5), levelFactory.CreateHouse),
+            new BuildOrderItem(new ItemCollection(10, 5), levelFactory.CreateSmithy),
+        };
+        buildLoopInitialCost = new ItemCollection(15, 10, 5);
+        buildLoopInitialCost = new ItemCollection(5, 5, 5);
+        buildLoop = new List<Func<Vector2, IEntity, IEntity>>()
+        {
+            levelFactory.CreateWoodcutterHut,
+            levelFactory.CreateHunterHut,
+            levelFactory.CreateMinerHut,
+            levelFactory.CreateSmithy,
         };
     }
 
@@ -60,19 +77,44 @@ internal readonly struct VillageAISystem : IEntityProcessor<Location, Village, O
         while (TryBuild(ref location, ref village, ref owner)) ;
     }
 
+    /// <summary>
+    /// Try build next building. At first takes buildings from the build order, after that it will takes buildings from
+    /// the build loop.
+    /// </summary>
+    /// <param name="location">Village's location component.</param>
+    /// <param name="village">Village's village component.</param>
+    /// <param name="owner">Village's owner component.</param>
+    /// <returns></returns>
     private bool TryBuild(ref Location location, ref Village village, ref Owner owner)
     {
         if (village.MainBuilding == null)
         {
             levelFactory.CreateMainBuilding(location.Position, owner.Entity);
             levelFactory.CreateStockpile(GetBuildingPosition(ref village), owner.Entity);
-            levelFactory.CreateHouse(GetBuildingPosition(ref village), owner.Entity);
+            levelFactory.CreateWoodcutterHut(GetBuildingPosition(ref village), owner.Entity);
             return true;
         }
 
-        ref Inventory inventory = ref village.StockPile.GetComponent<Inventory>();
+        ref Inventory inventory = ref village.Stockpile.GetComponent<Inventory>();
+        if (village.BuildOrderIndex >= buildOrder.Count)
+        {
+            ItemCollection cost = buildLoopInitialCost 
+                + buildLoopIncreaseCost * (village.BuildOrderIndex - buildOrder.Count);
+            if (inventory.Items.Contains(cost))
+            {
+                inventory.Items.Remove(cost);
+                buildLoop[(village.BuildOrderIndex - buildOrder.Count) % buildLoop.Count]
+                (
+                    GetBuildingPosition(ref village),
+                    owner.Entity
+                );
+                village.BuildOrderIndex++;
+                return true;
+            }
+        }
         if (inventory.Items.Contains(buildOrder[village.BuildOrderIndex].Items))
         {
+            inventory.Items.Remove(buildOrder[village.BuildOrderIndex].Items);
             buildOrder[village.BuildOrderIndex].BuildMethod(GetBuildingPosition(ref village), owner.Entity);
             village.BuildOrderIndex++;
             return true;
@@ -81,23 +123,17 @@ internal readonly struct VillageAISystem : IEntityProcessor<Location, Village, O
         return false;
     }
 
-    private bool TryAsignProfession(ref Village village)
-    {
-        return false;
-    }
-
+    /// <summary>
+    /// Get next suitable building position.
+    /// </summary>
     private Vector2 GetBuildingPosition(ref Village village)
     {
         Vector2[] buildingPositions =  new IEntity[]
         {
             village.MainBuilding,
-            village.StockPile,
-            village.WoodcutterHut,
-            village.MinerHut,
-            village.Smithy,
-            village.HunterHut
+            village.Stockpile,
         }
-        .Concat(village.Houses)
+        .Concat(village.Buildings)
         .Where(b => b != null)
         .Select(b => b.GetComponent<Location>().Position)
         .ToArray();

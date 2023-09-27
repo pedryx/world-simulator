@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 
 namespace WorldSimulator;
 /// <summary>
@@ -117,6 +116,21 @@ internal readonly struct ItemCollection
     }
 
     /// <summary>
+    /// Removes items from item collection. Items to remove are specified with an another item collection.
+    /// </summary>
+    /// <param name="items">The item collection containing items to remove.</param>
+    public void Remove(ItemCollection items)
+    {
+        for (int i = 0; i < quantities.Length; i++)
+        {
+            // TODO: fix bug where this assert triggers (caused sometimes when new building should be build)
+            Debug.Assert(quantities[i] <= items.quantities[i]);
+
+            quantities[i] -= items.quantities[i];
+        }
+    }
+
+    /// <summary>
     /// Transform items of a specified type to an another specified type.
     /// </summary>
     /// <param name="itemType1">The type of item to transform.</param>
@@ -125,5 +139,35 @@ internal readonly struct ItemCollection
     {
         quantities[itemType2.ID] += quantities[itemType1.ID];
         quantities[itemType1.ID] = 0;
+    }
+
+    /// <summary>
+    /// Concatenate two item collections into a new one.
+    /// </summary>
+    public static ItemCollection operator+(ItemCollection itemCollection1, ItemCollection itemCollection2)
+    {
+        int[] quantities = new int[ItemType.Count];
+
+        for (int i = 0; i < quantities.Length; i++)
+        {
+            quantities[i] = itemCollection1.quantities[i] + itemCollection2.quantities[i];
+        }
+
+        return new ItemCollection(quantities);
+    }
+
+    /// <summary>
+    /// Multiply quantity of each item in the item collection by a specified multiplier.
+    /// </summary>
+    public static ItemCollection operator *(ItemCollection itemCollection, float multiplier)
+    {
+        int[] quantities = new int[ItemType.Count];
+
+        for (int i = 0; i < quantities.Length; i++)
+        {
+            quantities[i] = (int)(itemCollection.quantities[i] * multiplier);
+        }
+
+        return new ItemCollection(quantities);
     }
 }

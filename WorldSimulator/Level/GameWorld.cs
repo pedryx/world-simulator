@@ -3,14 +3,12 @@ using KdTree.Math;
 
 using Microsoft.Xna.Framework;
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
-using WorldSimulator.Villages;
 
 namespace WorldSimulator.Level;
 internal class GameWorld

@@ -119,7 +119,8 @@ internal class LevelFactory
         string textureName,
         float scale,
         IEntity village,
-        ResourceType resource
+        ResourceType resource,
+        VillagerProfession profession
     )
     {
         IEntity entity = CreateBasicBuilding(position, textureName, scale, village);
@@ -132,80 +133,76 @@ internal class LevelFactory
             OutputItem = resource.HarvestItem.ProcessedItem,
             OutputQuantity = 1,
             ProcessingTime = resource.HarvestItem.TimeToProcess,
-            
         });
+        entity.AddComponent(new VillagerSpawner()
+        {
+            Village = village,
+            Profession = profession
+        });
+
+        ref Village villageComponent = ref village.GetComponent<Village>();
+        villageComponent.Buildings[villageComponent.BuildingsCount] = entity;
+        villageComponent.BuildingsCount++;
 
         return entity;
     }
 
     public IEntity CreateWoodcutterHut(Vector2 position, IEntity village)
     {
-        Debug.Assert(village.GetComponent<Village>().WoodcutterHut == null);
-
         IEntity entity = CreateBasicResourceProcessingBuilding
         (
             position,
             "woodcutter hut",
             0.6f,
             village,
-            ResourceType.Tree
+            ResourceType.Tree,
+            VillagerProfession.Woodcutter
         );
-
-        village.GetComponent<Village>().WoodcutterHut = entity;
 
         return entity;
     }
 
     public IEntity CreateMinerHut(Vector2 position, IEntity village)
     {
-        Debug.Assert(village.GetComponent<Village>().MinerHut == null);
-
         IEntity entity = CreateBasicResourceProcessingBuilding
         (
             position,
             "miner hut",
             0.6f,
             village,
-            ResourceType.Rock
+            ResourceType.Rock,
+            VillagerProfession.StoneMiner
         );
-
-        village.GetComponent<Village>().MinerHut = entity;
 
         return entity;
     }
 
     public IEntity CreateSmithy(Vector2 position, IEntity village)
     {
-        Debug.Assert(village.GetComponent<Village>().Smithy == null);
-
         IEntity entity = CreateBasicResourceProcessingBuilding
         (
             position,
             "smithy",
             0.6f,
             village,
-            ResourceType.Deposit
+            ResourceType.Deposit,
+            VillagerProfession.IronMiner
         );
-
-        village.GetComponent<Village>().Smithy = entity;
 
         return entity;
     }
 
     public IEntity CreateHunterHut(Vector2 position, IEntity village)
     {
-        Debug.Assert(village.GetComponent<Village>().HunterHut == null);
-
         IEntity entity = CreateBasicResourceProcessingBuilding
         (
             position,
             "hunter hut",
             0.6f,
             village,
-            ResourceType.Deer
+            ResourceType.Deer,
+            VillagerProfession.Hunter
         );
-
-        village.GetComponent<Village>().HunterHut = entity;
 
         return entity;
     }
@@ -224,32 +221,12 @@ internal class LevelFactory
 
     public IEntity CreateStockpile(Vector2 position, IEntity village)
     {
-        Debug.Assert(village.GetComponent<Village>().StockPile == null);
+        Debug.Assert(village.GetComponent<Village>().Stockpile == null);
 
         IEntity entity = CreateBasicBuilding(position, "stockpile", 0.4f, village);
 
         entity.AddComponent<Inventory>();
-        village.GetComponent<Village>().StockPile = entity;
-
-        return entity;
-    }
-
-    public IEntity CreateHouse(Vector2 position, IEntity village)
-    {
-        IEntity entity = CreateBasicEntity(position, "house", 0.4f);
-
-        entity.AddComponent(new VillagerSpawner()
-        {
-            Village = village
-        });
-
-        ref Village villageComponent = ref village.GetComponent<Village>();
-
-        Debug.Assert(villageComponent.Houses[villageComponent.HouseCount] == null);
-        Debug.Assert(villageComponent.HouseCount < Village.MaxVillagerCount);
-
-        villageComponent.Houses[villageComponent.HouseCount] = entity;
-        villageComponent.HouseCount++;
+        village.GetComponent<Village>().Stockpile = entity;
 
         return entity;
     }
@@ -274,7 +251,9 @@ internal class LevelFactory
             Destination = position,
             Speed = 60.0f,
         });
-        entity.AddComponent(new VillagerBehavior()
+        entity.AddComponent<Behavior>();
+        entity.AddComponent<VillagerBehavior>();
+        entity.AddComponent(new Villager()
         {
             Village = village,
         });

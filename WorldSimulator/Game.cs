@@ -123,7 +123,7 @@ public class Game : MonoGameBaseGame
 
     protected override void Update(GameTime gameTime)
     {
-        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds * Speed;
 
         ActiveState.Update(deltaTime);
 
@@ -133,7 +133,7 @@ public class Game : MonoGameBaseGame
 
     protected override void Draw(GameTime gameTime)
     {
-        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds * Speed;
 
         GraphicsDevice.Clear(clearColor);
         ActiveState.Draw(deltaTime);

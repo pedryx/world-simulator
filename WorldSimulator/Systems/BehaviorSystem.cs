@@ -1,37 +1,40 @@
 ﻿using BehaviourTree;
 
 using WorldSimulator.Components;
-using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Level;
-using WorldSimulator.Villages;
 
-namespace WorldSimulator.Systems.Villaages;
+namespace WorldSimulator.Systems;
 /// <summary>
 /// A system that handles the behavior of villagers.
 /// </summary>
-internal readonly struct VillagerBehaviorSystem : IEntityProcessor<VillagerBehavior, Owner>
+internal readonly struct BehaviorSystem : IEntityProcessor<Behavior, Owner>
 {
     private readonly GameWorld gameWorld;
     private readonly BehaviorTrees behaviorTrees;
 
-    public VillagerBehaviorSystem(GameWorld gameWorld, BehaviorTrees behaviorTrees)
+    public BehaviorSystem(GameWorld gameWorld, BehaviorTrees behaviorTrees)
     {
         this.gameWorld = gameWorld;
         this.behaviorTrees = behaviorTrees;
     }
 
-    public void Process(ref VillagerBehavior behavior, ref Owner owner, float deltaTime)
+    public void Process(ref Behavior behavior, ref Owner owner, float deltaTime)
     {
         if (behavior.BehaviorTreeIndex == -1)
             return;
 
         BehaviourStatus result;
-        IBehaviour<VillagerContext> behaviorTree = behaviorTrees.GetBehaviorTree(behavior.BehaviorTreeIndex);
+        IBehaviour<BehaviorContext> behaviorTree = behaviorTrees.GetBehaviorTree(behavior.BehaviorTreeIndex);
 
         do
         {
-            result = behaviorTree.Tick(new VillagerContext(owner.Entity, gameWorld, deltaTime));
+            result = behaviorTree.Tick(new BehaviorContext()
+            {
+                Entity = owner.Entity,
+                GameWorld = gameWorld,
+                DeltaTime = deltaTime,
+            });
         }
         while (result == BehaviourStatus.Succeeded);
     }

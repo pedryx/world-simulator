@@ -18,6 +18,7 @@ internal struct VillagerSpawner
     /// The ID of village where the villager will be spawned.
     /// </summary>
     public IEntity Village;
+    public VillagerProfession Profession;
 
     public VillagerSpawner() { }
 }

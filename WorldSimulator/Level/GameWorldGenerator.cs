@@ -1,18 +1,10 @@
-﻿using KdTree;
-using KdTree.Math;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 
-using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
-using WorldSimulator.Villages;
 
 namespace WorldSimulator.Level;
 internal class GameWorldGenerator
@@ -133,7 +125,7 @@ internal class GameWorldGenerator
 
     private void SpawnVillages()
     {
-        // factory.CreateVillage(GameWorld.Size.ToVector2() / 2.0f); return;
+        factory.CreateVillage(GameWorld.Size.ToVector2() / 2.0f); return;
 
         Random random = new(game.GenerateSeed());
 
