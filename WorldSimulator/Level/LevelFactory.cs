@@ -65,31 +65,6 @@ internal class LevelFactory
 
         return entity;
     }
-
-    /// <summary>
-    /// Creates an entity representing a specified resource type at the given spawn position.
-    /// </summary>
-    /// <param name="resourceType">
-    /// The type of resource to create (e.g., Tree, Rock, Deposit, Deer).
-    /// </param>
-    /// <param name="position">The position at which the resource entity will spawn.</param>
-    /// <returns>The created resource entity.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to create an entity for an unsupported resource type.
-    /// </exception>
-    /*public IEntity CreateResource(ResourceType resourceType, Vector2 position)
-    {
-        if (resourceType == ResourceType.Tree)
-            return CreateTree(position);
-        else if (resourceType == ResourceType.Rock)
-            return CreateRock(position);
-        else if (resourceType == ResourceType.Deposit)
-            return CreateDeposit(position);
-        else if (resourceType == ResourceType.Deer)
-            return CreateDeer(position);
-
-        throw new InvalidOperationException("Entity for this resource not exist!");
-    }*/
     #endregion
     #region Buildings
     private IEntity CreateBasicBuilding
