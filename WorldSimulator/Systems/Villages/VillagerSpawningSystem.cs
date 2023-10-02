@@ -59,23 +59,42 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
                     _ => throw new InvalidOperationException("Unsupported villager profession."),
                 };
 
-                SetProfession(villager, resource, owner.Entity, stockpile);
+                SetProfession(villager, resource, owner.Entity, stockpile, stockpile);
             }
         }
     }
 
-    private void SetProfession(IEntity villager, ResourceType resource, IEntity workplace, IEntity stockpile)
+    private void SetProfession
+    (
+        IEntity villager,
+        ResourceType resource,
+        IEntity workplace,
+        IEntity stockpile,
+        IEntity foodStockpile
+    )
     {
         IBehaviour<BehaviorContext> behaviorTree = FluentBuilder.Create<BehaviorContext>()
-            .Sequence("villager job sequence")
-                .Do("find nearest resource", FindNearestResource(resource))
-                .Do("move to nearest resource", MoveTo(null))
-                .Do("harvest resource", HarvestResource)
-                .Do("move to workplace", MoveTo(workplace))
-                .Do("start processing resources", StartResourceProcessing(workplace))
-                .Do("wait until resources are processed", WaitForResources(workplace))
-                .Do("move to stockpile", MoveTo(stockpile))
-                .Do("store items", StoreItems(stockpile))
+            .Selector("root")
+                .Sequence("hunger")
+                    .Condition("is hunger bellow threshold?", IsHungry)
+                    .Condition("is there food?", IsThereFood(foodStockpile))
+                    .Do("go to get food", MoveTo(foodStockpile))
+                    // We need to check again because an another villager could take the food in the meantime.
+                    .Condition("is there food?", IsThereFood(foodStockpile))
+                    .Do("get food", GetFood(foodStockpile))
+                    .Do("eat food", EatFood)
+                .End()
+
+                .Sequence("villager job sequence")
+                    .Do("find nearest resource", FindNearestResource(resource))
+                    .Do("move to nearest resource", MoveTo(null))
+                    .Do("harvest resource", HarvestResource)
+                    .Do("move to workplace", MoveTo(workplace))
+                    .Do("start processing resources", StartResourceProcessing(workplace))
+                    .Do("wait until resources are processed", WaitForResources(workplace))
+                    .Do("move to stockpile", MoveTo(stockpile))
+                    .Do("store items", StoreItems(stockpile))
+                .End()
             .End()
             .Build();
 
@@ -83,6 +102,46 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
     }
 
     #region behavior tree nodes
+    private static Func<BehaviorContext, bool> IsThereFood(IEntity foodStorage)
+    {
+        return (context) =>
+        {
+            ref Inventory inventory = ref foodStorage.GetComponent<Inventory>();
+
+            return inventory.Items.Has(ItemType.Food);
+        };
+    }
+    
+    private static BehaviourStatus EatFood(BehaviorContext context)
+    {
+        ref Inventory inventory = ref context.Entity.GetComponent<Inventory>();
+        ref Hunger hunger = ref context.Entity.GetComponent<Hunger>();
+
+        inventory.Items.Remove(ItemType.Food, 1);
+        hunger.Amount = 0.0f;
+
+        return BehaviourStatus.Succeeded;
+    }
+
+    private static Func<BehaviorContext, BehaviourStatus> GetFood(IEntity foodStockpile)
+    {
+        return (context) =>
+        {
+            ref Inventory stockpileInventory = ref foodStockpile.GetComponent<Inventory>();
+            ref Inventory inventory = ref context.Entity.GetComponent<Inventory>();
+
+            stockpileInventory.Items.TransferTo(ref inventory.Items, ItemType.Food, 1);
+            return BehaviourStatus.Succeeded;
+        };
+    }
+
+    private static bool IsHungry(BehaviorContext context)
+    {
+        ref Hunger hunger = ref context.Entity.GetComponent<Hunger>();
+
+        return hunger.Amount >= 60.0f;
+    }
+
     private static Func<BehaviorContext, BehaviourStatus> MoveTo(IEntity target)
     {
         return (context) =>

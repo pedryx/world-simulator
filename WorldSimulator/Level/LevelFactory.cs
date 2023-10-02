@@ -238,6 +238,11 @@ internal class LevelFactory
         {
             DamagePerSecond = 1.0f,
         });
+        entity.AddComponent(new Health()
+        {
+            Amount = 60.0f,
+        });
+        entity.AddComponent<Hunger>();
 
         return entity;
     }

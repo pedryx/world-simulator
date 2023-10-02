@@ -40,6 +40,7 @@ public class LevelState : GameState
             Game.Factory.CreateSystem(new ResourceProcessingSystem()),
             Game.Factory.CreateSystem(new VillagerSpawningSystem(LevelFactory, BehaviorTrees)),
             Game.Factory.CreateSystem(new VillageBuildingSystem(this)),
+            Game.Factory.CreateSystem(new HungerSystem()),
         };
     }
 

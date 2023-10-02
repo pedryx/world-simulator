@@ -152,7 +152,7 @@ internal class GameWorldGrid
     /// </summary>
     private IEnumerable<Vector2> GetNeighbors(Vector2 position)
     {
-        List<Vector2> neighbors = new List<Vector2>()
+        List<Vector2> neighbors = new()
         {
             position + Vector2.UnitX * -Distance,
             position + Vector2.UnitX * Distance,
