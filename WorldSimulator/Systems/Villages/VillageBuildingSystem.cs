@@ -62,7 +62,7 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
             new BuildOrderItem(new ItemCollection(10, 5), levelFactory.CreateSmithy),
         };
         buildLoopInitialCost = new ItemCollection(15, 10, 5);
-        buildLoopInitialCost = new ItemCollection(5, 5, 5);
+        buildLoopIncreaseCost = new ItemCollection(5, 5, 5);
         buildLoop = new List<Func<Vector2, IEntity, IEntity>>()
         {
             levelFactory.CreateWoodcutterHut,
@@ -112,7 +112,7 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
                 return true;
             }
         }
-        if (inventory.Items.Contains(buildOrder[village.BuildOrderIndex].Items))
+        else if (inventory.Items.Contains(buildOrder[village.BuildOrderIndex].Items))
         {
             inventory.Items.Remove(buildOrder[village.BuildOrderIndex].Items);
             buildOrder[village.BuildOrderIndex].BuildMethod(GetBuildingPosition(ref village), owner.Entity);

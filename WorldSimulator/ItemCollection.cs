@@ -123,8 +123,7 @@ internal readonly struct ItemCollection
     {
         for (int i = 0; i < quantities.Length; i++)
         {
-            // TODO: fix bug where this assert triggers (caused sometimes when new building should be build)
-            Debug.Assert(quantities[i] <= items.quantities[i]);
+            Debug.Assert(quantities[i] >= items.quantities[i]);
 
             quantities[i] -= items.quantities[i];
         }

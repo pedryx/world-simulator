@@ -75,12 +75,17 @@ internal class GameWorldGrid
         cameFrom[gridStart] = null;
         cost[gridStart] = 0.0f;
 
+        bool reached = false;
+
         while (frontier.Any())
         {
             Vector2 current = frontier.Dequeue().Position;
 
             if (current == gridEnd)
+            {
+                reached = true;
                 break;
+            }
 
             foreach (var neighbor in GetNeighbors(current))
             {
@@ -93,6 +98,10 @@ internal class GameWorldGrid
                 }
             }
         }
+
+        // Target is unreachable, go for it and pray user dont notice.
+        if (!reached)
+            return new Vector2[] { start, end };
 
         if (frontier.Count == 0)
             return Array.Empty<Vector2>();
@@ -143,19 +152,21 @@ internal class GameWorldGrid
     /// </summary>
     private IEnumerable<Vector2> GetNeighbors(Vector2 position)
     {
-        List<Vector2> neighbors = new();
+        List<Vector2> neighbors = new List<Vector2>()
+        {
+            position + Vector2.UnitX * -Distance,
+            position + Vector2.UnitX * Distance,
+            position + Vector2.UnitY * -Distance,
+            position + Vector2.UnitY * Distance,
+        };
 
-        Vector2 left = position + Vector2.UnitX * -Distance;
-        Vector2 right = position + Vector2.UnitX * Distance;
-        Vector2 top = position + Vector2.UnitY * -Distance;
-        Vector2 down = position + Vector2.UnitY * Distance;
-
-        if (gameWorld.IsWalkable(left)) neighbors.Add(left);
-        if (gameWorld.IsWalkable(right)) neighbors.Add(right);
-        if (gameWorld.IsWalkable(top)) neighbors.Add(top);
-        if (gameWorld.IsWalkable(down)) neighbors.Add(down);
-
-        return neighbors;
+        foreach (Vector2 neighbor in neighbors)
+        {
+            if (gameWorld.IsWalkable(neighbor))
+            {
+                yield return neighbor;
+            }
+        }
     }
 
     /// <summary>
