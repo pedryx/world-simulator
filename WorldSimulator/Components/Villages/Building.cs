@@ -1,6 +1,7 @@
 ﻿using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components.Villages;
+[Component]
 internal struct Building
 {
     public IEntity Village;

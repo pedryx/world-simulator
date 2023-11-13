@@ -4,6 +4,7 @@ namespace WorldSimulator.Components.Villages;
 /// <summary>
 /// Entities with this component will periodically spawn a villager. Only one villager can be spawned at a time.
 /// </summary>
+[Component]
 internal struct VillagerSpawner
 {
     /// <summary>
