@@ -11,7 +11,9 @@ internal readonly struct DeathSystem : IEntityProcessor<Health, Owner>
     {
         if (health.Amount < 0.0f)
         {
-            if (health.DamageSource != null && health.DamageSource.HasComponent<Inventory>())
+            if (health.DamageSource != null &&
+                !health.DamageSource.IsDestroyed() &&
+                health.DamageSource.HasComponent<Inventory>())
             {
                 ref Inventory attackerInventory = ref health.DamageSource.GetComponent<Inventory>();
 
