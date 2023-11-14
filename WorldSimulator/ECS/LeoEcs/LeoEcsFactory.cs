@@ -11,7 +11,7 @@ public class LeoEcsFactory : ECSFactory
             typeof(LeoEcsSystem<,>),
             typeof(LeoEcsSystem<,,>),
             typeof(LeoEcsSystem<,,,>),
-            typeof(LeoEcsSystem<,,,>)
+            typeof(LeoEcsSystem<,,,,>)
         ) { }
 
     public override IEntity CreateEntity(IECSWorld world)
