@@ -57,6 +57,7 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
 
         buildOrder = new List<BuildOrderItem>()
         {
+            new BuildOrderItem(new ItemCollection(), levelFactory.CreateWoodcutterHut),
             new BuildOrderItem(new ItemCollection(5), levelFactory.CreateHunterHut),
             new BuildOrderItem(new ItemCollection(5), levelFactory.CreateMinerHut),
             new BuildOrderItem(new ItemCollection(10, 5), levelFactory.CreateSmithy),
@@ -74,7 +75,7 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
 
     public void Process(ref Location location, ref Village village, ref Owner owner, float deltaTime)
     {
-        while (TryBuild(ref location, ref village, ref owner)) ;
+        TryBuild(ref location, ref village, ref owner);
     }
 
     /// <summary>
@@ -85,14 +86,18 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
     /// <param name="village">Village's village component.</param>
     /// <param name="owner">Village's owner component.</param>
     /// <returns></returns>
-    private bool TryBuild(ref Location location, ref Village village, ref Owner owner)
+    private void TryBuild(ref Location location, ref Village village, ref Owner owner)
     {
         if (village.MainBuilding == null)
         {
             levelFactory.CreateMainBuilding(location.Position, owner.Entity);
+            return;
+        }
+
+        if (village.Stockpile == null)
+        {
             levelFactory.CreateStockpile(GetBuildingPosition(ref village), owner.Entity);
-            levelFactory.CreateWoodcutterHut(GetBuildingPosition(ref village), owner.Entity);
-            return true;
+            return;
         }
 
         ref Inventory inventory = ref village.Stockpile.GetComponent<Inventory>();
@@ -109,7 +114,6 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
                     owner.Entity
                 );
                 village.BuildOrderIndex++;
-                return true;
             }
         }
         else if (inventory.Items.Contains(buildOrder[village.BuildOrderIndex].Items))
@@ -117,10 +121,7 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
             inventory.Items.Remove(buildOrder[village.BuildOrderIndex].Items);
             buildOrder[village.BuildOrderIndex].BuildMethod(GetBuildingPosition(ref village), owner.Entity);
             village.BuildOrderIndex++;
-            return true;
         }
-
-        return false;
     }
 
     /// <summary>

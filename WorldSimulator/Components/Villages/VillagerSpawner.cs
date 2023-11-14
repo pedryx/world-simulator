@@ -20,6 +20,10 @@ internal struct VillagerSpawner
     /// </summary>
     public IEntity Village;
     public VillagerProfession Profession;
+    /// <summary>
+    /// Determine if villager has been spawned during last game loop iteration.
+    /// </summary>
+    public bool JustSpawned;
 
     public VillagerSpawner() { }
 }

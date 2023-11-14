@@ -1,10 +1,20 @@
 ﻿using HypEcs;
 
+using System.Collections.Generic;
+
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.HypEcs;
 public class HypEcsFactory : ECSFactory
 {
+    private readonly List<HypEcsEntity> entities = new();
+
+    internal void AddEntity(HypEcsEntity entity)
+        => entities.Add(entity);
+
+    internal void RemoveEntity(HypEcsEntity entity)
+        => entities.Remove(entity);
+
     public HypEcsFactory()
         : base
         (
@@ -18,9 +28,19 @@ public class HypEcsFactory : ECSFactory
     {
         World world = ((BasicECSWorld<World>)worldWrapper).World;
 
-        return new HypEcsEntity(world.Spawn().Id(), world);
+        return new HypEcsEntity(world.Spawn().Id(), world, this);
     }
 
-    public override IECSWorld CreateWorld() 
-        => new BasicECSWorld<World>(new World(), world => world.Tick());
+    public override IECSWorld CreateWorld()
+    {
+        return new BasicECSWorld<World>(new World(), world =>
+        {
+            foreach (var entity in entities)
+            {
+                entity.Update();
+            }
+
+            world.Tick();
+        });
+    }
 }

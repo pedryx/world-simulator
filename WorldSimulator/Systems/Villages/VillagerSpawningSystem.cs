@@ -33,6 +33,24 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
 
     public void Process(ref Location location, ref VillagerSpawner villagerSpawner, ref Owner owner, float deltaTime)
     {
+        if (villagerSpawner.JustSpawned)
+        {
+            villagerSpawner.JustSpawned = false;
+
+            IEntity stockpile = villagerSpawner.Village.GetComponent<Village>().Stockpile;
+            ResourceType resource = villagerSpawner.Profession switch
+            {
+                VillagerProfession.Woodcutter => ResourceType.Tree,
+                VillagerProfession.StoneMiner => ResourceType.Rock,
+                VillagerProfession.IronMiner => ResourceType.Deposit,
+                VillagerProfession.Hunter => ResourceType.Deer,
+
+                _ => throw new InvalidOperationException("Unsupported villager profession."),
+            };
+
+            SetProfession(villagerSpawner.Villager, resource, owner.Entity, stockpile, stockpile);
+        }
+
         if (villagerSpawner.Villager == null || villagerSpawner.Villager.IsDestroyed())
         {
             villagerSpawner.Elapsed += deltaTime;
@@ -48,18 +66,7 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
                 );
                 villagerSpawner.Villager = villager;
 
-                IEntity stockpile = villagerSpawner.Village.GetComponent<Village>().Stockpile;
-                ResourceType resource = villagerSpawner.Profession switch
-                {
-                    VillagerProfession.Woodcutter => ResourceType.Tree,
-                    VillagerProfession.StoneMiner => ResourceType.Rock,
-                    VillagerProfession.IronMiner => ResourceType.Deposit,
-                    VillagerProfession.Hunter => ResourceType.Deer,
-
-                    _ => throw new InvalidOperationException("Unsupported villager profession."),
-                };
-
-                SetProfession(villager, resource, owner.Entity, stockpile, stockpile);
+                villagerSpawner.JustSpawned = true;
             }
         }
     }
