@@ -224,7 +224,7 @@ internal class LevelFactory
         entity.AddComponent(new Movement()
         {
             Destination = position,
-            Speed = 60.0f,
+            Speed = 120.0f,
         });
         entity.AddComponent<Behavior>();
         entity.AddComponent<VillagerBehavior>();
