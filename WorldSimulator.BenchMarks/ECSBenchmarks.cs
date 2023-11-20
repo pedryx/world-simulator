@@ -29,11 +29,11 @@ public class ECSBenchmarks
     /// <summary>
     /// Number of iterations for which will game run during iteration setup.
     /// </summary>
-    private const int setupIterationCount = 10 * 60; // ~10 seconds
+    private const int setupIterationCount = 30 * 60; // ~30 seconds
     /// <summary>
     /// Number of iterations for which will game run during benchmark.
     /// </summary>
-    private const int benchmarkIterationCount = 30 * 60; // ~30 seconds
+    private const int benchmarkIterationCount = 1 * 60 * 60; // ~1 minute
 
     private Game game;
     private TimeSpan elapsedTimeSpan;
