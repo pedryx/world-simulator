@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
 using System.Diagnostics;
 
 using WorldSimulator.Components;
@@ -24,18 +23,19 @@ internal class LevelFactory
     }
 
     #region Resources
-    private IEntity CreateBasicResource(Vector2 position, string textureName, float scale, ResourceType resource)
+    private IEntity CreateBasicResource(Vector2 position, string textureName, float scale, ResourceType type)
     {
         IEntity entity = CreateBasicEntity(position, textureName, scale);
 
         entity.AddComponent(new Health()
         {
-            Amount = resource.HarvestTime
+            Amount = type.HarvestTime
         });
         entity.AddComponent(new ItemDrop()
         {
-            Items = new ItemCollection(resource.HarvestItem, resource.HarvestQuantity),
+            Items = new ItemCollection(type.HarvestItem, type.HarvestQuantity),
         });
+        entity.AddComponent(new Resource(type));
 
         return entity;
     }

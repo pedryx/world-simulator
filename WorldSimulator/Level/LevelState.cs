@@ -36,7 +36,7 @@ public class LevelState : GameState
             Game.Factory.CreateSystem(new BehaviorSystem(GameWorld, BehaviorTrees)),
             Game.Factory.CreateSystem(new PathFollowSystem()),
             Game.Factory.CreateSystem(new DamageSystem()),
-            Game.Factory.CreateSystem(new DeathSystem()),
+            Game.Factory.CreateSystem(new DeathSystem(GameWorld)),
             Game.Factory.CreateSystem(new ResourceProcessingSystem()),
             Game.Factory.CreateSystem(new VillagerSpawningSystem(LevelFactory, BehaviorTrees)),
             Game.Factory.CreateSystem(new VillageBuildingSystem(this)),

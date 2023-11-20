@@ -147,7 +147,7 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
             Vector2 position = random.NextPointInRing(center, minBuildDistance, maxBuildDistance);
 
             var query = buildingPositions.Where(p => Vector2.DistanceSquared(p, position) < minDistanceSquared);
-            if (!query.Any() && gameWorld.GetTerrain(position).Buildable)
+            if (!query.Any() && gameWorld.IsBuildable(position))
             {
                 return position;
             }
