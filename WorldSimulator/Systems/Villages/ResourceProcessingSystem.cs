@@ -1,10 +1,13 @@
-﻿using WorldSimulator.Components;
+﻿using System.Runtime.CompilerServices;
+
+using WorldSimulator.Components;
 using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems.Villaages;
 internal readonly struct ResourceProcessingSystem : IEntityProcessor<Inventory, ResourceProcessor>
 {
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Inventory inventory, ref ResourceProcessor processor, float deltaTime)
     {
         if (processor.Processing)

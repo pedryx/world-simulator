@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 
 using System;
+using System.Runtime.CompilerServices;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
@@ -47,6 +48,7 @@ internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movem
         destinationRandom = new Random(game.GenerateSeed());
     }
 
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process
     (
         ref Location location,

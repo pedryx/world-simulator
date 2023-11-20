@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using WorldSimulator.Components;
 using WorldSimulator.Components.Villages;
@@ -73,6 +74,7 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
         };
     }
 
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Location location, ref Village village, ref Owner owner, float deltaTime)
     {
         TryBuild(ref location, ref village, ref owner);

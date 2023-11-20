@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 using WorldSimulator.ECS.AbstractECS;
-using WorldSimulator.Level;
 using WorldSimulator.ResourceManagers;
 
 using MonoGameBaseGame = Microsoft.Xna.Framework.Game;
@@ -16,6 +16,8 @@ namespace WorldSimulator;
 /// </summary>
 public class Game : MonoGameBaseGame
 {
+    public const MethodImplOptions EntityProcessorInline = 0;
+
     private const int defaultResolutionWidth = 1920;
     private const int defaultResolutionHeight = 1080;
     private const int initialResolutionWidth = 1280;

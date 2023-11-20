@@ -1,9 +1,12 @@
-﻿using WorldSimulator.Components;
+﻿using System.Runtime.CompilerServices;
+
+using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems;
 internal readonly struct DamageSystem : IEntityProcessor<DamageDealer, Owner>
 {
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref DamageDealer damageDealer, ref Owner owner, float deltaTime)
     {
         if (damageDealer.Target != null && !damageDealer.Target.IsDestroyed())

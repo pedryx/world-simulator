@@ -1,8 +1,10 @@
-﻿using WorldSimulator.Components;
+﻿using System.Runtime.CompilerServices;
+
+using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems;
-internal struct HungerSystem : IEntityProcessor<Health, Hunger>
+internal readonly struct HungerSystem : IEntityProcessor<Health, Hunger>
 {
     /// <summary>
     /// Increase rate of hunger (per second).
@@ -17,6 +19,7 @@ internal struct HungerSystem : IEntityProcessor<Health, Hunger>
     /// </summary>
     private const float starvationThreshold = 120.0f;
 
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Health health, ref Hunger hunger, float deltaTime)
     {
         hunger.Amount += hungerRate * deltaTime;

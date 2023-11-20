@@ -1,5 +1,7 @@
 ﻿using BehaviourTree;
 
+using System.Runtime.CompilerServices;
+
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Level;
@@ -19,6 +21,7 @@ internal readonly struct BehaviorSystem : IEntityProcessor<Behavior, Owner>
         this.behaviorTrees = behaviorTrees;
     }
 
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Behavior behavior, ref Owner owner, float deltaTime)
     {
         if (behavior.BehaviorTreeIndex == -1)

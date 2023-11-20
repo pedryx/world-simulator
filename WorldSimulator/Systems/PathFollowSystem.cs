@@ -1,10 +1,13 @@
-﻿using WorldSimulator.Components;
+﻿using System.Runtime.CompilerServices;
+
+using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 
 namespace WorldSimulator.Systems;
-internal struct PathFollowSystem : IEntityProcessor<Location, Movement, PathFollow>
+internal readonly struct PathFollowSystem : IEntityProcessor<Location, Movement, PathFollow>
 {
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Location location, ref Movement movement, ref PathFollow pathFollow, float deltaTime)
     {
         if (pathFollow.PathIndex == pathFollow.Path.Length)

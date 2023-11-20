@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
+using System.Runtime.CompilerServices;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
@@ -12,6 +13,7 @@ namespace WorldSimulator.Systems;
 /// </summary>
 internal readonly struct OrientationUpdateSystem : IEntityProcessor<Location, Movement, Appearance>
 {
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Location location, ref Movement movement, ref Appearance appearance, float deltaTime)
     {
         Vector2 direction = movement.Destination - location.Position;

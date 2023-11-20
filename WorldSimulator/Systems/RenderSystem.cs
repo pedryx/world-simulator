@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using System.Runtime.CompilerServices;
+
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
@@ -49,6 +51,7 @@ internal readonly struct RenderSystem : IEntityProcessor<Location, Appearance>
         );
     }
 
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Location location, ref Appearance appearance, float deltaTime)
     {
         // Calculate bounds for camera view and entity.

@@ -4,6 +4,7 @@ using BehaviourTree.FluentBuilder;
 using Microsoft.Xna.Framework;
 
 using System;
+using System.Runtime.CompilerServices;
 
 using WorldSimulator.Components;
 using WorldSimulator.Components.Villages;
@@ -31,6 +32,7 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
         this.behaviorTrees = behaviorTrees;
     }
 
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Location location, ref VillagerSpawner villagerSpawner, ref Owner owner, float deltaTime)
     {
         if (villagerSpawner.JustSpawned)

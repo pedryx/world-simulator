@@ -1,4 +1,6 @@
-﻿using WorldSimulator.Components;
+﻿using System.Runtime.CompilerServices;
+
+using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Systems;
@@ -7,6 +9,7 @@ namespace WorldSimulator.Systems;
 /// </summary>
 internal readonly struct DeathSystem : IEntityProcessor<Health, Owner>
 {
+    [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Health health, ref Owner owner, float deltaTime)
     {
         if (health.Amount < 0.0f)
