@@ -1,11 +1,11 @@
 ﻿namespace WorldSimulator;
 /// <summary>
-/// Represent a type of natural resource, which can be harvested to obtain resources.
+/// Represent a type of a natural resource, which can be harvested to obtain items.
 /// </summary>
 internal sealed class ResourceType : GlobalInstances<ResourceType>
 {
     /// <summary>
-    /// The item obtained upon harvesting resource.
+    /// The item obtained upon harvesting the resource.
     /// </summary>
     public ItemType HarvestItem { get; init; }
     /// <summary>
@@ -13,7 +13,7 @@ internal sealed class ResourceType : GlobalInstances<ResourceType>
     /// </summary>
     public int HarvestQuantity { get; init; }
     /// <summary>
-    /// Time it takes to harvest the resource in seconds.
+    /// How much time it takes to harvest the resource in seconds.
     /// </summary>
     public float HarvestTime { get; init; }
 

@@ -144,7 +144,7 @@ internal class GameWorld
         {
             Vector2 position = start + direction * i;
 
-            if (!GetTerrain(position).Walkable)
+            if (!GetTerrain(position).CanWalk)
                 return false;
         }
 
@@ -172,17 +172,17 @@ internal class GameWorld
     /// <summary>
     /// Determine if a terrain is walkable at a specified position.
     /// </summary>
-    public bool IsWalkable(Vector2 position)
+    public bool CanWalkAt(Vector2 position)
     {
         TerrainType terrain = GetTerrain(position);
 
-        return terrain != null && terrain.Walkable;
+        return terrain != null && terrain.CanWalk;
     }
 
-    public bool IsBuildable(Vector2 position)
+    public bool CanBuildAt(Vector2 position)
     {
         TerrainType terrain = GetTerrain(position);
 
-        return terrain != null && terrain.Buildable;
+        return terrain != null && terrain.CanBuild;
     }
 }

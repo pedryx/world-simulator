@@ -162,7 +162,7 @@ internal class GameWorldGrid
 
         foreach (Vector2 neighbor in neighbors)
         {
-            if (gameWorld.IsWalkable(neighbor))
+            if (gameWorld.CanWalkAt(neighbor))
             {
                 yield return neighbor;
             }

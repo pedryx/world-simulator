@@ -12,14 +12,24 @@ using WorldSimulator.UI.Elements;
 namespace WorldSimulator.Level;
 public class LevelState : GameState
 {
+    private readonly bool regenerateWorld;
+
     internal LevelFactory LevelFactory { get; private set; }
     internal GameWorld GameWorld { get; private set; }
     internal BehaviorTrees BehaviorTrees { get; private init; } = new();
 
+    /// <param name="regenerateWorld">
+    /// Determine if world should be regenerated (new terrain + new positions of resources).
+    /// </param>
+    public LevelState(bool regenerateWorld)
+    {
+        this.regenerateWorld = regenerateWorld;
+    }
+
     protected override void CreateEntities()
     {
         LevelFactory = new LevelFactory(Game, this);
-        GameWorldGenerator worldGenerator = new(Game, LevelFactory);
+        GameWorldGenerator worldGenerator = new(Game, LevelFactory, regenerateWorld);
         Camera.Position = GameWorld.Size.ToVector2() / 2.0f;
 
         GameWorld = worldGenerator.Generate();

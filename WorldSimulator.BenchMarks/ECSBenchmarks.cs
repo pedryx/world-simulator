@@ -55,7 +55,7 @@ public class ECSBenchmarks
         ECSFactory ecsFactory = (ECSFactory)Activator.CreateInstance(ECSFactoryType);
 
         game = new Game(ecsFactory, seed);
-        game.SwitchState(new LevelState());
+        game.SwitchState(new LevelState(true));
         game.RunOneFrame();
 
         elapsedTimeSpan = TimeSpan.FromSeconds(0.0);

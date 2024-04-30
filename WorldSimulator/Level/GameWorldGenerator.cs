@@ -15,10 +15,16 @@ internal class GameWorldGenerator
     private const int shaderThreadGroupSize = 1024;
     private const int villageJitterSize = 2048;
 
+    /// <summary>
+    /// Global world data which can be reused by different instances of <see cref="Game"/>.
+    /// </summary>
+    private static GameWorldData globalWorldData;
+
     private readonly Effect terrainGenShader;
     private readonly GraphicsDevice graphicsDevice;
     private readonly Game game;
-    private readonly LevelFactory factory;
+    private readonly LevelFactory levelFactory;
+    private readonly bool useGlobalWorldData;
 
     /// <summary>
     /// Positions where resources will be spawned.
@@ -27,10 +33,15 @@ internal class GameWorldGenerator
         
     private GameWorld gameWorld;
 
-    public GameWorldGenerator(Game game, LevelFactory levelFactory)
+    /// <param name="useGlobalWorldData">
+    /// Determine if generator should use global world data. If no global world data yet exist, generator will generate
+    /// them.
+    /// </param>
+    public GameWorldGenerator(Game game, LevelFactory levelFactory, bool useGlobalWorldData)
     {
-        this.factory = levelFactory;
+        this.levelFactory = levelFactory;
         this.game = game;
+        this.useGlobalWorldData = useGlobalWorldData;
 
         terrainGenShader = game.GetResourceManager<Effect>()[GameWorld.TerrainGenShader];
         graphicsDevice = game.GraphicsDevice;
@@ -50,6 +61,13 @@ internal class GameWorldGenerator
 
     private void GenerateTerrain()
     {
+        if (globalWorldData != null && useGlobalWorldData) 
+        {
+            gameWorld = new GameWorld(globalWorldData.TerrainData);
+            resourcePositions = globalWorldData.ResourcePositions;
+            return;
+        }
+
         StructuredBuffer terrainBuffer = new
         (
             graphicsDevice,
@@ -93,6 +111,8 @@ internal class GameWorldGenerator
 
         resourcePositions = new Vector2[size[0]];
         resourceBuffer.GetData(resourcePositions);
+
+        globalWorldData = new GameWorldData(terrains, resourcePositions);
     }
 
     private void SpawnResources()
@@ -108,13 +128,13 @@ internal class GameWorldGenerator
 
             IEntity entity = null;
             if (resourceType == ResourceType.Tree)
-                entity = factory.CreateTree(position);
+                entity = levelFactory.CreateTree(position);
             else if (resourceType == ResourceType.Rock)
-                entity = factory.CreateRock(position);
+                entity = levelFactory.CreateRock(position);
             else if (resourceType == ResourceType.Deposit)
-                entity = factory.CreateDeposit(position);
+                entity = levelFactory.CreateDeposit(position);
             else if (resourceType == ResourceType.Deer)
-                entity = factory.CreateDeer(position);
+                entity = levelFactory.CreateDeer(position);
             else
                 throw new InvalidOperationException("Resource type not supported!");
 
@@ -143,11 +163,11 @@ internal class GameWorldGenerator
                         random.NextSingle(y, y + villageJitterSize)
                     );
 
-                    if (gameWorld.GetTerrain(position).Buildable)
+                    if (gameWorld.GetTerrain(position).CanBuild)
                         break;
                 }
 
-                factory.CreateVillage(position);
+                levelFactory.CreateVillage(position);
             }
         }
     }
