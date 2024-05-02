@@ -23,4 +23,10 @@
 	</Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ECS\LeoEcsLite\" />
+    <Folder Include="ECS\MonoGameExtendedEntities\" />
+    <Folder Include="ECS\RelEcs\" />
+  </ItemGroup>
+
 </Project>

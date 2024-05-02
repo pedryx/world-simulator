@@ -4,7 +4,7 @@ using Leopotam.Ecs;
 
 using WorldSimulator.ECS.AbstractECS;
 
-namespace WorldSimulator.ECS.LeoEcs;
+namespace WorldSimulator.ECS.LeoECS;
 internal class LeoEcsSystem<TEntityProcessor, TComponent> : IECSSystem, IEcsSystem
     where TEntityProcessor : IEntityProcessor<TComponent>
     where TComponent : struct

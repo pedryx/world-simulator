@@ -2,10 +2,10 @@
 
 using WorldSimulator.ECS.AbstractECS;
 
-namespace WorldSimulator.ECS.LeoEcs;
-public class LeoEcsFactory : ECSFactory
+namespace WorldSimulator.ECS.LeoECS;
+public class LeoECSFactory : ECSFactory
 {
-    public LeoEcsFactory()
+    public LeoECSFactory()
         : base
         (
             typeof(LeoEcsSystem<,>),
@@ -15,7 +15,7 @@ public class LeoEcsFactory : ECSFactory
         ) { }
 
     public override IEntity CreateEntity(IECSWorld world)
-        => new LeoEcsEntity(((BasicECSWorld<EcsWorld>)world).World.NewEntity());
+        => new LeoECSEntity(((BasicECSWorld<EcsWorld>)world).World.NewEntity());
 
     public override IECSWorld CreateWorld()
         => new BasicECSWorld<EcsWorld>(new EcsWorld());

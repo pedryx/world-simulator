@@ -2,12 +2,12 @@
 
 using WorldSimulator.ECS.AbstractECS;
 
-namespace WorldSimulator.ECS.LeoEcs;
-internal class LeoEcsEntity : IEntity
+namespace WorldSimulator.ECS.LeoECS;
+internal class LeoECSEntity : IEntity
 {
     public EcsEntity Entity { get; private set; }
 
-    public LeoEcsEntity(EcsEntity entity)
+    public LeoECSEntity(EcsEntity entity)
     {
         Entity = entity;
     }

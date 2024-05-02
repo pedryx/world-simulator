@@ -9,7 +9,7 @@ using WorldSimulator.ECS.Arch;
 using WorldSimulator.ECS.DefaultEcs;
 using WorldSimulator.ECS.Entitas;
 using WorldSimulator.ECS.HypEcs;
-using WorldSimulator.ECS.LeoEcs;
+using WorldSimulator.ECS.LeoECS;
 using WorldSimulator.Level;
 
 namespace WorldSimulator.Benchmarks;
@@ -45,7 +45,7 @@ public class ECSBenchmarks
         typeof(DefaultEcsFactory),
         typeof(EntitasFactory),
         typeof(HypEcsFactory),
-        typeof(LeoEcsFactory)
+        typeof(LeoECSFactory)
     )]
     public Type ECSFactoryType { get; set; }
 
