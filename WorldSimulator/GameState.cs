@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.UI;
@@ -60,12 +59,13 @@ public abstract class GameState
 
     internal void Update(float deltaTime)
     {
+        ECSWorld.Update();
+
         foreach (var system in systems)
         {
             system.Update(deltaTime);
         }
 
-        ECSWorld.Update();
         UILayer.Update(deltaTime);
     }
 
