@@ -6,7 +6,7 @@ namespace WorldSimulator.ECS.LeoEcsLite;
 /// <summary>
 /// https://github.com/Leopotam/ecslite
 /// </summary>
-internal class LeoEcsLiteFactory : ECSFactory
+public class LeoEcsLiteFactory : ECSFactory
 {
     public LeoEcsLiteFactory() 
         : base
