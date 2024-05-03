@@ -11,7 +11,7 @@ using WorldSimulator.ECS.RelEcs;
 using WorldSimulator.Level;
 
 const int seed = 0;
-ECSFactory factory = new RelEcsFactory();
+ECSFactory factory = new ArchFactory();
 
 Game game = new(factory, seed);
 game.SwitchState(new LevelState(true));
