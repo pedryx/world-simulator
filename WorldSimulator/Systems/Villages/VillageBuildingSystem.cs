@@ -58,10 +58,10 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
 
         buildOrder = new List<BuildOrderItem>()
         {
-            new BuildOrderItem(new ItemCollection(), levelFactory.CreateWoodcutterHut),
-            new BuildOrderItem(new ItemCollection(5), levelFactory.CreateHunterHut),
-            new BuildOrderItem(new ItemCollection(5), levelFactory.CreateMinerHut),
-            new BuildOrderItem(new ItemCollection(10, 5), levelFactory.CreateSmithy),
+            new(new ItemCollection(), levelFactory.CreateWoodcutterHut),
+            new(new ItemCollection(5), levelFactory.CreateHunterHut),
+            new(new ItemCollection(5), levelFactory.CreateMinerHut),
+            new(new ItemCollection(10, 5), levelFactory.CreateSmithy),
         };
         buildLoopInitialCost = new ItemCollection(15, 10, 5);
         buildLoopIncreaseCost = new ItemCollection(5, 5, 5);
