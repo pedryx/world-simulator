@@ -12,10 +12,10 @@
     <PackageReference Include="BehaviourTree" Version="1.0.73" />
     <PackageReference Include="DefaultEcs" Version="0.17.2" />
     <PackageReference Include="Entitas" Version="1.14.2" />
-    <PackageReference Include="Friflo.Engine.ECS" Version="1.28.0" />
     <PackageReference Include="HypEcs" Version="1.2.1" />
     <PackageReference Include="KdTree" Version="1.4.1" />
     <PackageReference Include="Leopotam.Ecs" Version="1.0.1" />
+    <PackageReference Include="Leopotam.EcsLite" Version="1.0.1" />
     <PackageReference Include="MonoGame.Framework.Compute.DesktopGL" Version="3.8.2" />
     <PackageReference Include="OptimizedPriorityQueue" Version="5.1.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ECS\LeoEcsLite\" />
     <Folder Include="ECS\MonoGameExtendedEntities\" />
     <Folder Include="ECS\RelEcs\" />
   </ItemGroup>
