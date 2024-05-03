@@ -3,6 +3,9 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.MonoGameExtendedEntities;
+/// <summary>
+/// https://github.com/craftworkgames/MonoGame.Extended
+/// </summary>
 internal class MonoGameExtendedFactory : ECSFactory
 {
     public MonoGameExtendedFactory() 

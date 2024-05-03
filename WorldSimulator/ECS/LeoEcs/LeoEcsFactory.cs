@@ -3,6 +3,9 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.LeoECS;
+/// <summary>
+/// https://github.com/Leopotam/ecs
+/// </summary>
 public class LeoECSFactory : ECSFactory
 {
     public LeoECSFactory()

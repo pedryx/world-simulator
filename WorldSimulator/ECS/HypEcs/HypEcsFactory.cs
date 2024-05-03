@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.HypEcs;
+/// <summary>
+/// https://github.com/Byteron/HypEcs
+/// </summary>
 public class HypEcsFactory : ECSFactory
 {
     private readonly List<HypEcsEntity> entities = new();

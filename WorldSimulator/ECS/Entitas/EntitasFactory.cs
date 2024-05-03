@@ -3,6 +3,9 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.Entitas;
+/// <summary>
+/// https://github.com/sschmid/Entitas
+/// </summary>
 public class EntitasFactory : ECSFactory
 {
     public EntitasFactory()

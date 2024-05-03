@@ -3,7 +3,9 @@
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.ECS.RelEcs;
-// https://github.com/Byteron/RelEcs
+/// <summary>
+/// https://github.com/Byteron/RelEcs
+/// </summary>
 internal class RelEcsFactory : ECSFactory
 {
     public RelEcsFactory() 
