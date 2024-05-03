@@ -7,10 +7,11 @@ using WorldSimulator.ECS.HypEcs;
 using WorldSimulator.ECS.LeoECS;
 using WorldSimulator.ECS.LeoEcsLite;
 using WorldSimulator.ECS.MonoGameExtendedEntities;
+using WorldSimulator.ECS.RelEcs;
 using WorldSimulator.Level;
 
 const int seed = 0;
-ECSFactory factory = new MonoGameExtendedFactory();
+ECSFactory factory = new RelEcsFactory();
 
 Game game = new(factory, seed);
 game.SwitchState(new LevelState(true));
