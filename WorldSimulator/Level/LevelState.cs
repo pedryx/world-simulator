@@ -58,7 +58,7 @@ public class LevelState : GameState
     {
         return new List<IECSSystem>()
         {
-            new TerrainRenderSystem(Game, Camera),
+            new TerrainRenderSystem(this),
             Game.Factory.CreateSystem(new OrientationUpdateSystem()),
             Game.Factory.CreateSystem(new RenderSystem(Game, Camera)),
         };

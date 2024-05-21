@@ -63,7 +63,7 @@ internal class GameWorldGenerator
     {
         if (globalWorldData != null && useGlobalWorldData) 
         {
-            gameWorld = new GameWorld(globalWorldData.TerrainData);
+            gameWorld = new GameWorld(globalWorldData.TerrainData, globalWorldData.Seed);
             resourcePositions = globalWorldData.ResourcePositions;
             return;
         }
@@ -93,6 +93,9 @@ internal class GameWorldGenerator
             ShaderAccess.None
         );
 
+        int seed = game.GenerateSeed();
+
+        terrainGenShader.Parameters["seed"].SetValue(seed);
         terrainGenShader.Parameters["worldSize"].SetValue(GameWorld.Size.ToVector2());
         terrainGenShader.Parameters["gridDistance"].SetValue(GameWorldGrid.Distance);
         terrainGenShader.Parameters["terrainBuffer"].SetValue(terrainBuffer);
@@ -104,7 +107,7 @@ internal class GameWorldGenerator
 
         int[] terrains = new int[terrainBuffer.ElementCount];
         terrainBuffer.GetData(terrains);
-        gameWorld = new GameWorld(terrains);
+        gameWorld = new GameWorld(terrains, seed);
 
         int[] size = new int[sizeBuffer.ElementCount];
         sizeBuffer.GetData(size);
@@ -112,7 +115,7 @@ internal class GameWorldGenerator
         resourcePositions = new Vector2[size[0]];
         resourceBuffer.GetData(resourcePositions);
 
-        globalWorldData = new GameWorldData(terrains, resourcePositions);
+        globalWorldData = new GameWorldData(terrains, resourcePositions, seed);
     }
 
     private void SpawnResources()

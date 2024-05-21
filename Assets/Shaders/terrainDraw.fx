@@ -11,6 +11,8 @@ extern float2 texOrigin;
 extern float scale;
 extern float2 offset;
 
+extern int seed;
+
 float4 MainPS(float4 screenPos : SV_Position) : SV_Target
 {
     // in HLSL origin is at bottom-left and y+ goes up
@@ -34,7 +36,7 @@ float4 MainPS(float4 screenPos : SV_Position) : SV_Target
         return float4(terrains[0].color, 1.0);
     }
 
-    float height = CalcNoise(noisePos);
+    float height = CalcNoise(noisePos, seed);
 
     return float4(GetTerrain(height).color, 1.0);
 }

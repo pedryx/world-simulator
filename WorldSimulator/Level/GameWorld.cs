@@ -35,6 +35,8 @@ internal class GameWorld
     /// </summary>
     public static readonly int TotalSize = Size.X * Size.Y;
 
+    public int Seed { get; }
+
     /// <summary>
     /// Contain the ID of a terrain type for each grid point.
     /// </summary>
@@ -46,7 +48,7 @@ internal class GameWorld
     private readonly GameWorldGrid grid;
 
     /// <param name="terrains">Contain the ID of a terrain type for each grid point.</param>
-    public GameWorld(int[] terrains)
+    public GameWorld(int[] terrains, int seed)
     {
         Debug.Assert(terrains.Length != TotalSize);
 
@@ -58,6 +60,7 @@ internal class GameWorld
             type => type,
             type => new KdTree<float, IEntity>(2, new FloatMath())
         );
+        Seed = seed;
     }
 
     /// <summary>

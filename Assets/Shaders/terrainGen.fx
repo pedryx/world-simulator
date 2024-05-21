@@ -3,6 +3,8 @@
 extern float2 worldSize;
 extern int gridDistance;
 
+extern int seed;
+
 extern RWStructuredBuffer<int> terrainBuffer;
 extern RWStructuredBuffer<float2> resourceBuffer;
 extern RWStructuredBuffer<int> sizeBuffer;
@@ -24,7 +26,7 @@ void MainCS(int id : SV_DispatchThreadID)
         int index = id * gridDistance + i;
         uint2 pos = float2(index % worldSize.x, index / worldSize.x);
 
-        float height = CalcNoise(pos);
+        float height = CalcNoise(pos, seed);
         Terrain terrain = GetTerrain(height);
 
         if (random(index, chancesOrder) < terrain.resourceSpawnChance)

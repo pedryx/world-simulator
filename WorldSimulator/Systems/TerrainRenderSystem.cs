@@ -16,16 +16,17 @@ internal readonly struct TerrainRenderSystem : IECSSystem
     private readonly Game game;
     private readonly Camera camera;
 
-    public TerrainRenderSystem(Game game, Camera camera)
+    public TerrainRenderSystem(LevelState levelState)
     {
+        game = levelState.Game;
+        camera = levelState.Camera;
+
         terrainDrawShader = game.GetResourceManager<Effect>()[GameWorld.TerrainDrawShader];
         spriteBatch = game.SpriteBatch;
         blankTexture = game.BlankTexture;
 
-        this.game = game;
-        this.camera = camera;
-
         terrainDrawShader.Parameters["worldSize"].SetValue(GameWorld.Size.ToVector2());
+        terrainDrawShader.Parameters["seed"].SetValue(levelState.GameWorld.Seed);
     }
 
     public void Initialize(IECSWorld world) { }
