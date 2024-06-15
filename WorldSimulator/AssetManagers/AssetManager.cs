@@ -3,12 +3,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace WorldSimulator.ResourceManagers;
+namespace WorldSimulator.AssetManagers;
 /// <summary>
-/// A base interface for resource managers. A resource manager is responsible for storing content resources and loading
+/// A base interface for asset managers. An asset manager is responsible for storing content resources and loading
 /// them from files.
 /// </summary>
-internal interface IResourceManager
+internal interface IAssetManager
 {
     /// <summary>
     /// Load all resources managed by the resource manager.
@@ -17,21 +17,21 @@ internal interface IResourceManager
 }
 
 /// <summary>
-/// Base class for a resource manager responsible for managing content resources of a specified type.
+/// Base class for an asset manager responsible for managing asset of a specified type.
 /// </summary>
-/// <typeparam name="TResource">The type of content resource which will be managed by the resource manager.</typeparam>
-internal abstract class ResourceManager<TResource> : IResourceManager
+/// <typeparam name="TAsset">The type of content asset which will be managed by the asset manager.</typeparam>
+internal abstract class AssetManager<TAsset> : IAssetManager
 {
     private const string ContentRootFolder = "Content";
 
     /// <summary>
     /// Contains loaded resources.
     /// </summary>
-    private readonly IDictionary<string, TResource> resources = new Dictionary<string, TResource>();
+    private readonly IDictionary<string, TAsset> assets = new Dictionary<string, TAsset>();
     private readonly string fileExtension;
     private readonly string contentFolder;
 
-    public ResourceManager(string fileExtension, string contentSubFolder)
+    public AssetManager(string fileExtension, string contentSubFolder)
     {
         Debug.Assert(!string.IsNullOrEmpty(fileExtension));
         Debug.Assert(!string.IsNullOrEmpty(contentSubFolder));
@@ -58,9 +58,9 @@ internal abstract class ResourceManager<TResource> : IResourceManager
         foreach (var file in files)
         {
             string name = GetName(file);
-            TResource value = Load(file, name);
+            TAsset value = Load(file, name);
 
-            resources.Add(name, value);
+            assets.Add(name, value);
         }
     }
 
@@ -73,7 +73,7 @@ internal abstract class ResourceManager<TResource> : IResourceManager
     /// <summary>
     /// Load a resource from a file.
     /// </summary>
-    public abstract TResource Load(string file, string name);
+    public abstract TAsset Load(string file, string name);
 
-    public TResource this[string name] => resources[name];
+    public TAsset this[string name] => assets[name];
 }

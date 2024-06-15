@@ -2,8 +2,8 @@
 
 using System.IO;
 
-namespace WorldSimulator.ResourceManagers;
-internal class ShaderManager : ResourceManager<Effect>
+namespace WorldSimulator.AssetManagers;
+internal class ShaderManager : AssetManager<Effect>
 {
     private readonly GraphicsDevice graphics;
 

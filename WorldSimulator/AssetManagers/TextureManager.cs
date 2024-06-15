@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace WorldSimulator.ResourceManagers;
-internal class TextureManager : ResourceManager<Texture2D>
+namespace WorldSimulator.AssetManagers;
+internal class TextureManager : AssetManager<Texture2D>
 {
     private readonly GraphicsDevice graphics;
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 using WorldSimulator.ECS.AbstractECS;
-using WorldSimulator.ResourceManagers;
+using WorldSimulator.AssetManagers;
 
 using MonoGameBaseGame = Microsoft.Xna.Framework.Game;
 
@@ -30,7 +30,7 @@ public class Game : MonoGameBaseGame
     /// from this generator. Use <see cref="GenerateSeed"/> is used for obtaining seeds.
     /// </summary>
     private readonly Random seedGenerator;
-    private IDictionary<Type, IResourceManager> resourceManagers;
+    private IDictionary<Type, IAssetManager> resourceManagers;
 
     internal ECSFactory Factory { get; private set; }
     public float Speed { get; set; } = 1.0f;
@@ -77,8 +77,8 @@ public class Game : MonoGameBaseGame
     internal int GenerateSeed()
         => seedGenerator.Next();
 
-    internal ResourceManager<TResource> GetResourceManager<TResource>()
-        => (ResourceManager<TResource>)resourceManagers[typeof(TResource)];
+    internal AssetManager<TResource> GetResourceManager<TResource>()
+        => (AssetManager<TResource>)resourceManagers[typeof(TResource)];
 
     /// <summary>
     /// Create and switch to a new state of a specified type. The created state will also be initialized.
@@ -109,7 +109,7 @@ public class Game : MonoGameBaseGame
         BlankTexture = new Texture2D(GraphicsDevice, 1, 1);
         BlankTexture.SetData(new Color[] { Color.White });
 
-        resourceManagers = new Dictionary<Type, IResourceManager>()
+        resourceManagers = new Dictionary<Type, IAssetManager>()
         {
             { typeof(Texture2D) ,new TextureManager(GraphicsDevice) },
             { typeof(Effect), new ShaderManager(GraphicsDevice) },
