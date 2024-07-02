@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System.Linq;
-
-using WorldSimulator.Components;
 using WorldSimulator.Level;
 
 namespace WorldSimulator.UI.Elements;
