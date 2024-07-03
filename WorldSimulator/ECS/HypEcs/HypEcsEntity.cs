@@ -10,28 +10,19 @@ internal class HypEcsEntity : IEntity
 {
     private readonly Entity entity;
     private readonly World world;
-    private readonly HypEcsFactory factory;
 
-    private readonly List<Action> componentActions = new();
-
-    public HypEcsEntity(Entity entity, World world, HypEcsFactory factory)
+    public HypEcsEntity(Entity entity, World world)
     {
         this.entity = entity;
         this.world = world;
-        this.factory = factory;
-
-        factory.AddEntity(this);
     }
 
     public void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct 
-        => componentActions.Add(() => world.AddComponent(entity, component));
+        where TComponent : struct
+        => world.AddComponent(entity, component);
 
     public void Destroy()
-    {
-        factory.RemoveEntity(this);
-        world.Despawn(entity);
-    }
+        => world.Despawn(entity);
 
     public ref TComponent GetComponent<TComponent>()
         where TComponent : struct 
@@ -46,15 +37,5 @@ internal class HypEcsEntity : IEntity
 
     public void RemoveComponent<TComponent>()
         where TComponent : struct 
-        => componentActions.Add(() => world.RemoveComponent<TComponent>(entity));
-
-    public void Update()
-    {
-        foreach (var action in componentActions)
-        {
-            action.Invoke();
-        }
-
-        componentActions.Clear();
-    }
+        => world.RemoveComponent<TComponent>(entity);
 }

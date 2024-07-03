@@ -31,19 +31,9 @@ public class HypEcsFactory : ECSFactory
     {
         World world = ((BasicECSWorld<World>)worldWrapper).World;
 
-        return new HypEcsEntity(world.Spawn().Id(), world, this);
+        return new HypEcsEntity(world.Spawn().Id(), world);
     }
 
     public override IECSWorld CreateWorld()
-    {
-        return new BasicECSWorld<World>(new World(), world =>
-        {
-            foreach (var entity in entities)
-            {
-                entity.Update();
-            }
-
-            world.Tick();
-        });
-    }
+        => new BasicECSWorld<World>(new World(), world => world.Tick());
 }

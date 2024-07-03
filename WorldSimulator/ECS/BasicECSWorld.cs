@@ -23,23 +23,18 @@ public class BasicECSWorld<TWorld> : IECSWorld
     /// Create a new wrapper around the ECS world.
     /// </summary>
     /// <param name="world">The instance of the ECS world.</param>
-    /// <param name="updateCallback">The callback for the Update method of the ECS world.</param>
-    public BasicECSWorld(TWorld world, Action<TWorld> updateCallback)
+    /// <param name="updateCallback">
+    /// The callback for the Update method of the ECS world. Leavne null for no callback.
+    /// </param>
+    public BasicECSWorld(TWorld world, Action<TWorld> updateCallback = null)
     {
         World = world ?? throw new ArgumentNullException(nameof(world));
-        this.updateCallback = updateCallback ?? throw new ArgumentNullException(nameof(updateCallback));
+        this.updateCallback = updateCallback;
     }
-
-    /// <summary>
-    /// Create a new wrapper around the ECS world with no Update method.
-    /// </summary>
-    /// <param name="world">The instance of the ECS world.</param>
-    public BasicECSWorld(TWorld world)
-        : this(world, _ => { }) { }
 
     /// <summary>
     /// Call Update method on the wrapped ECS world instance.
     /// </summary>
     public void Update() 
-        => updateCallback(World);
+        => updateCallback?.Invoke(World);
 }
