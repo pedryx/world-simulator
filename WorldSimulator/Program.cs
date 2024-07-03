@@ -11,7 +11,7 @@ using WorldSimulator.ECS.RelEcs;
 using WorldSimulator.Level;
 
 SeedGenerator.SetGlobalSeed(0);
-ECSFactory factory = new ArchFactory();
+ECSFactory factory = new HypEcsFactory();
 
 Game game = new(factory);
 game.SwitchState(new LevelState(true));
