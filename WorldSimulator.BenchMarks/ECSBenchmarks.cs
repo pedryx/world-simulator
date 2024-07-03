@@ -58,9 +58,10 @@ public class ECSBenchmarks
     [IterationSetup]
     public void IterationSetup()
     {
+        SeedGenerator.SetGlobalSeed(seed);
         ECSFactory ecsFactory = (ECSFactory)Activator.CreateInstance(ECSFactoryType);
 
-        game = new Game(ecsFactory, seed);
+        game = new Game(ecsFactory);
         game.SwitchState(new LevelState(true));
         game.RunOneFrame();
 

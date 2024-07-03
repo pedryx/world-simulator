@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-
-using System;
 using System.Runtime.CompilerServices;
 
 using WorldSimulator.Components;
@@ -31,21 +29,11 @@ internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movem
     /// </summary>
     private const float minTimeToUpdate = 1.0f;
 
-    /// <summary>
-    /// Random number generator used for generating destinations for random walks.
-    /// </summary>
-    private readonly Random destinationRandom;
-    /// <summary>
-    /// Random number generator used for generating intervals for updating animal position in corresponding KD-tree.
-    /// </summary>
-    private readonly Random timeToUpdateRandom = new();
     private readonly GameWorld gameWorld;
 
     public AnimalBehaviorSystem(Game game, GameWorld gameWorld)
     {
         this.gameWorld = gameWorld;
-
-        destinationRandom = new Random(game.GenerateSeed());
     }
 
     [MethodImpl(Game.EntityProcessorInline)]
@@ -53,27 +41,27 @@ internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movem
     (
         ref Location location,
         ref Movement movement,
-        ref AnimalBehavior controller,
+        ref AnimalBehavior behavior,
         ref Owner owner,
         float deltaTime
     )
     {
-        if (controller.UpdateEnabled)
+        if (behavior.UpdateEnabled)
         {
-            controller.TimeToUpdate -= deltaTime;
-            if (controller.TimeToUpdate <= 0.0f)
+            behavior.TimeToUpdate -= deltaTime;
+            if (behavior.TimeToUpdate <= 0.0f)
             {
-                controller.TimeToUpdate = timeToUpdateRandom.NextSingle(minTimeToUpdate, maxTimeToUpdate);
-                if (controller.PreviousPosition != location.Position)
+                behavior.TimeToUpdate = behavior.Random.NextSingle(minTimeToUpdate, maxTimeToUpdate);
+                if (behavior.PreviousPosition != location.Position)
                 {
                     gameWorld.UpdateResourcePosition
                     (
-                        controller.ResourceType,
+                        behavior.ResourceType,
                         owner.Entity,
-                        controller.PreviousPosition,
+                        behavior.PreviousPosition,
                         location.Position
                     );
-                    controller.PreviousPosition = location.Position;
+                    behavior.PreviousPosition = location.Position;
                 }
             }
         }
@@ -85,7 +73,12 @@ internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movem
             TerrainType terrainType;
             do
             {
-                destination = destinationRandom.NextPointInRing(location.Position, minRadius, maxRadius + radiusOffset);
+                destination = behavior.Random.NextPointInRing
+                (
+                    location.Position,
+                    minRadius,
+                    maxRadius + radiusOffset
+                );
                 radiusOffset += 1.0f;
                 terrainType = gameWorld.GetTerrain(destination);
             }

@@ -16,7 +16,7 @@ namespace WorldSimulator;
 /// </summary>
 public class Game : MonoGameBaseGame
 {
-    public const MethodImplOptions EntityProcessorInline = 0;
+    public const MethodImplOptions EntityProcessorInline = MethodImplOptions.AggressiveInlining;
 
     private const int defaultResolutionWidth = 1920;
     private const int defaultResolutionHeight = 1080;
@@ -25,11 +25,6 @@ public class Game : MonoGameBaseGame
 
     private readonly Color clearColor = Color.Black;
 
-    /// <summary>
-    /// Random number generator used for generating seeds. Each random number generator in the game is based on a seed
-    /// from this generator. Use <see cref="GenerateSeed"/> is used for obtaining seeds.
-    /// </summary>
-    private readonly Random seedGenerator;
     private IDictionary<Type, IAssetManager> resourceManagers;
 
     internal ECSFactory Factory { get; private set; }
@@ -55,7 +50,7 @@ public class Game : MonoGameBaseGame
     /// </summary>
     internal Vector2 ResolutionScale => Resolution / DefaultResolution;
 
-    public Game(ECSFactory factory, int seed)
+    public Game(ECSFactory factory)
     {
         Graphics = new GraphicsDeviceManager(this)
         {
@@ -63,19 +58,12 @@ public class Game : MonoGameBaseGame
             PreferredBackBufferHeight = initialResolutionHeight,
             SynchronizeWithVerticalRetrace = false,
         };
-        seedGenerator = new Random(seed);
 
         Factory = factory;
 
         IsMouseVisible = true;
         IsFixedTimeStep = false;
     }
-
-    /// <summary>
-    /// Generate seed for random number generation.
-    /// </summary>
-    internal int GenerateSeed()
-        => seedGenerator.Next();
 
     internal AssetManager<TResource> GetResourceManager<TResource>()
         => (AssetManager<TResource>)resourceManagers[typeof(TResource)];

@@ -1,4 +1,5 @@
-﻿using WorldSimulator.ECS.AbstractECS;
+﻿using System;
+using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components.Villages;
 [Component]
@@ -13,6 +14,11 @@ internal struct Village
     public int BuildingsCount = 0;
 
     public int BuildOrderIndex = 0;
+
+    /// <summary>
+    /// Random number generator for generating random positions for new buildings.
+    /// </summary>
+    public Random Random = SeedGenerator.CreateRandom();
 
     public Village() { }
 }

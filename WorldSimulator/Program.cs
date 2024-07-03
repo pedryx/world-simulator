@@ -10,9 +10,9 @@ using WorldSimulator.ECS.MonoGameExtendedEntities;
 using WorldSimulator.ECS.RelEcs;
 using WorldSimulator.Level;
 
-const int seed = 0;
+SeedGenerator.SetGlobalSeed(0);
 ECSFactory factory = new ArchFactory();
 
-Game game = new(factory, seed);
+Game game = new(factory);
 game.SwitchState(new LevelState(true));
 game.Run();

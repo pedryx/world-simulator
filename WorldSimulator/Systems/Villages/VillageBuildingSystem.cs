@@ -28,7 +28,6 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
     private const float minDistanceSquared = minBuildDistance * minBuildDistance;
 
     private readonly LevelFactory levelFactory;
-    private readonly Random random;
     private readonly GameWorld gameWorld;
 
     /// <summary>
@@ -53,8 +52,6 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
     {
         levelFactory = levelState.LevelFactory;
         gameWorld = levelState.GameWorld;
-
-        random = new Random(levelState.Game.GenerateSeed());
 
         buildOrder = new List<BuildOrderItem>()
         {
@@ -143,8 +140,8 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
 
         while (true)
         {
-            Vector2 center = buildingPositions[random.Next(buildingPositions.Length)];
-            Vector2 position = random.NextPointInRing(center, minBuildDistance, maxBuildDistance);
+            Vector2 center = buildingPositions[village.Random.Next(buildingPositions.Length)];
+            Vector2 position = village.Random.NextPointInRing(center, minBuildDistance, maxBuildDistance);
 
             var query = buildingPositions.Where(p => Vector2.DistanceSquared(p, position) < minDistanceSquared);
             if (!query.Any() && gameWorld.CanBuildAt(position))

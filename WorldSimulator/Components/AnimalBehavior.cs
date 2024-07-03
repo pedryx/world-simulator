@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-
+using System;
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components;
@@ -28,6 +28,11 @@ internal struct AnimalBehavior
     /// Determine if the animal position will be updated in its corresponding KD-tree.
     /// </summary>
     public bool UpdateEnabled = true;
+
+    /// <summary>
+    /// Random number generator for generating random walks and random kd-tree update intervals.
+    /// </summary>
+    public Random Random = SeedGenerator.CreateRandom();
 
     public AnimalBehavior() { }
 }

@@ -22,7 +22,6 @@ internal class GameWorldGenerator
 
     private readonly Effect terrainGenShader;
     private readonly GraphicsDevice graphicsDevice;
-    private readonly Game game;
     private readonly LevelFactory levelFactory;
     private readonly bool useGlobalWorldData;
 
@@ -40,7 +39,6 @@ internal class GameWorldGenerator
     public GameWorldGenerator(Game game, LevelFactory levelFactory, bool useGlobalWorldData)
     {
         this.levelFactory = levelFactory;
-        this.game = game;
         this.useGlobalWorldData = useGlobalWorldData;
 
         terrainGenShader = game.GetResourceManager<Effect>()[GameWorld.TerrainGenShader];
@@ -93,7 +91,7 @@ internal class GameWorldGenerator
             ShaderAccess.None
         );
 
-        int seed = game.GenerateSeed();
+        int seed = SeedGenerator.Generate();
 
         terrainGenShader.Parameters["seed"].SetValue(seed);
         terrainGenShader.Parameters["worldSize"].SetValue(GameWorld.Size.ToVector2());
@@ -148,9 +146,9 @@ internal class GameWorldGenerator
 
     private void SpawnVillages()
     {
-        // factory.CreateVillage(GameWorld.Size.ToVector2() / 2.0f); return;
+        //levelFactory.CreateVillage(GameWorld.Size.ToVector2() / 2.0f); return;
 
-        Random random = new(game.GenerateSeed());
+        Random random = SeedGenerator.CreateRandom();
 
         for (int y = 0; y < GameWorld.Size.Y; y += villageJitterSize)
         {
