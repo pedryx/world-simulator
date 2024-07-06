@@ -1,3 +1,9 @@
 [submodule "Assets/Shaders/lygia"]
 	path = Assets/Shaders/lygia
 	url = https://github.com/patriciogonzalezvivo/lygia.git
+[submodule "WorldSimulator/ECS/LeoEcs/Lib/ecs"]
+	path = WorldSimulator/ECS/LeoEcs/Lib/ecs
+	url = https://github.com/Leopotam/ecs
+[submodule "WorldSimulator/ECS/LeoEcsLite/Lib/ecslite"]
+	path = WorldSimulator/ECS/LeoEcsLite/Lib/ecslite
+	url = https://github.com/Leopotam/ecslite

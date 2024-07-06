@@ -14,8 +14,6 @@
     <PackageReference Include="Entitas" Version="1.14.2" />
     <PackageReference Include="HypEcs" Version="1.2.1" />
     <PackageReference Include="KdTree" Version="1.4.1" />
-    <PackageReference Include="Leopotam.Ecs" Version="1.0.1" />
-    <PackageReference Include="Leopotam.EcsLite" Version="1.0.1" />
     <PackageReference Include="MonoGame.Extended.Entities" Version="3.8.0" />
     <PackageReference Include="MonoGame.Framework.Compute.DesktopGL" Version="3.8.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
