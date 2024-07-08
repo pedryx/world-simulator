@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 
 using System.Runtime.CompilerServices;
-
+using WorldSimulator.AssetManagers;
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
@@ -54,9 +54,11 @@ internal readonly struct RenderSystem : IEntityProcessor<Location, Appearance>
     [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Location location, ref Appearance appearance, float deltaTime)
     {
+        var texture = game.GetResourceManager<Texture2D>()[appearance.TextureID];
+
         // Calculate bounds for camera view and entity.
         Rectangle viewBounds = camera.ViewBounds;
-        Vector2 entitySize = appearance.Texture.GetSize() * appearance.Scale;
+        Vector2 entitySize = texture.GetSize() * appearance.Scale;
         Rectangle entityBounds = new
         (
             (location.Position - entitySize * appearance.Origin).ToPoint(),
@@ -78,12 +80,12 @@ internal readonly struct RenderSystem : IEntityProcessor<Location, Appearance>
 
         spriteBatch.Draw
         (
-            appearance.Texture,
+            texture,
             location.Position,
             null,
             Color.White,
             0.0f,
-            appearance.Origin * appearance.Texture.GetSize(),
+            appearance.Origin * texture.GetSize(),
             appearance.Scale,
             appearance.Effects,
             layer

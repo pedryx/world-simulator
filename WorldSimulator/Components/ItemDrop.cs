@@ -7,7 +7,13 @@ namespace WorldSimulator.Components;
 [Component]
 internal struct ItemDrop
 {
-    public ItemCollection Items = new();
+    /// <summary>
+    /// ID of item collection which contains items which will be dropped when entity dies.
+    /// </summary>
+    public int ItemCollectionID = -1;
 
-    public ItemDrop() { }
+    public ItemDrop(Game game, ItemCollection items)
+    {
+        ItemCollectionID = game.GetManagedDataManager<ItemCollection?>().Insert(items);
+    }
 }

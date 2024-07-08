@@ -8,7 +8,13 @@ namespace WorldSimulator.Components;
 internal struct Owner
 {
     /// <summary>
-    /// The entity which owns this component.
+    /// The ID of an entity which owns this component.
     /// </summary>
-    public IEntity Entity;
+    public int EntityID = -1;
+
+    public Owner(Game game, IEntity entity)
+    {
+        EntityID = game.GetManagedDataManager<IEntity>().Insert(entity);
+
+    }
 }

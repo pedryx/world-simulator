@@ -9,6 +9,7 @@ using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.AssetManagers;
 
 using MonoGameBaseGame = Microsoft.Xna.Framework.Game;
+using WorldSimulator.ManagedDataManagers;
 
 namespace WorldSimulator;
 /// <summary>
@@ -26,6 +27,7 @@ public class Game : MonoGameBaseGame
     private readonly Color clearColor = Color.Black;
 
     private IDictionary<Type, IAssetManager> resourceManagers;
+    private IDictionary<Type, IManagedDataManager> managedDataManagers;
 
     internal ECSFactory Factory { get; private set; }
     public float Speed { get; set; } = 1.0f;
@@ -68,6 +70,9 @@ public class Game : MonoGameBaseGame
     internal AssetManager<TResource> GetResourceManager<TResource>()
         => (AssetManager<TResource>)resourceManagers[typeof(TResource)];
 
+    internal ManagedDataManager<TManagedData> GetManagedDataManager<TManagedData>()
+        => (ManagedDataManager<TManagedData>)managedDataManagers[typeof(TManagedData)];
+
     /// <summary>
     /// Create and switch to a new state of a specified type. The created state will also be initialized.
     /// </summary>
@@ -96,6 +101,15 @@ public class Game : MonoGameBaseGame
 
         BlankTexture = new Texture2D(GraphicsDevice, 1, 1);
         BlankTexture.SetData(new Color[] { Color.White });
+
+        managedDataManagers = new Dictionary<Type, IManagedDataManager>()
+        {
+            { typeof(Vector2[]), new PathManager() },
+            { typeof(IEntity), new EntityManager() },
+            { typeof(ItemCollection?), new ItemCollectionManager() },
+            { typeof(Random), new RandomManager() },
+            { typeof(IEntity[]), new EntityArrayManager() },
+        };
 
         resourceManagers = new Dictionary<Type, IAssetManager>()
         {

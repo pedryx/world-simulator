@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 
-using System;
-
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components;
@@ -12,13 +10,16 @@ namespace WorldSimulator.Components;
 internal struct PathFollow
 {
     /// <summary>
-    /// The specified path which will be followed by the entity.
+    /// ID of the specified path which will be followed by the entity.
     /// </summary>
-    public Vector2[] Path = Array.Empty<Vector2>();
+    public int PathID = -1;
     /// <summary>
     /// The index of current path node (element of the <see cref="Path"/> array).
     /// </summary>
-    public int PathIndex;
+    public int PathNodeIndex;
 
-    public PathFollow() { }
+    public PathFollow(Game game)
+    {
+        PathID = game.GetManagedDataManager<Vector2[]>().Create();
+    }
 }

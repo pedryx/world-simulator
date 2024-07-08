@@ -7,7 +7,7 @@ namespace WorldSimulator.Components;
 [Component]
 internal struct Appearance
 {
-    public Texture2D Texture;
+    public int TextureID = -1;
     /// <summary>
     /// The origin point of the <see cref="Texture"/>  in a normalized format, using coordinates within the range
     /// [0, 1].

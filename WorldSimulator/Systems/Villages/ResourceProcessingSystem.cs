@@ -3,13 +3,26 @@
 using WorldSimulator.Components;
 using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.ManagedDataManagers;
 
 namespace WorldSimulator.Systems.Villaages;
 internal readonly struct ResourceProcessingSystem : IEntityProcessor<Inventory, ResourceProcessor>
 {
+    private readonly ManagedDataManager<ItemCollection?> itemCollectionManager;
+
+    public ResourceProcessingSystem(Game game)
+    {
+        itemCollectionManager = game.GetManagedDataManager<ItemCollection?>();
+    }
+
     [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Inventory inventory, ref ResourceProcessor processor, float deltaTime)
     {
+        ItemCollection inventoryItems = itemCollectionManager[inventory.ItemCollectionID].Value;
+
+        ItemType inputItem = ItemType.Get(processor.InputItemID);
+        ItemType outputItem = ItemType.Get(processor.OutputItemID);
+
         if (processor.Processing)
         {
             processor.Elapsed += deltaTime;
@@ -17,13 +30,15 @@ internal readonly struct ResourceProcessingSystem : IEntityProcessor<Inventory, 
             {
                 processor.Elapsed = 0.0f;
                 processor.Processing = false;
-                inventory.Items.Add(processor.OutputItem, processor.OutputQuantity);
+                inventoryItems.Add(outputItem, processor.OutputQuantity);
             }
         }
-        else if (inventory.Items.GetQuantity(processor.InputItem) >= processor.InputQuantity)
+        else if (inventoryItems.GetQuantity(inputItem) >= processor.InputQuantity)
         {
             processor.Processing = true;
-            inventory.Items.Remove(processor.InputItem, processor.InputQuantity);
+            inventoryItems.Remove(inputItem, processor.InputQuantity);
         }
+
+        itemCollectionManager[inventory.ItemCollectionID] = inventoryItems;
     }
 }

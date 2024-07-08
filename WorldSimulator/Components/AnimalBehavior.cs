@@ -17,7 +17,7 @@ internal struct AnimalBehavior
     /// <summary>
     /// The resource type of the animal.
     /// </summary>
-    public ResourceType ResourceType;
+    public int ResourceTypeID = -1;
 
     /// <summary>
     /// The position of the entity during the last KD-tree position update.
@@ -32,7 +32,10 @@ internal struct AnimalBehavior
     /// <summary>
     /// Random number generator for generating random walks and random kd-tree update intervals.
     /// </summary>
-    public Random Random = SeedGenerator.CreateRandom();
-
-    public AnimalBehavior() { }
+    public int RandomID = -1;
+        
+    public AnimalBehavior(Game game)
+    {
+        RandomID = game.GetManagedDataManager<Random>().Create();
+    }
 }

@@ -7,7 +7,13 @@ namespace WorldSimulator.Components;
 [Component]
 internal struct Inventory
 {
-    public ItemCollection Items = new();
+    /// <summary>
+    /// ID of item collection which contains inventory items.
+    /// </summary>
+    public int ItemCollectionID = -1;
 
-    public Inventory() { }
+    public Inventory(Game game, ItemCollection itemCollection) 
+    {
+        ItemCollectionID = game.GetManagedDataManager<ItemCollection?>().Insert(itemCollection);
+    }
 }

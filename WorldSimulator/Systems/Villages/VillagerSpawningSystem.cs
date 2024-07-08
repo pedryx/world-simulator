@@ -11,6 +11,7 @@ using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 using WorldSimulator.Level;
+using WorldSimulator.ManagedDataManagers;
 
 namespace WorldSimulator.Systems.Villaages;
 /// <summary>
@@ -25,21 +26,26 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
 
     private readonly LevelFactory levelFactory;
     private readonly BehaviorTrees behaviorTrees;
+    private readonly ManagedDataManager<IEntity> entityManager;
 
-    public VillagerSpawningSystem(LevelFactory levelFactory, BehaviorTrees behaviorTrees)
+    public VillagerSpawningSystem(Game game, LevelFactory levelFactory, BehaviorTrees behaviorTrees)
     {
         this.levelFactory = levelFactory;
         this.behaviorTrees = behaviorTrees;
+        entityManager = game.GetManagedDataManager<IEntity>();
     }
 
     [MethodImpl(Game.EntityProcessorInline)]
     public void Process(ref Location location, ref VillagerSpawner villagerSpawner, ref Owner owner, float deltaTime)
     {
+        IEntity entity = entityManager[owner.EntityID];
+        IEntity village = entityManager[villagerSpawner.VillageID];
+
         if (villagerSpawner.JustSpawned)
         {
             villagerSpawner.JustSpawned = false;
 
-            IEntity stockpile = villagerSpawner.Village.GetComponent<Village>().Stockpile;
+            IEntity stockpile = entityManager[village.GetComponent<Village>().StockpileID];
             ResourceType resource = villagerSpawner.Profession switch
             {
                 VillagerProfession.Woodcutter => ResourceType.Tree,
@@ -50,10 +56,10 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
                 _ => throw new InvalidOperationException("Unsupported villager profession."),
             };
 
-            SetProfession(villagerSpawner.Villager, resource, owner.Entity, stockpile, stockpile);
+            SetProfession(entityManager[villagerSpawner.VillagerID], resource, entity, stockpile, stockpile);
         }
 
-        if (villagerSpawner.Villager == null || villagerSpawner.Villager.IsDestroyed())
+        if (villagerSpawner.VillagerID == -1 || entityManager[villagerSpawner.VillagerID].IsDestroyed())
         {
             villagerSpawner.Elapsed += deltaTime;
 
@@ -64,9 +70,9 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
                 IEntity villager = levelFactory.CreateVillager
                 (
                     location.Position + Vector2.UnitY,
-                    villagerSpawner.Village
+                    village
                 );
-                villagerSpawner.Villager = villager;
+                villagerSpawner.VillagerID = entityManager.Insert(villager);
 
                 villagerSpawner.JustSpawned = true;
             }
@@ -115,18 +121,27 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
     {
         return (context) =>
         {
-            ref Inventory inventory = ref foodStorage.GetComponent<Inventory>();
+            ManagedDataManager<ItemCollection?> itemCollectionManager =
+                context.Game.GetManagedDataManager<ItemCollection?>();
 
-            return inventory.Items.Has(ItemType.Food);
+            ref Inventory inventory = ref foodStorage.GetComponent<Inventory>();
+            ItemCollection inventoryItem = itemCollectionManager[inventory.ItemCollectionID].Value;
+
+            return inventoryItem.Has(ItemType.Food);
         };
     }
     
     private static BehaviourStatus EatFood(BehaviorContext context)
     {
-        ref Inventory inventory = ref context.Entity.GetComponent<Inventory>();
-        ref Hunger hunger = ref context.Entity.GetComponent<Hunger>();
+        ManagedDataManager<ItemCollection?> itemCollectionManager =
+                context.Game.GetManagedDataManager<ItemCollection?>();
 
-        inventory.Items.Remove(ItemType.Food, 1);
+        ref Inventory inventory = ref context.Entity.GetComponent<Inventory>();
+        ItemCollection inventoryItem = itemCollectionManager[inventory.ItemCollectionID].Value;
+        inventoryItem.Remove(ItemType.Food, 1);
+
+
+        ref Hunger hunger = ref context.Entity.GetComponent<Hunger>();
         hunger.Amount = 0.0f;
 
         return BehaviourStatus.Succeeded;
@@ -136,10 +151,20 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
     {
         return (context) =>
         {
+            ManagedDataManager<ItemCollection?> itemCollectionManager =
+                context.Game.GetManagedDataManager<ItemCollection?>();
+
             ref Inventory stockpileInventory = ref foodStockpile.GetComponent<Inventory>();
             ref Inventory inventory = ref context.Entity.GetComponent<Inventory>();
 
-            stockpileInventory.Items.TransferTo(ref inventory.Items, ItemType.Food, 1);
+            ItemCollection stockpileItems = itemCollectionManager[stockpileInventory.ItemCollectionID].Value;
+            ItemCollection inventoryItem = itemCollectionManager[inventory.ItemCollectionID].Value;
+
+            stockpileItems.TransferTo(ref inventoryItem, ItemType.Food.ID, 1);
+
+            itemCollectionManager[stockpileInventory.ItemCollectionID] = stockpileItems;
+            itemCollectionManager[inventory.ItemCollectionID] = inventoryItem;
+
             return BehaviourStatus.Succeeded;
         };
     }
@@ -155,12 +180,16 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
     {
         return (context) =>
         {
-            ref PathFollow pathFollow = ref context.Entity.GetComponent<PathFollow>();
+            var pathManager = context.Game.GetManagedDataManager<Vector2[]>();
+            var entityManager = context.Game.GetManagedDataManager<IEntity>();
 
-            if (pathFollow.PathIndex == pathFollow.Path.Length)
+            ref PathFollow pathFollow = ref context.Entity.GetComponent<PathFollow>();
+            Vector2[] path = pathManager[pathFollow.PathID];
+
+            if (pathFollow.PathNodeIndex == path.Length)
             {
                 // when two entities are at same position, depth layer fighting occur
-                Vector2 targetPosition = (target ?? context.Entity.GetComponent<VillagerBehavior>().Target)
+                Vector2 targetPosition = (target ?? entityManager[context.Entity.GetComponent<VillagerBehavior>().TargetID])
                     .GetComponent<Location>().Position + Vector2.UnitY;
                 Vector2 position = context.Entity.GetComponent<Location>().Position;
                 float speed = context.Entity.GetComponent<Movement>().Speed;
@@ -168,8 +197,8 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
                 if (position.IsCloseEnough(targetPosition, speed * context.DeltaTime))
                     return BehaviourStatus.Succeeded;
 
-                pathFollow.Path = context.GameWorld.FindPath(position, targetPosition);
-                pathFollow.PathIndex = 0;
+                pathManager[pathFollow.PathID] = context.GameWorld.FindPath(position, targetPosition);
+                pathFollow.PathNodeIndex = 0;
             }
 
             return BehaviourStatus.Running;
@@ -180,13 +209,15 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
     {
         return (context) =>
         {
+            var entityManager = context.Game.GetManagedDataManager<IEntity>();
+
             Vector2 position = context.Entity.GetComponent<Location>().Position;
             IEntity resource = context.GameWorld.GetAndRemoveNearestResource(resourceType, position);
 
             if (resource == null)
                 return BehaviourStatus.Failed;
 
-            context.Entity.GetComponent<VillagerBehavior>().Target = resource;
+            context.Entity.GetComponent<VillagerBehavior>().TargetID = entityManager.Insert(resource);
 
             if (resource.HasComponent<AnimalBehavior>())
             {
@@ -200,28 +231,39 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
 
     private static BehaviourStatus HarvestResource(BehaviorContext context)
     {
+        var entityManager = context.Game.GetManagedDataManager<IEntity>();
+
         ref DamageDealer damageDealer = ref context.Entity.GetComponent<DamageDealer>();
         ref VillagerBehavior behavior = ref context.Entity.GetComponent<VillagerBehavior>();
 
-        damageDealer.Target = behavior.Target;
+        damageDealer.TargetID = entityManager.Insert(entityManager[behavior.TargetID]);
 
-        return damageDealer.Target.IsDestroyed() ? BehaviourStatus.Succeeded : BehaviourStatus.Running;
+        return entityManager[damageDealer.TargetID].IsDestroyed() ? BehaviourStatus.Succeeded : BehaviourStatus.Running;
     }
 
     private static Func<BehaviorContext, BehaviourStatus> StartResourceProcessing(IEntity workplace)
     {
         return (context) =>
         {
+            ManagedDataManager<ItemCollection?> itemCollectionManager =
+                context.Game.GetManagedDataManager<ItemCollection?>();
+
+            ref ResourceProcessor resourceProcessor = ref workplace.GetComponent<ResourceProcessor>();
             ref Inventory villagerInventory = ref context.Entity.GetComponent<Inventory>();
             ref Inventory workPlaceInventory = ref workplace.GetComponent<Inventory>();
-            ref ResourceProcessor resourceProcessor = ref workplace.GetComponent<ResourceProcessor>();
 
-            villagerInventory.Items.TransferTo
+            ItemCollection villagerItems = itemCollectionManager[villagerInventory.ItemCollectionID].Value;
+            ItemCollection workplaceItems = itemCollectionManager[workPlaceInventory.ItemCollectionID].Value;
+
+            villagerItems.TransferTo
             (
-                ref workPlaceInventory.Items,
-                resourceProcessor.InputItem,
+                ref workplaceItems,
+                resourceProcessor.InputItemID,
                 resourceProcessor.InputQuantity
             );
+
+            itemCollectionManager[villagerInventory.ItemCollectionID] = villagerItems;
+            itemCollectionManager[workPlaceInventory.ItemCollectionID] = workplaceItems;
 
             return BehaviourStatus.Succeeded;
         };
@@ -231,13 +273,24 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
     {
         return (context) =>
         {
+            ManagedDataManager<ItemCollection?> itemCollectionManager =
+                context.Game.GetManagedDataManager<ItemCollection?>();
+
+            ref ResourceProcessor resourceProcessor = ref workplace.GetComponent<ResourceProcessor>();
             ref Inventory villagerInventory = ref context.Entity.GetComponent<Inventory>();
             ref Inventory workPlaceInventory = ref workplace.GetComponent<Inventory>();
-            ref ResourceProcessor resourceProcessor = ref workplace.GetComponent<ResourceProcessor>();
 
-            if (workPlaceInventory.Items.Has(resourceProcessor.OutputItem))
+            ItemCollection villagerItems = itemCollectionManager[villagerInventory.ItemCollectionID].Value;
+            ItemCollection workplaceItems = itemCollectionManager[workPlaceInventory.ItemCollectionID].Value;
+
+
+            if (workplaceItems.Has(ItemType.Get(resourceProcessor.OutputItemID)))
             {
-                workPlaceInventory.Items.TransferTo(ref villagerInventory.Items);
+                workplaceItems.TransferTo(ref villagerItems);
+
+                itemCollectionManager[villagerInventory.ItemCollectionID] = villagerItems;
+                itemCollectionManager[workPlaceInventory.ItemCollectionID] = workplaceItems;
+
                 return BehaviourStatus.Succeeded;
             }
 
@@ -249,8 +302,19 @@ internal readonly struct VillagerSpawningSystem : IEntityProcessor<Location, Vil
     {
         return (context) =>
         {
+            ManagedDataManager<ItemCollection?> itemCollectionManager =
+                context.Game.GetManagedDataManager<ItemCollection?>();
+
             ref Inventory stockpileInventory = ref stockpile.GetComponent<Inventory>();
-            context.Entity.GetComponent<Inventory>().Items.TransferTo(ref stockpileInventory.Items);
+            ref Inventory villagerInventory = ref context.Entity.GetComponent<Inventory>();
+
+            ItemCollection stockpileItems = itemCollectionManager[stockpileInventory.ItemCollectionID].Value;
+            ItemCollection villagerItems = itemCollectionManager[villagerInventory.ItemCollectionID].Value;
+
+            villagerItems.TransferTo(ref stockpileItems);
+
+            itemCollectionManager[stockpileInventory.ItemCollectionID] = stockpileItems;
+            itemCollectionManager[villagerInventory.ItemCollectionID] = villagerItems;
 
             return BehaviourStatus.Succeeded;
         };

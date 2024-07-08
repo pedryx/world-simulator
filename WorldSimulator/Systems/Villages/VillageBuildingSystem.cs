@@ -10,6 +10,7 @@ using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 using WorldSimulator.Level;
+using WorldSimulator.ManagedDataManagers;
 
 namespace WorldSimulator.Systems.Villages;
 internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Village, Owner>
@@ -29,6 +30,10 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
 
     private readonly LevelFactory levelFactory;
     private readonly GameWorld gameWorld;
+    private readonly ManagedDataManager<IEntity> entityManager;
+    private readonly ManagedDataManager<ItemCollection?> itemCollectionManager;
+    private readonly ManagedDataManager<IEntity[]> entityArrayManager;
+    private readonly ManagedDataManager<Random> randomManager;
 
     /// <summary>
     /// At first buildings are build according to the build order.
@@ -48,10 +53,15 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
     /// </summary>
     private readonly ItemCollection buildLoopIncreaseCost;
 
-    public VillageBuildingSystem(LevelState levelState)
+    public VillageBuildingSystem(Game game, LevelState levelState)
     {
         levelFactory = levelState.LevelFactory;
         gameWorld = levelState.GameWorld;
+
+        entityManager = game.GetManagedDataManager<IEntity>();
+        itemCollectionManager = game.GetManagedDataManager<ItemCollection?>();
+        entityArrayManager = game.GetManagedDataManager<IEntity[]>();
+        randomManager = game.GetManagedDataManager<Random>();
 
         buildOrder = new List<BuildOrderItem>()
         {
@@ -87,40 +97,48 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
     /// <returns></returns>
     private void TryBuild(ref Location location, ref Village village, ref Owner owner)
     {
-        if (village.MainBuilding == null)
+        IEntity entity = entityManager[owner.EntityID];
+
+        if (village.MainBuildingID == -1)
         {
-            levelFactory.CreateMainBuilding(location.Position, owner.Entity);
+            levelFactory.CreateMainBuilding(location.Position, entity);
             return;
         }
 
-        if (village.Stockpile == null)
+        if (village.StockpileID == -1)
         {
-            levelFactory.CreateStockpile(GetBuildingPosition(ref village), owner.Entity);
+            levelFactory.CreateStockpile(GetBuildingPosition(ref village), entity);
             return;
         }
 
-        ref Inventory inventory = ref village.Stockpile.GetComponent<Inventory>();
+        IEntity stockpileEntity = entityManager[village.StockpileID];
+
+        ref Inventory inventory = ref stockpileEntity.GetComponent<Inventory>();
+        ItemCollection inventoryItems = itemCollectionManager[inventory.ItemCollectionID].Value;
+
         if (village.BuildOrderIndex >= buildOrder.Count)
         {
             ItemCollection cost = buildLoopInitialCost 
                 + buildLoopIncreaseCost * (village.BuildOrderIndex - buildOrder.Count);
-            if (inventory.Items.Contains(cost))
+            if (inventoryItems.Contains(cost))
             {
-                inventory.Items.Remove(cost);
+                inventoryItems.Remove(cost);
                 buildLoop[(village.BuildOrderIndex - buildOrder.Count) % buildLoop.Count]
                 (
                     GetBuildingPosition(ref village),
-                    owner.Entity
+                    entity
                 );
                 village.BuildOrderIndex++;
             }
         }
-        else if (inventory.Items.Contains(buildOrder[village.BuildOrderIndex].Items))
+        else if (inventoryItems.Contains(buildOrder[village.BuildOrderIndex].Items))
         {
-            inventory.Items.Remove(buildOrder[village.BuildOrderIndex].Items);
-            buildOrder[village.BuildOrderIndex].BuildMethod(GetBuildingPosition(ref village), owner.Entity);
+            inventoryItems.Remove(buildOrder[village.BuildOrderIndex].Items);
+            buildOrder[village.BuildOrderIndex].BuildMethod(GetBuildingPosition(ref village), entity);
             village.BuildOrderIndex++;
         }
+
+        itemCollectionManager[inventory.ItemCollectionID] = inventoryItems;
     }
 
     /// <summary>
@@ -130,18 +148,20 @@ internal readonly struct VillageBuildingSystem : IEntityProcessor<Location, Vill
     {
         Vector2[] buildingPositions =  new IEntity[]
         {
-            village.MainBuilding,
-            village.Stockpile,
+            entityManager[village.MainBuildingID],
+            entityManager[village.StockpileID],
         }
-        .Concat(village.Buildings)
+        .Concat(entityArrayManager[village.BuildingsArrayID])
         .Where(b => b != null)
         .Select(b => b.GetComponent<Location>().Position)
         .ToArray();
 
+        Random random = randomManager[village.RandomID];
+
         while (true)
         {
-            Vector2 center = buildingPositions[village.Random.Next(buildingPositions.Length)];
-            Vector2 position = village.Random.NextPointInRing(center, minBuildDistance, maxBuildDistance);
+            Vector2 center = buildingPositions[random.Next(buildingPositions.Length)];
+            Vector2 position = random.NextPointInRing(center, minBuildDistance, maxBuildDistance);
 
             var query = buildingPositions.Where(p => Vector2.DistanceSquared(p, position) < minDistanceSquared);
             if (!query.Any() && gameWorld.CanBuildAt(position))

@@ -12,13 +12,13 @@ internal struct VillagerSpawner
     /// </summary>
     public float Elapsed = float.MaxValue;
     /// <summary>
-    /// The currently spawned villager.
+    /// ID of the currently spawned villager.
     /// </summary>
-    public IEntity Villager;
+    public int VillagerID = -1;
     /// <summary>
     /// The ID of village where the villager will be spawned.
     /// </summary>
-    public IEntity Village;
+    public int VillageID = -1;
     public VillagerProfession Profession;
     /// <summary>
     /// Determine if villager has been spawned during last game loop iteration.

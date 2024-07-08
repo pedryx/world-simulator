@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Runtime.CompilerServices;
 
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Extensions;
 using WorldSimulator.Level;
+using WorldSimulator.ManagedDataManagers;
 
 namespace WorldSimulator.Systems;
 /// <summary>
@@ -30,10 +32,14 @@ internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movem
     private const float minTimeToUpdate = 1.0f;
 
     private readonly GameWorld gameWorld;
+    private readonly ManagedDataManager<IEntity> entityManager;
+    private readonly ManagedDataManager<Random> randomManager;
 
     public AnimalBehaviorSystem(Game game, GameWorld gameWorld)
     {
         this.gameWorld = gameWorld;
+        entityManager = game.GetManagedDataManager<IEntity>();
+        randomManager = game.GetManagedDataManager<Random>();
     }
 
     [MethodImpl(Game.EntityProcessorInline)]
@@ -46,18 +52,20 @@ internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movem
         float deltaTime
     )
     {
+        Random random = randomManager[behavior.RandomID];
+
         if (behavior.UpdateEnabled)
         {
             behavior.TimeToUpdate -= deltaTime;
             if (behavior.TimeToUpdate <= 0.0f)
             {
-                behavior.TimeToUpdate = behavior.Random.NextSingle(minTimeToUpdate, maxTimeToUpdate);
+                behavior.TimeToUpdate = random.NextSingle(minTimeToUpdate, maxTimeToUpdate);
                 if (behavior.PreviousPosition != location.Position)
                 {
                     gameWorld.UpdateResourcePosition
                     (
-                        behavior.ResourceType,
-                        owner.Entity,
+                        ResourceType.Get(behavior.ResourceTypeID),
+                        entityManager[owner.EntityID],
                         behavior.PreviousPosition,
                         location.Position
                     );
@@ -73,7 +81,7 @@ internal readonly struct AnimalBehaviorSystem : IEntityProcessor<Location, Movem
             TerrainType terrainType;
             do
             {
-                destination = behavior.Random.NextPointInRing
+                destination = random.NextPointInRing
                 (
                     location.Position,
                     minRadius,

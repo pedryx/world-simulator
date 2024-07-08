@@ -23,11 +23,12 @@ internal interface IAssetManager
 internal abstract class AssetManager<TAsset> : IAssetManager
 {
     private const string ContentRootFolder = "Content";
-
+    
+    private readonly IDictionary<string, int> nameMapping = new Dictionary<string, int>();
     /// <summary>
     /// Contains loaded resources.
     /// </summary>
-    private readonly IDictionary<string, TAsset> assets = new Dictionary<string, TAsset>();
+    private readonly List<TAsset> assets = new();
     private readonly string fileExtension;
     private readonly string contentFolder;
 
@@ -59,8 +60,10 @@ internal abstract class AssetManager<TAsset> : IAssetManager
         {
             string name = GetName(file);
             TAsset value = Load(file, name);
+            int id = assets.Count;
 
-            assets.Add(name, value);
+            assets.Add(value);
+            nameMapping.Add(name, id);
         }
     }
 
@@ -75,5 +78,9 @@ internal abstract class AssetManager<TAsset> : IAssetManager
     /// </summary>
     public abstract TAsset Load(string file, string name);
 
-    public TAsset this[string name] => assets[name];
+    public int GetID(string name)
+        => nameMapping[name];
+
+    public TAsset this[string name] => assets[nameMapping[name]];
+    public TAsset this[int id] => assets[id];
 }

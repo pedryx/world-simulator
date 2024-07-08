@@ -1,4 +1,5 @@
 ﻿using System;
+
 using WorldSimulator.ECS.AbstractECS;
 
 namespace WorldSimulator.Components.Villages;
@@ -7,18 +8,22 @@ internal struct Village
 {
     public const int MaxBuildingCount = 64;
 
-    public IEntity MainBuilding;
-    public IEntity Stockpile;
+    public int MainBuildingID = -1;
+    public int StockpileID = -1;
 
-    public IEntity[] Buildings = new IEntity[MaxBuildingCount];
+    public int BuildingsArrayID = -1;
     public int BuildingsCount = 0;
 
     public int BuildOrderIndex = 0;
 
     /// <summary>
-    /// Random number generator for generating random positions for new buildings.
+    /// ID of Random number generator for generating random positions for new buildings.
     /// </summary>
-    public Random Random = SeedGenerator.CreateRandom();
+    public int RandomID = -1;
 
-    public Village() { }
+    public Village(Game game)
+    {
+        BuildingsArrayID = game.GetManagedDataManager<IEntity[]>().Insert(new IEntity[MaxBuildingCount]);
+        RandomID = game.GetManagedDataManager<Random>().Create();
+    }
 }

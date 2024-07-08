@@ -8,5 +8,7 @@ namespace WorldSimulator.Components;
 internal struct DamageDealer
 {
     public float DamagePerSecond;
-    public IEntity Target;
+    public int TargetID = -1;
+
+    public DamageDealer() { }
 }

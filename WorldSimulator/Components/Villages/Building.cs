@@ -4,5 +4,7 @@ namespace WorldSimulator.Components.Villages;
 [Component]
 internal struct Building
 {
-    public IEntity Village;
+    public int VillageID = -1;
+
+    public Building() { }
 }

@@ -4,5 +4,7 @@ namespace WorldSimulator.Components.Villages;
 [Component]
 internal struct VillagerBehavior
 {
-    public IEntity Target;
+    public int TargetID = -1;
+
+    public VillagerBehavior() { }
 }

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using WorldSimulator.Components;
 using WorldSimulator.ECS.AbstractECS;
 using WorldSimulator.Level;
+using WorldSimulator.ManagedDataManagers;
 
 namespace WorldSimulator.Systems;
 /// <summary>
@@ -14,11 +15,15 @@ internal readonly struct BehaviorSystem : IEntityProcessor<Behavior, Owner>
 {
     private readonly GameWorld gameWorld;
     private readonly BehaviorTrees behaviorTrees;
+    private readonly Game game;
+    private readonly ManagedDataManager<IEntity> manager;
 
-    public BehaviorSystem(GameWorld gameWorld, BehaviorTrees behaviorTrees)
+    public BehaviorSystem(GameWorld gameWorld, BehaviorTrees behaviorTrees, Game game)
     {
         this.gameWorld = gameWorld;
         this.behaviorTrees = behaviorTrees;
+        this.game = game;
+        manager = game.GetManagedDataManager<IEntity>();
     }
 
     [MethodImpl(Game.EntityProcessorInline)]
@@ -27,6 +32,8 @@ internal readonly struct BehaviorSystem : IEntityProcessor<Behavior, Owner>
         if (behavior.BehaviorTreeIndex == -1)
             return;
 
+        IEntity entity = manager[owner.EntityID];
+
         BehaviourStatus result;
         IBehaviour<BehaviorContext> behaviorTree = behaviorTrees.GetBehaviorTree(behavior.BehaviorTreeIndex);
 
@@ -34,9 +41,10 @@ internal readonly struct BehaviorSystem : IEntityProcessor<Behavior, Owner>
         {
             result = behaviorTree.Tick(new BehaviorContext()
             {
-                Entity = owner.Entity,
+                Entity = entity,
                 GameWorld = gameWorld,
                 DeltaTime = deltaTime,
+                Game = game,
             });
         }
         while (result == BehaviourStatus.Succeeded);

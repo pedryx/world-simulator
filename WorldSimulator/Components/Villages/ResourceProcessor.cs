@@ -8,9 +8,9 @@ namespace WorldSimulator.Components.Villages;
 [Component]
 internal struct ResourceProcessor
 {
-    public ItemType InputItem;
+    public int InputItemID;
     public int InputQuantity;
-    public ItemType OutputItem;
+    public int OutputItemID;
     public int OutputQuantity;
     /// <summary>
     /// How many seconds has elapsed from the time resource processing started.

@@ -12,7 +12,9 @@ internal struct Health
     /// </summary>
     public float Amount;
     /// <summary>
-    /// The most recent entity which has damaged the current entity.
+    /// The ID of the most recent entity which has damaged the current entity.
     /// </summary>
-    public IEntity DamageSource;
+    public int DamageSourceID = -1;
+
+    public Health() { }
 }

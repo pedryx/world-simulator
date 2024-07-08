@@ -6,6 +6,7 @@ using System.Diagnostics;
 using WorldSimulator.Components;
 using WorldSimulator.Components.Villages;
 using WorldSimulator.ECS.AbstractECS;
+using WorldSimulator.ManagedDataManagers;
 
 namespace WorldSimulator.Level;
 /// <summary>
@@ -15,11 +16,13 @@ internal class LevelFactory
 {
     private readonly Game game;
     private readonly LevelState levelState;
+    private readonly ManagedDataManager<IEntity> entityManager;
 
     public LevelFactory(Game game, LevelState levelState)
     {
         this.game = game;
         this.levelState = levelState;
+        entityManager = game.GetManagedDataManager<IEntity>();
     }
 
     #region Resources
@@ -31,10 +34,7 @@ internal class LevelFactory
         {
             Amount = type.HarvestTime
         });
-        entity.AddComponent(new ItemDrop()
-        {
-            Items = new ItemCollection(type.HarvestItem, type.HarvestQuantity),
-        });
+        entity.AddComponent(new ItemDrop(game, new ItemCollection(type.HarvestItem, type.HarvestQuantity)));
         entity.AddComponent(new Resource(type));
 
         return entity;
@@ -58,9 +58,9 @@ internal class LevelFactory
             Speed = 30.0f,
             Destination = position,
         });
-        entity.AddComponent(new AnimalBehavior()
+        entity.AddComponent(new AnimalBehavior(game)
         {
-            ResourceType = ResourceType.Deer,
+            ResourceTypeID = ResourceType.Deer.ID,
         });
 
         return entity;
@@ -81,7 +81,7 @@ internal class LevelFactory
 
         entity.AddComponent(new Building()
         {
-            Village = village,
+            VillageID = entityManager.Insert(village),
         });
 
         return entity;
@@ -100,23 +100,27 @@ internal class LevelFactory
     {
         IEntity entity = CreateBasicBuilding(position, textureName, scale, village);
 
-        entity.AddComponent<Inventory>();
+        entity.AddComponent(new Inventory(game, new ItemCollection()));
         entity.AddComponent(new ResourceProcessor()
         {
-            InputItem = resource.HarvestItem,
+            InputItemID = resource.HarvestItem.ID,
             InputQuantity = 1,
-            OutputItem = resource.HarvestItem.ProcessedItem,
+            OutputItemID = resource.HarvestItem.ProcessedItem.ID,
             OutputQuantity = 1,
             ProcessingTime = resource.HarvestItem.TimeToProcess,
         });
         entity.AddComponent(new VillagerSpawner()
         {
-            Village = village,
+            VillageID = entityManager.Insert(village),
             Profession = profession
         });
 
+        var entityArrayManager = game.GetManagedDataManager<IEntity[]>();
+
         ref Village villageComponent = ref village.GetComponent<Village>();
-        villageComponent.Buildings[villageComponent.BuildingsCount] = entity;
+        IEntity[] buildingEntities = entityArrayManager[villageComponent.BuildingsArrayID];
+
+        buildingEntities[villageComponent.BuildingsCount] = entity;
         villageComponent.BuildingsCount++;
 
         return entity;
@@ -185,23 +189,23 @@ internal class LevelFactory
 
     public IEntity CreateMainBuilding(Vector2 position, IEntity village)
     {
-        Debug.Assert(village.GetComponent<Village>().MainBuilding == null);
+        Debug.Assert(village.GetComponent<Village>().MainBuildingID == -1);
 
         IEntity entity = CreateBasicBuilding(position, "main building", 0.9f, village);
 
-        village.GetComponent<Village>().MainBuilding = entity;
+        village.GetComponent<Village>().MainBuildingID = entityManager.Insert(entity);
 
         return entity;
     }
 
     public IEntity CreateStockpile(Vector2 position, IEntity village)
     {
-        Debug.Assert(village.GetComponent<Village>().Stockpile == null);
+        Debug.Assert(village.GetComponent<Village>().StockpileID == -1);
 
         IEntity entity = CreateBasicBuilding(position, "stockpile", 0.4f, village);
 
-        entity.AddComponent<Inventory>();
-        village.GetComponent<Village>().Stockpile = entity;
+        entity.AddComponent(new Inventory(game, new ItemCollection()));
+        village.GetComponent<Village>().StockpileID = entityManager.Insert(entity);
 
         return entity;
     }
@@ -230,10 +234,10 @@ internal class LevelFactory
         entity.AddComponent<VillagerBehavior>();
         entity.AddComponent(new Villager()
         {
-            Village = village,
+            VillageID = entityManager.Insert(village),
         });
-        entity.AddComponent<PathFollow>();
-        entity.AddComponent<Inventory>();
+        entity.AddComponent(new PathFollow(game));
+        entity.AddComponent(new Inventory(game, new ItemCollection()));
         entity.AddComponent(new DamageDealer()
         {
             DamagePerSecond = 1.0f,
@@ -255,11 +259,8 @@ internal class LevelFactory
         {
             Position = position,
         });
-        entity.AddComponent<Village>();
-        entity.AddComponent(new Owner()
-        {
-            Entity = entity,
-        });
+        entity.AddComponent(new Village(game));
+        entity.AddComponent(new Owner(game, entity));
 
         return entity;
     }
@@ -282,14 +283,11 @@ internal class LevelFactory
         });
         entity.AddComponent(new Appearance()
         {
-            Texture = game.GetResourceManager<Texture2D>()[textureName],
+            TextureID = game.GetResourceManager<Texture2D>().GetID(textureName),
             Origin = new Vector2(0.5f, 1.0f),
             Scale = scale,
         });
-        entity.AddComponent(new Owner()
-        {
-            Entity = entity,
-        });
+        entity.AddComponent(new Owner(game, entity));
 
         return entity;
     }

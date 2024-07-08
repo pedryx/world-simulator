@@ -7,5 +7,7 @@ internal struct Villager
     /// <summary>
     /// The village to which villager belongs.
     /// </summary>
-    public IEntity Village;
+    public int VillageID = -1;
+
+    public Villager() { }
 }

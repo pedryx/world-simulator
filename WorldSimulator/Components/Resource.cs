@@ -4,10 +4,10 @@ namespace WorldSimulator.Components;
 [Component]
 internal struct Resource 
 {
-    public ResourceType Type;
+    public int TypeID = -1;
 
     public Resource(ResourceType type)
     {
-        Type = type;
+        TypeID = type.ID;
     }
 }
