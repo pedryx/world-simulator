@@ -13,7 +13,7 @@ internal class EntitasEntity : AbstractECS.IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct
+        where TComponent : unmanaged
         => Entity.AddComponent(ComponentWrapper<TComponent>.ID, new ComponentWrapper<TComponent>(component));
 
     public void Destroy()
@@ -23,15 +23,15 @@ internal class EntitasEntity : AbstractECS.IEntity
     }
 
     public ref TComponent GetComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => ref ((ComponentWrapper<TComponent>)Entity.GetComponent(ComponentWrapper<TComponent>.ID)).Component;
 
     public bool HasComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => Entity.HasComponent(ComponentWrapper<TComponent>.ID); 
     
     public void RemoveComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => Entity.RemoveComponent(ComponentWrapper<TComponent>.ID);
 
     public bool IsDestroyed()

@@ -5,7 +5,7 @@ using WorldSimulator.ECS.AbstractECS;
 namespace WorldSimulator.ECS.LeoEcsLite;
 internal class LeoEcsLiteSystem<TEntityProcessor, TComponent> : IECSSystem
     where TEntityProcessor : IEntityProcessor<TComponent>
-    where TComponent : struct
+    where TComponent : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -42,8 +42,8 @@ internal class LeoEcsLiteSystem<TEntityProcessor, TComponent> : IECSSystem
 
 internal class LeoEcsLiteSystem<TEntityProcessor, TComponent1, TComponent2> : IECSSystem
     where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2>
-    where TComponent1 : struct
-    where TComponent2 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -83,9 +83,9 @@ internal class LeoEcsLiteSystem<TEntityProcessor, TComponent1, TComponent2> : IE
 
 internal class LeoEcsLiteSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3> : IECSSystem
     where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3>
-    where TComponent1 : struct
-    where TComponent2 : struct
-    where TComponent3 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
+    where TComponent3 : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -128,10 +128,10 @@ internal class LeoEcsLiteSystem<TEntityProcessor, TComponent1, TComponent2, TCom
 
 internal class LeoEcsLiteSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
     where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
-    where TComponent1 : struct
-    where TComponent2 : struct
-    where TComponent3 : struct
-    where TComponent4 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
+    where TComponent3 : unmanaged
+    where TComponent4 : unmanaged
 {
     private readonly TEntityProcessor processor;
 

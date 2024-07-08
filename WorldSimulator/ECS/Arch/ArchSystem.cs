@@ -5,7 +5,7 @@ using WorldSimulator.ECS.AbstractECS;
 namespace WorldSimulator.ECS.Arch;
 internal class ArchSystem<TEntityProcessor, TComponent> : IECSSystem
     where TEntityProcessor : struct, IEntityProcessor<TComponent>
-    where TComponent : struct
+    where TComponent : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -37,8 +37,8 @@ internal class ArchSystem<TEntityProcessor, TComponent> : IECSSystem
 
 internal class ArchSystem<TEntityProcessor, TComponent1, TComponent2> : IECSSystem
     where TEntityProcessor : struct, IEntityProcessor<TComponent1, TComponent2>
-    where TComponent1 : struct
-    where TComponent2 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -69,9 +69,9 @@ internal class ArchSystem<TEntityProcessor, TComponent1, TComponent2> : IECSSyst
 
 internal class ArchSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3> : IECSSystem
     where TEntityProcessor : struct, IEntityProcessor<TComponent1, TComponent2, TComponent3>
-    where TComponent1 : struct
-    where TComponent2 : struct
-    where TComponent3 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
+    where TComponent3 : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -102,10 +102,10 @@ internal class ArchSystem<TEntityProcessor, TComponent1, TComponent2, TComponent
 
 internal class ArchSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3, TComponent4> : IECSSystem
     where TEntityProcessor : struct, IEntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
-    where TComponent1 : struct
-    where TComponent2 : struct
-    where TComponent3 : struct
-    where TComponent4 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
+    where TComponent3 : unmanaged
+    where TComponent4 : unmanaged
 {
     private readonly TEntityProcessor processor;
 

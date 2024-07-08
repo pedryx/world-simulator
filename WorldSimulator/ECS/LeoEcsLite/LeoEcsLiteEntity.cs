@@ -17,7 +17,7 @@ internal class LeoEcsLiteEntity : IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct
+        where TComponent : unmanaged
         => world.GetPool<TComponent>().Add(entity) = component;
 
     public void Destroy()
@@ -27,17 +27,17 @@ internal class LeoEcsLiteEntity : IEntity
     }
 
     public ref TComponent GetComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => ref world.GetPool<TComponent>().Get(entity);
 
     public bool HasComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => world.GetPool<TComponent>().Has(entity);
 
     public bool IsDestroyed()
         => isDestroyed;
 
     public void RemoveComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => world.GetPool<TComponent>().Del(entity);
 }

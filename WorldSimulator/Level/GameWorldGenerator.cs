@@ -146,7 +146,7 @@ internal class GameWorldGenerator
 
     private void SpawnVillages()
     {
-        //levelFactory.CreateVillage(GameWorld.Size.ToVector2() / 2.0f); return;
+        // levelFactory.CreateVillage(GameWorld.Size.ToVector2() / 2.0f); return;
 
         Random random = SeedGenerator.CreateRandom();
 

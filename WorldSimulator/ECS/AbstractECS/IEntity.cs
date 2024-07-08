@@ -12,24 +12,24 @@ public interface IEntity
     bool IsDestroyed();
 
     void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct;
+        where TComponent : unmanaged;
 
     /// <summary>
     /// Create an instance of the specified component type and add it to the entity.
     /// </summary>
     /// <typeparam name="TComponent">The type of component to create and add.</typeparam>
     public void AddComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => AddComponent(new TComponent());
 
     void RemoveComponent<TComponent>()
-        where TComponent : struct;
+        where TComponent : unmanaged;
 
     ref TComponent GetComponent<TComponent>()
-        where TComponent : struct;
+        where TComponent : unmanaged;
 
     bool HasComponent<TComponent>()
-        where TComponent : struct;
+        where TComponent : unmanaged;
 
     /// <summary>
     /// Destroys the entity. The instance will still exist, but using it in any operation may lead to undefined

@@ -16,24 +16,24 @@ internal class ArchEntity : IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct
+        where TComponent : unmanaged
         => entity.Add(component);
 
     public void Destroy()
         => world.Destroy(entity);
 
     public ref TComponent GetComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => ref entity.Get<TComponent>();
 
     public bool HasComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => entity.Has<TComponent>();
 
     public bool IsDestroyed()
         => !entity.IsAlive();
 
     public void RemoveComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => entity.Remove<TComponent>();
 }

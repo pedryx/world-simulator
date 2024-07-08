@@ -8,7 +8,7 @@ using WorldSimulator.ECS.AbstractECS;
 namespace WorldSimulator.ECS.MonoGameExtendedEntities;
 internal class MonoGameExtendedSystem<TEntityProcessor, TComponent1> : EntityUpdateSystem, IECSSystem 
     where TEntityProcessor : IEntityProcessor<TComponent1>
-    where TComponent1 : struct
+    where TComponent1 : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -49,8 +49,8 @@ internal class MonoGameExtendedSystem<TEntityProcessor, TComponent1> : EntityUpd
 
 internal class MonoGameExtendedSystem<TEntityProcessor, TComponent1, TComponent2> : EntityUpdateSystem, IECSSystem
     where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2>
-    where TComponent1 : struct
-    where TComponent2 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -95,9 +95,9 @@ internal class MonoGameExtendedSystem<TEntityProcessor, TComponent1, TComponent2
 internal class MonoGameExtendedSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3> 
     : EntityUpdateSystem, IECSSystem
     where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3>
-    where TComponent1 : struct
-    where TComponent2 : struct
-    where TComponent3 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
+    where TComponent3 : unmanaged
 {
     private readonly TEntityProcessor processor;
 
@@ -150,10 +150,10 @@ internal class MonoGameExtendedSystem<TEntityProcessor, TComponent1, TComponent2
 internal class MonoGameExtendedSystem<TEntityProcessor, TComponent1, TComponent2, TComponent3, TComponent4>
     : EntityUpdateSystem, IECSSystem
     where TEntityProcessor : IEntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4>
-    where TComponent1 : struct
-    where TComponent2 : struct
-    where TComponent3 : struct
-    where TComponent4 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
+    where TComponent3 : unmanaged
+    where TComponent4 : unmanaged
 {
     private readonly TEntityProcessor processor;
 

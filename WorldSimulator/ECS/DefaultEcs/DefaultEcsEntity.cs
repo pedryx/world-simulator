@@ -15,22 +15,22 @@ internal class DefaultEcsEntity : IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct
+        where TComponent : unmanaged
         => Entity.Set(component);
 
     public void Destroy()
         => Entity.Dispose();
 
     public ref TComponent GetComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => ref Entity.Get<TComponent>();
 
     public bool HasComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => Entity.Has<TComponent>();
 
     public void RemoveComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
         => Entity.Remove<TComponent>();
 
     public bool IsDestroyed()

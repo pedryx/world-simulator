@@ -25,7 +25,7 @@ public interface IEntityProcessor
 /// <see cref="IEntityProcessor"/>.
 /// </summary>
 public interface IEntityProcessor<TComponent> : IEntityProcessor
-    where TComponent : struct
+    where TComponent : unmanaged
 {
     void Process(ref TComponent component, float deltaTime);
 }
@@ -35,8 +35,8 @@ public interface IEntityProcessor<TComponent> : IEntityProcessor
 /// <see cref="IEntityProcessor"/>.
 /// </summary>
 public interface IEntityProcessor<TComponent1, TComponent2> : IEntityProcessor
-    where TComponent1 : struct
-    where TComponent2 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
 {
     void Process(ref TComponent1 component1, ref TComponent2 component2, float deltaTime);
 }
@@ -46,9 +46,9 @@ public interface IEntityProcessor<TComponent1, TComponent2> : IEntityProcessor
 /// <see cref="IEntityProcessor"/>.
 /// </summary>
 public interface IEntityProcessor<TComponent1, TComponent2, TComponent3> : IEntityProcessor
-    where TComponent1 : struct
-    where TComponent2 : struct
-    where TComponent3 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
+    where TComponent3 : unmanaged
 {
     void Process(ref TComponent1 component1, ref TComponent2 component2, ref TComponent3 component3, float deltaTime);
 }
@@ -58,10 +58,10 @@ public interface IEntityProcessor<TComponent1, TComponent2, TComponent3> : IEnti
 /// <see cref="IEntityProcessor"/>.
 /// </summary>
 public interface IEntityProcessor<TComponent1, TComponent2, TComponent3, TComponent4> : IEntityProcessor
-    where TComponent1 : struct
-    where TComponent2 : struct
-    where TComponent3 : struct
-    where TComponent4 : struct
+    where TComponent1 : unmanaged
+    where TComponent2 : unmanaged
+    where TComponent3 : unmanaged
+    where TComponent4 : unmanaged
 {
     void Process
     (

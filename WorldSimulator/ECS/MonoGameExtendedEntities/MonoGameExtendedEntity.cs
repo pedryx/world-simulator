@@ -27,7 +27,7 @@ internal class MonoGameExtendedEntity : IEntity
     }
 
     public void AddComponent<TComponent>(TComponent component)
-        where TComponent : struct
+        where TComponent : unmanaged
     {
         if (entity == null)
             world.ScheduleComponentAdd(this, component);
@@ -46,7 +46,7 @@ internal class MonoGameExtendedEntity : IEntity
     }
 
     public ref TComponent GetComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
     {
         if (entity == null)
             return ref world.GetScheduledComponent<TComponent>(this).Component;
@@ -55,7 +55,7 @@ internal class MonoGameExtendedEntity : IEntity
     }
 
     public bool HasComponent<TComponent>()
-        where TComponent : struct
+        where TComponent : unmanaged
     {
         if (entity == null)
             return world.GetScheduledComponent<TComponent>(this) == null;
@@ -67,7 +67,7 @@ internal class MonoGameExtendedEntity : IEntity
         => isDestroyed;
 
     public void RemoveComponent<TComponent>() 
-        where TComponent : struct
+        where TComponent : unmanaged
     {
         if (entity == null)
             world.ScheduleComponentRemove<TComponent>(this);

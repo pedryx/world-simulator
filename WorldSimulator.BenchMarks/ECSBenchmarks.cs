@@ -13,6 +13,7 @@ using WorldSimulator.ECS.LeoECS;
 using WorldSimulator.ECS.LeoEcsLite;
 using WorldSimulator.ECS.MonoGameExtendedEntities;
 using WorldSimulator.ECS.RelEcs;
+using WorldSimulator.ECS.SveltoECS;
 using WorldSimulator.Level;
 
 namespace WorldSimulator.Benchmarks;
@@ -51,7 +52,8 @@ public class ECSBenchmarks
         typeof(LeoECSFactory),
         typeof(LeoEcsLiteFactory),
         typeof(MonoGameExtendedFactory),
-        typeof(RelEcsFactory)
+        typeof(RelEcsFactory),
+        typeof(SveltoECSFactory)
     )]
     public Type ECSFactoryType { get; set; }
 
