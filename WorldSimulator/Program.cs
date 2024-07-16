@@ -12,7 +12,7 @@ using WorldSimulator.ECS.SveltoECS;
 using WorldSimulator.Level;
 
 SeedGenerator.SetGlobalSeed(0);
-ECSFactory factory = new SveltoECSFactory();
+ECSFactory factory = new ArchFactory();
 
 Game game = new(factory);
 game.SwitchState(new LevelState(true));
