@@ -26,6 +26,8 @@ Future updates will include:
 - Expanding game features
 - Refactoring code
 - Creating a tutorial for adding ECS libraries
+- How to build section
+- How to run benchmarks section
 
 ## ECS Libraries
 
